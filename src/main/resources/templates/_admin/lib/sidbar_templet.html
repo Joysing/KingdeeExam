@@ -1,0 +1,45 @@
+<#macro sidbar urlName>
+    <li <#if urlName == 'index.html'>class="active"</#if>>
+    	<a href="/admin/index.html">
+    		<i class="glyphicon glyphicon-th-large"></i>
+    		 后台首页
+    	</a>
+    </li>
+    <li <#if urlName == 'test-paper.html'>class="active"</#if>>
+    	<a href="/admin/testPaper.html">
+    		<i class="glyphicon glyphicon-list-alt"></i>
+    		 试卷列表
+    	</a>
+    </li>
+    <li <#if urlName == 'question-bank.html'>class="active"</#if>>
+    	<a href="/admin/question-bank.html">
+    		<i class="glyphicon glyphicon-folder-close"></i>
+    		题库管理
+    	</a>
+    </li>
+    <li <#if urlName == 'score.html'>class="active"</#if>>
+    	<a href="/admin/score.html">
+    		<i class="glyphicon glyphicon-filter"></i>
+    		用户成绩
+    	</a>
+    </li>
+    <li <#if urlName == 'user.html'>class="active"</#if>>
+    	<a href="/admin/user.html">
+    		<i class="glyphicon glyphicon-user"></i>
+    		用户管理
+    	</a>
+    </li>
+</#macro>
+
+<#macro header>
+	<div class="navbar navbar-inverse navbar-fixed-top box">
+		<div class="container-fluid" style="height: 50px;background: #006ada;">
+			<div class="navbar-header">
+				<a href="" ><img src="/static/img/kingdee-logo.png" height="45px"/></a>
+			</div>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span>退出</a></li>
+			</ul>
+		</div>
+	</div>
+</#macro>

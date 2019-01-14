@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kingdee.exam.dao.TestPaperTestsMapper">
+  <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.TestPaperTests">
+    <id column="testpaper_tests_id" jdbcType="INTEGER" property="testpaperTestsId" />
+    <result column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
+    <result column="question_bank_id" jdbcType="INTEGER" property="questionBankId" />
+  </resultMap>
+  
+  
+   <resultMap id="AllQuesionResultMap" type="com.kingdee.exam.entity.vo.TestPaperTestsVo">
+    <id column="testpaper_tests_id" jdbcType="INTEGER" property="testpaperTestsId" />
+    <result column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
+    <result column="question_bank_id" jdbcType="INTEGER" property="questionBankId" />
+    <result column="stem" jdbcType="VARCHAR" property="stem" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    testpaper_tests_id, testpaper_id, question_bank_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from testpaper_tests
+    where testpaper_tests_id = #{testpaperTestsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from testpaper_tests
+    where testpaper_tests_id = #{testpaperTestsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.kingdee.exam.entity.TestPaperTests">
+    insert into testpaper_tests (testpaper_tests_id, testpaper_id, question_bank_id
+      )
+    values (#{testpaperTestsId,jdbcType=INTEGER}, #{testpaperId,jdbcType=INTEGER}, #{questionBankId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.kingdee.exam.entity.TestPaperTests">
+    insert into testpaper_tests
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="testpaperTestsId != null">
+        testpaper_tests_id,
+      </if>
+      <if test="testpaperId != null">
+        testpaper_id,
+      </if>
+      <if test="questionBankId != null">
+        question_bank_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="testpaperTestsId != null">
+        #{testpaperTestsId,jdbcType=INTEGER},
+      </if>
+      <if test="testpaperId != null">
+        #{testpaperId,jdbcType=INTEGER},
+      </if>
+      <if test="questionBankId != null">
+        #{questionBankId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kingdee.exam.entity.TestPaperTests">
+    update testpaper_tests
+    <set>
+      <if test="testpaperId != null">
+        testpaper_id = #{testpaperId,jdbcType=INTEGER},
+      </if>
+      <if test="questionBankId != null">
+        question_bank_id = #{questionBankId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where testpaper_tests_id = #{testpaperTestsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kingdee.exam.entity.TestPaperTests">
+    update testpaper_tests
+    set testpaper_id = #{testpaperId,jdbcType=INTEGER},
+      question_bank_id = #{questionBankId,jdbcType=INTEGER}
+    where testpaper_tests_id = #{testpaperTestsId,jdbcType=INTEGER}
+  </update>
+  <!-- 根据试卷id查询信息 -->
+  <select id="findSelectTestPaperQuesion" parameterType="java.lang.Integer" resultMap="AllQuesionResultMap" >
+		  SELECT
+			testpaper_tests.testpaper_tests_id,
+			testpaper_tests.question_bank_id,
+		  testpaper_tests.testpaper_id,
+		  question_bank.stem
+		FROM
+			testpaper_tests
+		LEFT JOIN question_bank ON testpaper_tests.question_bank_id = question_bank.question_bank_id
+		WHERE
+			testpaper_tests.testpaper_id =#{testpaperId,jdbcType=INTEGER}
+  </select>
+  
+  <!-- 根据试卷id删除试卷试题表中的信息 -->
+  <delete id="deleteTestPaperTestById"  parameterType="java.lang.Integer">
+      delete from testpaper_tests
+    where testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="addTestPaperQuestion"  parameterType="java.util.List">
+	INSERT INTO testpaper_tests
+	(testpaper_id, question_bank_id)
+	VALUES
+	<foreach collection="list" item="item" index="index" separator=",">(#{item.testpaperId}, #{item.questionBankId})</foreach>
+  </insert>
+</mapper>

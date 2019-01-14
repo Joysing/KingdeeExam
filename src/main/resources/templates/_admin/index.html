@@ -1,0 +1,71 @@
+<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exam</title>
+
+    <!-- Bootstrap -->
+    <link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/static/css/style.css" />
+	
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <style>
+  .backs{
+  
+  background: url(/static/img/backs.jpeg);
+  background-size:100%;
+  
+  }
+  
+  .box{
+  box-shadow:0 0 10px #000 !important;
+  }
+  .bzi{
+  width:80%;
+  height:80s%;
+  padding-left:40%;
+  padding-top:6%;
+  
+  }
+  </style>
+  <body  class="backs">
+  <img class="bzi"  src="/static/img/biglogo.png">
+<@sidbarTemplet.header />
+	
+	<div class="container-fluid ">
+        <div class="col-xs-2 sidebar box">
+          <ul class="nav nav-sidebar">
+			<@sidbarTemplet.sidbar "index.html" />
+          </ul>
+        </div>
+        <div class="col-xs-10 col-xs-offset-2 content"><!--content-->
+
+			
+			
+			
+        </div><!--content-->
+	</div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js" ></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script>
+    	$(function() {
+    		
+    	});
+    	function add() {
+    		$('#myModal').modal({backdrop: 'static', keyboard: false});
+    	}
+    </script>
+  </body>
+</html>

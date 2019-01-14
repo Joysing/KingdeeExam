@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingdee.exam.dao.AdminMapper">
+
+	<!-- 用户返回映射 -->
+	<resultMap id="UserResultMap" type="com.kingdee.exam.entity.User">
+		<id column="user_id" property="userId" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="permission" property="permission" jdbcType="INTEGER" />
+	</resultMap>
+
+	<!-- 用户SQL段 -->
+	<sql id="User_Column_List">
+		user_id, username, password, permission
+	</sql>
+
+	<select id="findByUser" parameterType="com.kingdee.exam.entity.User"
+		resultMap="UserResultMap">
+		SELECT
+		<include refid="User_Column_List"></include>
+		FROM
+		`users`
+		WHERE
+		user_id = #{userId}
+		AND password = #{password}
+	</select>
+
+</mapper>

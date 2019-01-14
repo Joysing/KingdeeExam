@@ -1,0 +1,160 @@
+<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam</title>
+
+<!-- Bootstrap -->
+<link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css" />
+<link href="/static/assets/toastr-master/toastr.css" rel="stylesheet"/>
+<link href="/static/assets/bootstrap-validator/css/bootstrapValidator.min.css" rel="stylesheet">
+
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+
+<@sidbarTemplet.header />
+
+	<div class="container-fluid">
+		<div class="col-xs-2 sidebar">
+			<ul class="nav nav-sidebar">
+				<@sidbarTemplet.sidbar "test-paper.html" />
+			</ul>
+		</div>
+		<div class="col-xs-10 col-xs-offset-2 content" id="content">
+			<!--content-->
+
+			<div class="panel panel-primary">
+				<div class="panel-heading primary-color">
+					<h2 class="panel-title pull-left" id="headingh2"  style="line-height: 39px;">添加试题</h2>
+					<div class="clearfix"></div>
+				</div>
+				<div class="panel-body">
+					<form id="formid"  onsubmit="return mySubmit();">
+							<input type="hidden" value="" id="testpaperId" name="testpaperId"/>
+					   <#list findAllQuestionBank as findAllQuestionBank>
+							<div class="form-group">
+							<input name="questionBankId" id="${findAllQuestionBank.testsType}" type="checkbox" value="${findAllQuestionBank.questionBankId}"/>
+							<span>
+								<#if findAllQuestionBank.testsType==1>
+								选择题
+								<#elseif findAllQuestionBank.testsType==0>
+								判断题
+								<#elseif findAllQuestionBank.testsType==2>
+								编程题
+							</#if>
+								</span>
+							<span>：第${findAllQuestionBank.questionBankId}题</span>
+							<span style="margin-left: 20px;">${findAllQuestionBank.stem}</span>
+							</div>
+						</#list>
+						<button class="btn btn-danger"
+							style="margin: 0 auto; width: 80%; height: 100%; margin-left: 10%" onclick="jiancha()">修改</button>
+					</form>
+
+				</div>
+			</div>
+
+		</div>
+		<!--content-->
+	</div>
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="/static/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
+		<script src="/static/assets/toastr-master/toastr.js" type="text/javascript"></script>
+		<script type="text/javascript" src="/static/js/common.js"></script>
+		<script src="/static/assets/bootstrap-validator/js/bootstrapValidator.min.js" type="text/javascript"></script>
+		
+     <script type="text/javascript">
+     
+     <#if selectIdTestPaperQuesion??>
+		<#list selectIdTestPaperQuesion as item>
+		$("input[name='questionBankId'][value='${item.questionBankId}']").attr("checked",true);
+		</#list>
+     </#if> 
+     
+      function mySubmit() {
+    	  return false;
+      }
+      
+      function getQueryString(testpaperId) { 
+	   	  var reg = new RegExp("(^|&)" + testpaperId + "=([^&]*)(&|$)", "i"); 
+	   	  var r = window.location.search.substr(1).match(reg); 
+	   	  if (r != null) return unescape(r[2]); return null; 
+   	  }
+      
+      $(function() {
+    	  $("#testpaperId").val(getQueryString('testpaperId'));
+    	  
+      });
+
+
+  		$.fn.serializeObject = function()
+  		{
+  			var o = {};
+  			var a = this.serializeArray();
+  			$.each(a, function() {
+  				if (o[this.name] !== undefined) {
+  					if (!o[this.name].push) {
+  						o[this.name] = [o[this.name]];
+  					}
+  					o[this.name].push(this.value || '');
+  				} else {
+  					o[this.name] = this.value || '';
+  				}
+  			});
+  			return o;
+  		};
+  		
+  		
+  		
+  		function jiancha(){
+  			var len = $("input:checkbox:checked").size();
+  			var len2 = $("input[id='1']:checkbox:checked").size();
+  			var len3 = $("input[id='0']:checkbox:checked").size();
+  			var len4 = $("input[id='2']:checkbox:checked").size();
+  			var temp = $("#formid").serialize();
+  					
+  			
+  			var t = $("#formid").serializeObject();
+  			
+  			var json = JSON.stringify(t);
+  			
+  			if(len==11&&len2==5&&len3==5&&len4==1){
+  				ajaxSubmitJSON("/admin/editTestPaperQuestion",
+  						json,
+  	  					function(data) {
+  	  						if(data == true) {
+  	  							toastr.success('修改成功!', '设置');
+  	  						}
+  	  					},
+  	  					function(data) {
+  	  						toastr.error('修改失败!', '设置');
+  	  					}
+  	  				);
+  			}else{
+					alert("请选择5道判断，5道选择，1道编程题。现在一共选择了"+len+"道,其中"+len2+"道选择，"+len3+"道判断，"+len4+"道编程");
+  			}
+  			
+  		}
+  		
+  	
+ </script>
+</body>
+
+</html>

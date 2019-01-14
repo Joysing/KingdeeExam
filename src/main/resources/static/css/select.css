@@ -1,0 +1,47 @@
+body{
+	background-color:#f0f0f0;
+}
+ article{
+	font-family: "微软雅黑";
+	line-height: 30px;
+}
+ul li{  
+list-style-type:none;  
+}
+label{
+	font-family: "黑体";
+}
+.quanju{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 5%;
+	width: 80%;	
+}
+
+
+.header{
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	height: 40px;
+}
+.header .ziti{
+	text-align: center;
+	font-family: "微软雅黑";
+}
+
+.panduan{
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+}
+.panduan input{
+	padding-top: 20px;
+}
+.panduan ul li{
+	width: 100%;
+	padding-top: 20px;
+}
+.panduan ul li label{
+	margin-left: 15px;
+}

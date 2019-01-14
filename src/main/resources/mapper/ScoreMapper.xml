@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kingdee.exam.dao.ScoreMapper">
+  <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.Score">
+    <id column="score_id" jdbcType="INTEGER" property="scoreId" />
+    <result column="users_id" jdbcType="VARCHAR" property="usersId" />
+    <result column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
+    <result column="fraction" jdbcType="DOUBLE" property="fraction" />
+  </resultMap>
+  
+  <resultMap id="AllScoretMap" type="com.kingdee.exam.entity.vo.scoreVo">
+    <id column="score_id" jdbcType="INTEGER" property="scoreId" />
+    <result column="users_id" jdbcType="VARCHAR" property="usersId" />
+    <result column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
+    <result column="fraction" jdbcType="DOUBLE" property="fraction" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+  </resultMap>
+  
+  
+  <sql id="Base_Column_List">
+    score_id, users_id, testpaper_id, fraction
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from score
+    where score_id = #{scoreId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from score
+    where score_id = #{scoreId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.kingdee.exam.entity.Score">
+    insert into score (score_id, users_id, testpaper_id, 
+      fraction)
+    values (#{scoreId,jdbcType=INTEGER}, #{usersId,jdbcType=VARCHAR}, #{testpaperId,jdbcType=INTEGER}, 
+      #{fraction,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kingdee.exam.entity.Score">
+    insert into score
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="scoreId != null">
+        score_id,
+      </if>
+      <if test="usersId != null">
+        users_id,
+      </if>
+      <if test="testpaperId != null">
+        testpaper_id,
+      </if>
+      <if test="fraction != null">
+        fraction,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="scoreId != null">
+        #{scoreId,jdbcType=INTEGER},
+      </if>
+      <if test="usersId != null">
+        #{usersId,jdbcType=VARCHAR},
+      </if>
+      <if test="testpaperId != null">
+        #{testpaperId,jdbcType=INTEGER},
+      </if>
+      <if test="fraction != null">
+        #{fraction,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kingdee.exam.entity.Score">
+    update score
+    <set>
+      <if test="usersId != null">
+        users_id = #{usersId,jdbcType=VARCHAR},
+      </if>
+      <if test="testpaperId != null">
+        testpaper_id = #{testpaperId,jdbcType=INTEGER},
+      </if>
+      <if test="fraction != null">
+        fraction = #{fraction,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where score_id = #{scoreId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kingdee.exam.entity.Score">
+    update score
+    set users_id = #{usersId,jdbcType=VARCHAR},
+      testpaper_id = #{testpaperId,jdbcType=INTEGER},
+      fraction = #{fraction,jdbcType=DOUBLE}
+    where score_id = #{scoreId,jdbcType=INTEGER}
+  </update>
+  
+  <!-- 系统与用户mapper分隔 -->
+  <!-- 查询所有考生成绩信息 -->
+  <select id="findUserExamInfo" resultMap="AllScoretMap">
+		SELECT
+			score.*, users.username
+		FROM
+			score
+		LEFT JOIN users ON score.users_id = users.user_id
+		ORDER BY
+			users.user_id
+  </select>
+</mapper>

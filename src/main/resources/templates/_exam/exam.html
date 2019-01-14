@@ -1,0 +1,436 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>考试页面</title>
+        <link rel="shortcut icon" href="/static/img/favicon.png">
+		<link rel="stylesheet" href="/static/css/select.css" />
+		<link rel="stylesheet" href="/static/css/bootstrap-theme.css" />
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/static/skins/all.css" />
+		<link rel="stylesheet" href="/static/skins/flat/green.css" />
+		<link rel="stylesheet" href="/static/skins/square/square.css" />
+		<link rel="stylesheet" href="/static/assets/remodal-1.1.0/remodal.css">
+		<link rel="stylesheet" href="/static/assets/remodal-1.1.0/remodal-default-theme.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/highlight.min.css" />
+	</head>
+	<style>
+		#back{
+			background: url(/static/img/back3.png) ;
+			background-size: 100%;
+			background-attachment: fixed;
+			padding-top:-5%;
+		}
+		.fontsize{
+			font-weight: 600;
+			font-size:18px ;
+			line-height: 30px;
+			
+		}
+		ul>li{
+			font-size: 18px;
+		}
+		#ziti{
+			font-size: 50px;
+		}
+		.black{
+			background:rgba(0,0,0,0.1);
+			box-shadow:0 0 10px #696969 !important;
+			padding-top:2%;
+			padding-bottom:3%;
+		}
+		.quanju{
+			padding-top:2%;
+			padding-bottom:3%;
+		}
+		.remodal{
+		 background:rgba(f,f,f,0.1);
+		opacity: 0.8;
+		 
+		}
+	</style>
+	<body id="back">
+
+    <section class="quanju black" >
+		<!--header-->
+		<section class="header">
+			<div class="ziti" id="ziti">
+				卷一   
+			</div>
+		</section>
+		<!--判断题-->
+		<section class="panduan">
+			<h1>判断题</h1>
+			<#list JudgmentQuestion as item>
+			<div >
+				<h2>第 ${item_index+1} 题</h2>
+				<article class="fontsize">
+					${item.stem}
+				</article>
+				<div style="width: 100%;height: 100px;">
+					<ul>
+						<li><input type="radio" id="${item.questionBankId}" name="${item.questionBankId}" value="1"><label>对</label></li>
+						<li><input type="radio" id="${item.questionBankId}" name="${item.questionBankId}" value="0"><label>错</label></li>
+					</ul>
+				</div>
+				<div class="alert alert-success text-center hidden success-${item.questionBankId}">正确</div>
+				<div class="alert alert-danger text-center hidden danger-${item.questionBankId}">错误&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;答案:<span>对</span></div>
+			</div>
+			</#list>
+		</section>
+		<!--选择题-->
+		<section class="panduan ">
+			<h1>选择题</h1>
+			<#list ChoiceQuestion as item>
+			<div class="col-xs-12">
+				<h2>第 ${item_index+1} 题</h2>
+				<article class="fontsize">
+					${item.stem}
+				</article>
+				<ul>
+					<#list item.options as temp>
+					<li><input type="radio" name="${item.questionBankId}" value="${temp.op}"><label>${temp.op}</label> </li> <label>${temp.content}</label>
+					</#list>
+				</ul>
+			</div>
+			<div class="clearfix"></div>
+			<div class="alert alert-success text-center hidden success-${item.questionBankId}">正确</div>
+			<div class="alert alert-danger text-center hidden danger-${item.questionBankId}">错误&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;答案:<span>对</span></div>
+			</#list>
+		</section>
+		<!--编程题-->
+		<section class="panduan ">
+			<h1>编程题</h1>
+			<#list CodingQuestion as item>
+			<div class="col-xs-12">
+				<h2>第 ${item_index+1} 题</h2>
+				<article class="fontsize">
+					${item.stem}
+				</article>
+				<ul>
+					<li>
+						<form id="code-editor" onsubmit="createSubmissionAction(${problem.problemId});" method="POST">
+							<textarea name="codemirror-editor" id="codemirror-editor"></textarea>
+							<div class="row-fluid">
+								<div class="span4">
+									<select id="languages">
+										<#list languages as item>
+											<option value="${item.languageSlug}">${item.languageName}</option>
+										</#list>
+									</select>
+								</div> <!-- .span4 -->
+								<div id="submission-error" class="offset1 span3"></div> <!-- #submission-error -->
+								<div id="submission-action" class="span4">
+									<button type="submit" class="btn btn-primary">运行代码</button>
+								</div> <!-- #submission-action -->
+							</div> <!-- .row-fluid -->
+						</form> <!-- #code-editor-->
+					</li>
+				</ul>
+			</div>
+			<div class="clearfix"></div>
+			<div class="alert alert-success text-center hidden success-${item.questionBankId}">正确</div>
+			<div class="alert alert-danger text-center hidden danger-${item.questionBankId}">错误&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;答案:<span>对</span></div>
+			</#list>
+    <div class="body">
+        <div class="section">
+            <h4>概况</h4>
+            <div class="description">
+                <table class="table">
+                    <tr>
+                        <td>评测结果</td>
+                        <td id="judge-result" class="flag-${submission.judgeResult.judgeResultSlug}">${submission.judgeResult.judgeResultName}</td>
+                    </tr>
+                    <tr>
+                        <td>试题</td>
+                        <td id="problem-summery">P${submission.problem.problemId} ${submission.problem.problemName}</td>
+                    </tr>
+                    <tr>
+                        <td>提交时间</td>
+                        <td id="submit-time">${submission.submitTime}</td>
+                    </tr>
+                    <tr>
+                        <td>语言</td>
+                        <td id="language-name">${submission.language.languageName}</td>
+                    </tr>
+                    <tr>
+                        <td>评测机</td>
+                        <td id="judger-name">Default Judger</td>
+                    </tr>
+                    <tr>
+                        <td>所用时间	</td>
+                        <td id="used-time">${submission.usedTime} ms</td>
+                    </tr>
+                    <tr>
+                        <td>所用内存	</td>
+                        <td id="used-memory">${submission.usedMemory} K</td>
+                    </tr>
+                    <tr>
+                        <td>评测时间</td>
+                        <td id="execute-time">${submission.executeTime}</td>
+                    </tr>
+                </table>
+            </div> <!-- .description -->
+        </div> <!-- .section -->
+        <div class="section">
+            <h4>评测结果</h4>
+            <div id="judge-log" class="description markdown">${submission.judgeLog}</div> <!-- .description -->
+        </div> <!-- .section -->
+            <div class="section">
+                <h4>你的代码</h4>
+                <div class="description">
+                    <pre><code>${submission.code.replace("<", "&lt;").replace(">", "&gt;")}</code></pre>
+                </div> <!-- .description -->
+            </div> <!-- .section -->
+    </div> <!-- .body -->
+		</section>
+	</section>
+	
+	<div id="mmm" style="background: #ccc; border-radius: 10px; opacity:0.5; width: 200px;  right: 0; top: 0; margin-right: 10px; margin-top: 10px;  position: fixed; ">
+		<h1 style="font-size: 48px;text-align: center; margin-top: 10px"><span id="time">${ExamTime}:00</span></h1>
+	</div>	
+	
+	<div>
+		<a id="testpaperBt" class="link link--highlighted btn btn-success btn-lg" href="#modal" style="opacity:0.8; position: fixed; right: 0; bottom: 0; margin-right: 10px; margin-bottom: 10px">提交试卷</a>
+		<!-- <button id="testpaper" class="btn btn-success btn-lg">提交试卷</button> -->
+	</div>	
+	
+
+	<div class="remodal " data-remodal-id="modal" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
+	  <button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
+	  <div>
+		<h2 id="modal1Title">是否提交试卷</h2>
+		<p id="modal1Desc">
+			你好！是否提交试卷。
+		</p>
+	  </div>
+	  <br>
+	  <button data-remodal-action="cancel" class="remodal-cancel">取消</button>
+	  <button data-remodal-action="confirm" class="remodal-confirm" id="testpaper">提交</button>
+	</div>
+
+	<div class="remodal" data-remodal-id="modal-score" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
+	  <button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
+	  <div>
+		<h2 id="modal1Title">考试成绩 <span id="score">0</span>分</h2>
+	  </div>
+	  <br>
+	  <button data-remodal-action="cancel" class="remodal-cancel">查看答案</button>
+	</div>
+	
+<!--js-->
+<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js" ></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js" ></script>
+<script type="text/javascript" src="/static/js/icheck.min.js" ></script>
+<script src="/static/assets/remodal-1.1.0/remodal.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+
+<script>
+	$(document).ready(function(){
+	  $('input').iCheck({
+		checkboxClass: 'icheckbox_square',
+		radioClass: 'iradio_square',
+		increaseArea: '20%' // optional
+	  });
+	});
+
+	var inst = $('[data-remodal-id=modal-score]').remodal();
+
+	history.pushState(null, null, document.URL);
+	window.addEventListener('popstate', function () {
+		history.pushState(null, null, document.URL);
+	});
+
+	function submitPapers(arr) {
+		ajaxSubmitJSON("/exam/submitpapers", JSON.stringify(arr),
+				function(data) {
+					var score = 0;
+					$("#mmm").remove();
+					data.forEach(function(e) {
+						if(e.ifCorrect) {
+							score+=10;
+						}
+						$("#score").text(score);
+						inst.open();
+						console.log(e);
+						if(e.ifCorrect) {
+							$(".success-"+e.questionBankId).removeClass("hidden");
+						} else {
+							$(".danger-"+e.questionBankId).removeClass("hidden");
+							if(e.answer == 0) {
+								e.answer = "错";
+							}
+							if(e.answer == 1) {
+								e.answer = "对";
+							}
+							$(".danger-"+e.questionBankId+" span").text(e.answer);
+						}
+					})
+
+				},
+				function(data) {
+					alert("错误");
+				}
+			);
+	}
+
+	var arr = [];
+	$("#testpaper").on("click", function(){
+		<#list JudgmentQuestion as item>
+		var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
+		arr.push({
+			'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
+			'answer': item${item.questionBankId}.val()
+		});
+		</#list>
+		<#list ChoiceQuestion as item>
+		var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
+		arr.push({
+			'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
+			'answer': item${item.questionBankId}.val()
+		});
+		</#list>
+		<#list CodingQuestion as item>
+		var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
+		arr.push({
+			'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
+			'answer': item${item.questionBankId}.val()
+		});
+		</#list>
+		console.log(arr);
+		console.log(JSON.stringify({"list":arr}));
+		$("#testpaperBt").remove();
+		submitPapers(arr);
+		clearInterval(timeSetInterval);
+	});
+
+	var timeSetInterval = setInterval(function() {
+		var time = $("#time").text();
+		var min = parseInt(time.split(":")[0]);
+		var sec = parseInt(time.split(":")[1]);
+		if(sec==0){
+			sec=59;
+			min--;
+		}else{
+			sec--;
+		}
+		if(sec<10){
+			sec="0"+sec;
+		}
+		$("#time").text(min+":"+sec);
+
+		if(min==0) {
+			$("#testpaperBt").remove();
+			submitPapers(arr);
+			clearInterval(timeSetInterval);
+		}
+
+	},1000);
+
+    function createSubmissionAction(problemId) {
+        var postData = {
+            problemId: problemId,
+            languageSlug: $('select#languages').val(),
+            code: $('#codemirror-editor').val()
+        };
+        ajaxSubmit("/p/createSubmission.action", postData,
+            function(result) {
+            console.log(JSON.stringify(result));
+                if ( result['isSuccessful'] ) {
+                    var submissionId = result['submissionId'];
+                    // window.location.href = '/submission/' + submissionId;
+                    console.log("现在用ajax提交评测任务，等待返回评测结果" + submissionId);
+                    $.get('/submission/' + submissionId,function(data,status){
+                        console.log("Data: " + JSON.stringify(data) + "\nStatus: " + status);
+                    });
+                } else {
+                    var errorMessage = '';
+
+                    if ( !result['isUserLogined'] ) {
+                        errorMessage = 'Please sign in first.';
+                    } else if ( !result['isProblemExists'] ) {
+                        errorMessage = 'The problem not exists.';
+                    } else if ( !result['isLanguageExists'] ) {
+                        errorMessage = 'The language not exists.';
+                    } else if ( result['isCodeEmpty'] ) {
+                        errorMessage = 'Please enter the code.';
+                    }
+                    $('#submission-error').html(errorMessage);
+                }
+
+                $('button[type=submit]', '#code-editor').removeAttr('disabled');
+                $('button[type=submit]', '#code-editor').html('运行代码');
+            },
+            function(error) {
+                alert(error.message);
+            }
+        );
+
+    }
+</script>
+    <script type="text/javascript">
+            var currentJudgeResult = 'Pending',
+                getterInterval     = setInterval(function() {
+                    getRealTimeJudgeResult();
+                    currentJudgeResult = $('#judge-result').html();
+
+                    if ( currentJudgeResult != 'Pending' ) {
+                        clearInterval(getterInterval);
+                    }
+                }, 10000);
+    </script>
+    <script type="text/javascript">
+        $(function() {
+            var subscriptionUrl = '<c:url value="/submission/getRealTimeJudgeResult.action?submissionId=${submission.submissionId}&csrfToken=${csrfToken}" />',
+                source          = new EventSource(subscriptionUrl),
+                lastMessage     = '';
+
+            source.onmessage    = function(e) {
+                var message     = e['data'];
+
+                if ( message == lastMessage ) {
+                    return;
+                }
+                lastMessage     = message;
+
+                if ( message == 'Established' ) {
+                    $('#judge-log').append('<p>Connected to Server.</p>');
+                    return;
+                }
+                var mapMessage  = JSON.parse(message),
+                    judgeResult = mapMessage['judgeResult'],
+                    judgeLog    = mapMessage['message'];
+
+                $('#judge-result').html(judgeResult);
+                $('#judge-log').append(converter.makeHtml(judgeLog));
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        function getRealTimeJudgeResult() {
+            var pageRequests = {
+                'submissionId': ${submission.submissionId}
+            };
+
+            $.ajax({
+                type: 'GET',
+                url: '<c:url value="/submission/getSubmission.action" />',
+                data: pageRequests,
+                dataType: 'JSON',
+                success: function(result){
+                    if ( result['isSuccessful'] ) {
+                        if ( result['submission']['judgeResult']['judgeResultSlug'] != 'PD' ) {
+                            $('#judge-result').removeClass();
+                            $('#judge-result').addClass("flag-" + result['submission']['judgeResult']['judgeResultSlug'])
+                            $('#judge-result').html(result['submission']['judgeResult']['judgeResultName']);
+                            $('#used-time').html(result['submission']['usedTime'] + " ms");
+                            $('#used-memory').html(result['submission']['usedMemory'] + " KB");
+                            $('#execute-time').html(getFormatedDateString(result['submission']['executeTime'], '${language}'));
+                            $('#judge-log').html(converter.makeHtml(result['submission']['judgeLog'].replace(/\\\n/g, '\\n')));
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+	</body>
+</html>

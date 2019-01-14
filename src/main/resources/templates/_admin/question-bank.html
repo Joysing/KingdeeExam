@@ -1,0 +1,358 @@
+<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exam</title>
+
+<!-- Bootstrap -->
+<link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css" />
+<link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<style>
+  .backs{
+  
+  background: url(/static/img/backs1.jpg);
+  background-size:100%;
+  background-attachment: fixed;
+  }
+  
+ .box{
+  box-shadow:0 0 10px #000 !important;
+  }
+   .pad{
+  margin-top:1.5%;
+  margin-left:0.5%;
+  }
+  </style>
+<body class="backs">
+
+<@sidbarTemplet.header />
+
+	<div class="container-fluid box" >
+		<div class="col-xs-2 sidebar box">
+			<ul class="nav nav-sidebar">
+				<@sidbarTemplet.sidbar "question-bank.html" />
+			</ul>
+		</div>
+		<div class="col-xs-10 col-xs-offset-2 content" id="content">
+			<!--content-->
+
+			<div class="panel panel-primary box pad" >
+				<div class="panel-heading primary-color">
+					<h2 class="panel-title pull-left" style="line-height: 39px;">题库</h2>
+					<button class="pull-right btn btn-primary" data-toggle="modal"
+						v-on:click="add()">新增题</button>
+					<div class="clearfix"></div>
+				</div>
+				<div class="panel-body">
+					<table class="table table-hover text-center table-bordered">
+						<thead>
+							<tr>
+								<th class="text-center">题干</th>
+								<th class="text-center">选项答案</th>
+								<th class="text-center">正确答案</th>
+								<th class="text-center">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="item in QuestionBankVoList.list">
+								<td v-text="item.stem" width="40%"></td>
+								<td width="30%"><span v-for="op in item.options">【<i v-text="op.op"></i>、<i v-text="op.content"></i>】</span></td>
+								<td v-text="item.answer"></td>
+								<td>
+									<button class="btn btn-xs" v-on:click="update(item)">修改</button>
+									<button class="btn btn-xs" v-on:click="deleteQuestionBank(item.questionBankId)">删除</button>
+								</td>
+							</tr>
+                         <tr v-if="QuestionBankVoList.list == 0">
+                             <td colspan="9" align="center"
+                                 style="vertical-align: middle; padding-top: 10px; padding-bottom: 10px;">暂无数据</td>
+                         </tr>
+						</tbody>
+					</table>
+					<div class="pull-right" v-if="QuestionBankVoList.list != 0">
+						<ul class="pagination">
+							<li :class="QuestionBankVoList.isFirstPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.prePage)">&laquo;</a></li>
+							<li v-for="n in QuestionBankVoList.pages" :class="n == QuestionBankVoList.pageNum? 'active':''"><a href="javascript:void(0);" v-on:click="page(n)" v-text="n"></a></li>
+							<li :class="QuestionBankVoList.isLastPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.nextPage)">&raquo;</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade bs-example-modal-lg" id="myModal">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header bg-primary primary-color">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">&times;</button>
+							<h4 class="modal-title" v-if="btnState == 0">新增题</h4>
+							<h4 class="modal-title" v-if="btnState == 1">修改题</h4>
+						</div>
+						<!--添加题-->
+						<div class="modal-body">
+							<form class="form-horizontal" id="optionsForm" action="/admin/addquestionbank" method="post" onsubmit="return mySubmit(true)">
+								<div class="form-group">
+									<label class="col-xs-2 control-label">题目：</label>
+									<div class="col-sm-10">
+										<textarea type="text" class="form-control" name="stem" v-model="QuestionBank.stem" placeholder="请输入题目">
+										</textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 control-label">类型：</label>
+									<div class="col-sm-3">
+										<input id="op-choose" v-on:click="choose()" type="radio" value="1" v-model="QuestionBank.testsType">
+										<label for="op-choose">选择题</label>
+									</div>
+									<div class="col-sm-3">
+										<input id="op-judge" v-on:click="judge()" type="radio" value="0" v-model="QuestionBank.testsType">
+                                        <label for="op-judge">判断题</label>
+									</div>
+									<div class="col-sm-3">
+										<input id="op-coding" v-on:click="coding()" type="radio" value="2" v-model="QuestionBank.testsType">
+                                        <label for="op-coding">编程题</label>
+									</div>
+								</div>
+								<div id="options-views">
+								<!-- 开始 -->
+									<div class="form-group">
+										<label class="col-sm-2 control-label">选项：</label>
+										<div class="col-sm-5">
+											<input type="hidden" v-model="QuestionBank.options" v-model="QuestionBank.options[0].op">
+											<input type="text" class="form-control" v-model="QuestionBank.options[0].content" placeholder="请输入A的内容">
+										</div>
+										<div class="col-sm-5">
+											<input type="hidden" v-model="QuestionBank.options[1].op">
+											<input type="text" class="form-control" v-model="QuestionBank.options[1].content" placeholder="请输入B的内容">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label"></label>
+										<div class="col-sm-5">
+											<input type="hidden" v-model="QuestionBank.options[2].op">
+											<input type="text" class="form-control" v-model="QuestionBank.options[2].content" placeholder="请输入C的内容">
+										</div>
+										<div class="col-sm-5">
+											<input type="hidden" v-model="QuestionBank.options[3].op">
+											<input type="text" class="form-control" v-model="QuestionBank.options[3].content" placeholder="请输入D的内容">
+										</div>
+									</div>
+								<!-- 结束  放一个对象里面-->
+								</div>
+								<div class="form-group" v-if="QuestionBank.testsType == 2">
+									<label class="col-xs-2 control-label">最低通过率：</label>
+									<div class="col-sm-5">
+										<select class="form-control" v-model="QuestionBank.answer">
+										  <option value="70">70%</option>
+										  <option value="80">80%</option>
+										  <option value="90">90%</option>
+										  <option value="100">100%</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group" v-if="QuestionBank.testsType == 1">
+									<label class="col-xs-2 control-label">正确答案：</label>
+									<div class="col-sm-5">
+										<select class="form-control" v-model="QuestionBank.answer">
+										  <option value="A">A</option>
+										  <option value="B">B</option>
+										  <option value="C">C</option>
+										  <option value="D">D</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group" v-if="QuestionBank.testsType == 0">
+									<label class="col-xs-2 control-label">正确答案：</label>
+									<div class="col-sm-5">
+										<select class="form-control" v-model="QuestionBank.answer">
+										  <option value="0">错误</option>
+										  <option value="1">正确</option>
+										</select>
+									</div>
+								</div>																
+							</form>
+							<!--end添加题-->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default" data-dismiss="modal">
+									关闭</button>
+								<button type="button" class="btn btn-primary" v-on:click="addQuestionBank()" v-if="btnState == 0">提交试题</button>
+								<button type="button" class="btn btn-primary" v-on:click="sbUpdate()"  v-if="btnState == 1">修改试题</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<!--content-->
+	</div>
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="/static/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
+		<script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
+		<script type="text/javascript" src="/static/js/common.js"></script>
+		<script>
+			$(function() {
+				var QuestionBank = {
+					stem: '',
+					answer: 'A',
+					testsType: 1,
+					questionBankId: null,
+					options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}],/* 这里 */
+				};
+				var vm = new Vue({
+				  el: '#content',
+				  data: {
+					  QuestionBankVoList: {},
+					  QuestionBank: QuestionBank,
+					  test: "123",
+					  btnState: 0
+				  },
+				  methods: {
+					  addQuestionBank: function() {
+						var temp = JSON.stringify(QuestionBank);
+						console.log(temp);
+						ajaxSubmitJSON("/admin/addquestionbank", JSON.stringify(QuestionBank), 
+									function(data) {
+										if(data) {
+											toastr.success('操作成功!', '新增题');
+											$('#myModal').modal('hide');
+											vm.QuestionBank.stem = '';
+											vm.QuestionBank.answer = 'A';
+											for (var i = 0; i <= 3; i++) {
+												vm.QuestionBank.options[i].content = '';
+											}
+											vm.page(vm.QuestionBankVoList.pageNum);
+										} else {
+											toastr.error('操作失败!', '新增题');
+										}
+									},
+									function(data) {
+										toastr.error('网络错误');
+									}
+							);
+						},
+				  		coding: function() {
+				  			if(this.QuestionBank.answer != 100 || this.QuestionBank.answer!= 90|| this.QuestionBank.answer!= 80|| this.QuestionBank.answer!= 70) {
+				  				this.QuestionBank.answer = 100;
+				  				this.QuestionBank.testsType = 2;
+				  			}
+				  			$("#options-views").hide();
+				  		},
+				  		judge: function() {
+				  			if(this.QuestionBank.answer != 1 || this.QuestionBank.answer!= 0) {
+				  				this.QuestionBank.answer = 1;
+				  				this.QuestionBank.testsType = 0;
+				  			}
+				  			$("#options-views").hide();
+				  		},
+                        choose: function() {
+				  			if(this.QuestionBank.answer != 'A' || this.QuestionBank.answer!= 'B' || this.QuestionBank.answer!= 'C' || this.QuestionBank.answer!= 'D') {
+				  				this.QuestionBank.answer = 'A';
+				  				this.QuestionBank.testsType = 1;
+				  			}
+				  			$("#options-views").show();
+				  		},
+				  		deleteQuestionBank: function(id) {
+							ajaxSubmitJSON("/admin/deletequestionbank", JSON.stringify({"questionBankId": id}), 
+									function(data) {
+										if(data) {
+											toastr.success('操作成功!', '删除题');
+											vm.page(vm.QuestionBankVoList.pageNum);
+										}else {
+											toastr.error('操作失败!', '删除题');
+										}
+									},
+									function(data) {
+										toastr.error('网络错误');
+									}
+							);
+						},
+						add: function() {
+							$('#myModal').modal({
+								backdrop: 'static',
+								keyboard: false
+							});
+						},
+						update: function(data) {
+							this.btnState = 1;
+							vm.QuestionBank.stem = data.stem;
+							vm.QuestionBank.answer = data.answer;
+							vm.QuestionBank.testsType = data.testsType;
+							vm.questionBankId = data.questionBankId;
+							if(data.testsType == 1) {
+								vm.QuestionBank.options = data.options;
+							} else {
+								vm.hide();
+							}
+							
+							$('#myModal').modal({
+								backdrop: 'static',
+								keyboard: false
+							});
+						},
+						sbUpdate: function() {
+							console.log(vm.questionBankId);
+							ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(QuestionBank), 
+									function(data) {
+										if(data) {
+											toastr.success('操作成功!', '修改题');
+											$('#myModal').modal('hide');
+											vm.QuestionBank.stem = '';
+											vm.QuestionBank.answer = 'A';
+											for (var i = 0; i <= 3; i++) {
+												vm.QuestionBank.options[i].content = '';
+											}
+											vm.page(vm.QuestionBankVoList.pageNum);
+										} else {
+											toastr.error('操作失败!', '修改题');
+										}
+									},
+									function(data) {
+										toastr.error('网络错误');
+									}
+							);							
+						},
+						page: function(pageNum) {
+							ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({'pageNum':pageNum}),
+								function(data) {
+									vm.QuestionBankVoList = data;
+								},
+								function(data) {
+									toastr.error('网络错误');
+								}
+							);
+						}
+				  }
+				});
+				ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({}),
+					function(data) {
+						vm.QuestionBankVoList = data;
+					},
+					function(data) {
+						toastr.error('网络错误');
+					}
+				);
+			});
+
+		</script>
+</body>
+
+</html>

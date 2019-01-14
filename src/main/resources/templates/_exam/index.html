@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<link rel="shortcut icon" href="/static/img/favicon.png">
+		<link rel="stylesheet" href="/static/css/select.css" />
+		<link rel="stylesheet" href="/static/css/bootstrap-theme.css" />
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css" />
+		<link rel="stylesheet" href="/static/skins/all.css" />
+		<link rel="stylesheet" href="/static/skins/flat/green.css" />
+		<link rel="stylesheet" href="/static/skins/square/square.css" />
+		<link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
+	</head>
+	<style>
+		#back{
+			background: url(/static/img/back3.png) ;
+			background-size: 100%;
+			background-attachment: fixed;
+			padding-bottom:4%;
+		
+		}
+		#fontsize{
+			font-weight: 600;
+			font-size:18px ;
+			line-height: 30px;
+			
+		}
+		ul>li{
+			font-size: 18px;
+		}
+		#ziti{
+			font-size: 50px;
+		}
+		.box {
+			width: 100%;
+			padding: 10px;
+		}
+		.box-title {
+			text-align: center;
+			font-size: 26px;
+			font-family: "微软雅黑";
+		}
+		.box-date {
+			text-align: center;
+			display: inherit;
+		}
+		.btn-info {
+    color: #fff;
+    background-color: #c0c0c0;
+    border-color: #A9A9A9;
+}
+	.btn-info:hover{
+    color: #fff;
+    background-color: #A9A9A9;
+    border-color: #696969;
+}
+.btn-info:focus{
+    color: #fff;
+    background-color: #696969 !important;
+    border-color: #696969 !important;
+    border-shadow:#696969 !important;
+        box-shadow: inset 0 1px 0 rgba(169, 169,169, .15), 0 1px 1px rgba(0, 0, 0, .075) !important;
+    
+}
+	.time{
+	text-align: center;
+	}
+	.black{
+			background:rgba(0,0,0,0.1);
+			
+			
+			box-shadow:0 0 10px #696969 !important;
+			
+			
+		}
+		.quanju{
+			padding-top:2%;
+			padding-bottom:3%;
+		}
+		
+	</style>
+	<body id="back">
+
+    <section class="quanju black" >
+<!--header-->
+		<section class="header">
+			<div class="ziti" id="ziti">
+				选择试卷
+			</div>
+		</section>
+<!--判断题-->
+		<section class="container" style="margin-top: 93px; padding: 0 65px 0 3px;">
+			
+			<#list allTestPaper as item>
+				<div class="col-xs-4">
+				 	<div class="box">
+				 		<p class="box-title">${item.testpaperName}</p>
+				 		<span class="box-date">考试时间: ${item.startDate?substring(0,16)} - ${item.endDate?substring(0,16)}</span>
+				 		<h4 class="time">时间 : <span class="badge" style="background: grey; font-size: 15px">60</span> 分钟</h4>
+				 		<div class="clearfix"></div>
+				 		<button class="btn btn-info center-block" onclick="select(${item.testpaperId})">选择题目考试</button>
+				 		<div class="clearfix" id="btn"></div>
+				 	</div>
+				</div>			
+			</#list>
+			
+		</section>
+
+	</section>
+	
+	
+	
+<!--js-->
+<script type="text/javascript" src="/static/js/jquery.js" ></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js" ></script>
+<script type="text/javascript" src="/static/js/icheck.min.js" ></script>
+<script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+
+<script>
+$(document).ready(function(){
+  $('input').iCheck({
+    checkboxClass: 'icheckbox_square',
+    radioClass: 'iradio_square',
+    increaseArea: '20%' // optional
+  });
+});
+
+function select(id) {
+	window.location="/exam/exam-"+id+".html";
+};
+
+/* function select(id) {
+	ajaxSubmit("/exam/autoGenerate", 'testpaperId='+id,
+		function(data) {
+			if(data) {
+				window.location="/exam/exam.html";
+			}
+		},
+		function(data) {
+			alert(data);
+		}
+	);
+}; */
+</script>
+	</body>
+</html>

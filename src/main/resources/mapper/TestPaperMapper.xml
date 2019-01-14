@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kingdee.exam.dao.TestPaperMapper">
+  <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.TestPaper">
+    <id column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
+    <result column="testpaper_name" jdbcType="VARCHAR" property="testpaperName" />
+    <result column="testpaper_state" jdbcType="INTEGER" property="testpaperState" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="is_start" jdbcType="INTEGER" property="isStart"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    testpaper_id, testpaper_name, testpaper_state, start_date, end_date
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from testpaper
+    where testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from testpaper
+    where testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.kingdee.exam.entity.TestPaper">
+    insert into testpaper (testpaper_id, testpaper_name, testpaper_state, 
+      start_date, end_date)
+    values (#{testpaperId,jdbcType=INTEGER}, #{testpaperName,jdbcType=VARCHAR}, #{testpaperState,jdbcType=INTEGER}, 
+      #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kingdee.exam.entity.TestPaper">
+    insert into testpaper
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="testpaperId != null">
+        testpaper_id,
+      </if>
+      <if test="testpaperName != null">
+        testpaper_name,
+      </if>
+      <if test="testpaperState != null">
+        testpaper_state,
+      </if>
+      <if test="startDate != null">
+        start_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="testpaperId != null">
+        #{testpaperId,jdbcType=INTEGER},
+      </if>
+      <if test="testpaperName != null">
+        #{testpaperName,jdbcType=VARCHAR},
+      </if>
+      <if test="testpaperState != null">
+        #{testpaperState,jdbcType=INTEGER},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kingdee.exam.entity.TestPaper">
+    update testpaper
+    <set>
+      <if test="testpaperName != null">
+        testpaper_name = #{testpaperName,jdbcType=VARCHAR},
+      </if>
+      <if test="testpaperState != null">
+        testpaper_state = #{testpaperState,jdbcType=INTEGER},
+      </if>
+      <if test="startDate != null">
+        start_date = #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kingdee.exam.entity.TestPaper">
+    update testpaper
+    set testpaper_name = #{testpaperName,jdbcType=VARCHAR},
+      testpaper_state = #{testpaperState,jdbcType=INTEGER},
+      start_date = #{startDate,jdbcType=TIMESTAMP},
+      end_date = #{endDate,jdbcType=TIMESTAMP}
+    where testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </update>
+  
+  
+  <!-- 与系统分隔 -->
+  <!-- 查询所有有效试卷 -->
+  
+  <select id="findTestPaperInfo" resultMap="BaseResultMap">
+	  SELECT
+		*
+	FROM
+		testpaper
+	WHERE
+		testpaper.testpaper_state = 1
+  </select>
+  
+  <!-- 更新书卷状态  即前端页面执行的删除试卷操作 -->
+  <update id="updateTestPaperState" parameterType="java.lang.Integer">
+		  UPDATE testpaper
+		SET testpaper.testpaper_state = 0
+		WHERE
+			testpaper.testpaper_id = #{id,jdbcType=INTEGER}
+  </update>
+  
+  <update id="updateTestPaperInfo" parameterType="com.kingdee.exam.entity.TestPaper">
+		  	UPDATE testpaper
+		SET testpaper.testpaper_name =#{testpaperName,jdbcType=VARCHAR},
+				testpaper.start_date =#{startDate,jdbcType=TIMESTAMP},
+				testpaper.end_date =#{endDate,jdbcType=TIMESTAMP}
+		WHERE
+			testpaper.testpaper_id =#{testpaperId,jdbcType=INTEGER}
+  
+  </update>
+  
+</mapper>

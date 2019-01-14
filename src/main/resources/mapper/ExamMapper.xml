@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingdee.exam.dao.ExamMapper">
+
+	<resultMap id="TestPaperResultMap" type="com.kingdee.exam.entity.TestPaper">
+		<id column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
+		<result column="testpaper_name" jdbcType="VARCHAR" property="testpaperName" />
+		<result column="testpaper_state" jdbcType="INTEGER" property="testpaperState" />
+		<result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+		<result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+		<result column="is_start" jdbcType="INTEGER" property="isStart" />
+	</resultMap>
+
+	<resultMap id="CodingQuestionMap" type="com.kingdee.exam.entity.vo.QuestionBankVo">
+		<id column="question_bank_id" property="questionBankId" jdbcType="INTEGER" />
+		<result column="stem" property="stem" jdbcType="LONGVARCHAR" />
+		<result column="answer" property="answer" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="JudgmentQuestionMap" type="com.kingdee.exam.entity.vo.QuestionBankVo">
+		<id column="question_bank_id" property="questionBankId" jdbcType="INTEGER" />
+		<result column="stem" property="stem" jdbcType="LONGVARCHAR" />
+		<result column="answer" property="answer" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="ChoiceQuestionMap" type="com.kingdee.exam.entity.vo.QuestionBankVo">
+	    <id column="question_bank_id" property="questionBankId" jdbcType="INTEGER" />
+	    <result column="stem" property="stem" jdbcType="LONGVARCHAR" />
+	    <result column="answer" property="answer" jdbcType="VARCHAR" />
+	    <result column="tests_type" property="testsType" jdbcType="INTEGER" />
+	    <result column="state" property="state" jdbcType="INTEGER" />
+	    <collection property="options" ofType="com.kingdee.exam.entity.Options">
+		    <id column="options_id" property="optionsId" jdbcType="INTEGER" />
+		    <result column="op" property="op" jdbcType="VARCHAR" />
+		    <result column="content" property="content" jdbcType="VARCHAR" />
+	    </collection>
+	</resultMap>	
+
+	<sql id="Test_Paper_Column_List">
+		testpaper_id, testpaper_name, testpaper_state, start_date, end_date, is_start
+	</sql>
+
+
+
+	<select id="findAllTestPaper" resultMap="TestPaperResultMap">
+		SELECT
+		<include refid="Test_Paper_Column_List"></include>
+		FROM
+		testpaper
+		WHERE
+		is_start = 1 AND testpaper_state = 1
+	</select>
+
+	<!-- 查找所有编程题 -->
+	<select id="findAllCodingQuestion" parameterType="java.lang.Integer" resultMap="CodingQuestionMap">
+		SELECT
+		question_bank.question_bank_id,
+		question_bank.stem,
+		question_bank.answer
+		FROM
+		`question_bank`
+		INNER JOIN testpaper_tests ON testpaper_tests.question_bank_id =
+		question_bank.question_bank_id
+		WHERE
+		testpaper_id = #{value}
+		AND tests_type = 2
+	</select>
+	
+	<!-- 查找所有判断题 选择题 -->
+	<select id="findAllJudgmentQuestion" parameterType="java.lang.Integer" resultMap="JudgmentQuestionMap">
+		SELECT
+		question_bank.question_bank_id,
+		question_bank.stem,
+		question_bank.answer
+		FROM
+		`question_bank`
+		INNER JOIN testpaper_tests ON testpaper_tests.question_bank_id =
+		question_bank.question_bank_id
+		WHERE
+		testpaper_id = #{value}
+		AND tests_type = 0
+	</select>
+
+	<!-- 查找所有 -->
+	<select id="findAllChoiceQuestion" parameterType="java.lang.Integer" resultMap="ChoiceQuestionMap">
+		SELECT
+			question_bank.question_bank_id,
+			question_bank.stem,
+			question_bank.answer,
+			options.op,
+			options.content
+		FROM
+			`question_bank`
+		INNER JOIN testpaper_tests ON testpaper_tests.question_bank_id = question_bank.question_bank_id
+		LEFT JOIN `options` ON `options`.question_bank_id = question_bank.question_bank_id
+		WHERE
+			testpaper_id = #{value}
+		AND tests_type = 1
+	</select>
+	
+	<!-- 查询这个用户和这套试卷是否有成绩 -->
+	<select id="findIfExistenceScore" parameterType="com.kingdee.exam.entity.Score" resultType="com.kingdee.exam.entity.Score">
+		SELECT
+			users_id as usersId,
+			testpaper_id as testpaperId,
+			fraction as fraction
+		FROM
+			score
+		WHERE
+			users_id = #{usersId}
+		AND testpaper_id = #{testpaperId}
+	</select>
+	
+	<!-- 查询当前用户当前试卷时间当前时间 -->
+	<select id="findExamTimes" parameterType="com.kingdee.exam.entity.Times" resultType="com.kingdee.exam.entity.Times">
+		SELECT
+			testpaper_id AS testpaperId,
+			user_id AS userId,
+			data_min AS dataMin,
+			times_state AS timesState
+		FROM
+			`times`
+		WHERE
+			testpaper_id = #{testpaperId}
+		AND user_id = #{userId}
+		AND times_state = 1
+	</select>
+	
+	<!-- 查询所有用户时间 -->
+	<select id="findAllExamTimes" resultType="com.kingdee.exam.entity.Times">
+		SELECT
+			times_id AS timesId,
+			testpaper_id as testpaperId,
+			user_id as userId,
+			data_min as dataMin,
+			times_state as timesState
+		FROM
+			`times`
+		WHERE
+			times_state = 1
+	</select>
+
+	<!-- 插入用户时间 -->
+	<insert id="addExamTimes" parameterType="com.kingdee.exam.entity.Times">
+		INSERT INTO times (
+			testpaper_id,
+			user_id,
+			data_min,
+			times_state
+		)
+		VALUES
+			(
+				#{testpaperId},
+				#{userId},
+				#{dataMin},
+				'1'
+			)
+	</insert>
+
+	<!-- 更新用户时间 -->
+	<update id="updateExamTimes" parameterType="com.kingdee.exam.entity.Times">
+		UPDATE times
+		SET data_min = #{dataMin},
+		 times_state = #{timesState}
+		WHERE
+		times_id = #{timesId}
+	</update>
+
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingdee.exam.dao.OptionsMapper" >
+  <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.Options" >
+    <id column="options_id" property="optionsId" jdbcType="INTEGER" />
+    <result column="op" property="op" jdbcType="VARCHAR" />
+    <result column="question_bank_id" property="questionBankId" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.kingdee.exam.entity.Options" extends="BaseResultMap" >
+    <result column="content" property="content" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    options_id, op, question_bank_id
+  </sql>
+  <sql id="Blob_Column_List" >
+    content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from options
+    where options_id = #{optionsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from options
+    where options_id = #{optionsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.kingdee.exam.entity.Options" >
+    insert into options (options_id, op, question_bank_id, 
+      content)
+    values (#{optionsId,jdbcType=INTEGER}, #{op,jdbcType=VARCHAR}, #{questionBankId,jdbcType=INTEGER}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kingdee.exam.entity.Options" >
+    insert into options
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="optionsId != null" >
+        options_id,
+      </if>
+      <if test="op != null" >
+        op,
+      </if>
+      <if test="questionBankId != null" >
+        question_bank_id,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="optionsId != null" >
+        #{optionsId,jdbcType=INTEGER},
+      </if>
+      <if test="op != null" >
+        #{op,jdbcType=VARCHAR},
+      </if>
+      <if test="questionBankId != null" >
+        #{questionBankId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kingdee.exam.entity.Options" >
+    update options
+    <set >
+      <if test="op != null" >
+        op = #{op,jdbcType=VARCHAR},
+      </if>
+      <if test="questionBankId != null" >
+        question_bank_id = #{questionBankId,jdbcType=INTEGER},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where options_id = #{optionsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kingdee.exam.entity.Options" >
+    update options
+    set op = #{op,jdbcType=VARCHAR},
+      question_bank_id = #{questionBankId,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where options_id = #{optionsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kingdee.exam.entity.Options" >
+    update options
+    set op = #{op,jdbcType=VARCHAR},
+      question_bank_id = #{questionBankId,jdbcType=INTEGER}
+    where options_id = #{optionsId,jdbcType=INTEGER}
+  </update>
+</mapper>

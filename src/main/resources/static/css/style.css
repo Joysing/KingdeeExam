@@ -1,0 +1,75 @@
+.sidebar {
+	display: none;
+}
+
+.sidebar {
+	position: fixed;
+	top: 45px;
+	bottom: 0;
+	left: 0;
+	z-index: 1000;
+	display: block;
+	padding: 20px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	/* Scrollable contents if viewport is shorter than content. */
+	background-color: #f5f5f5;
+	border-right: 1px solid #eee;
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+	margin-right: -4px;
+	/* 20px padding + 1px border */
+	margin-bottom: 10px;
+	margin-left: -3px;
+}
+
+.nav-sidebar> li {
+	margin-bottom: 5px;
+}
+
+.nav-sidebar> li> a {
+	padding-right: 20px;
+	padding-left: 20px;
+	color: #006ada;
+}
+
+.nav-sidebar> .active> a,
+.nav-sidebar> .active> a:hover,
+.nav-sidebar> .active> a:focus {
+	color: #fff;
+	background-color: #006ada;
+}
+
+.content {
+	margin-top: 53px;
+}
+
+
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar {
+	width: 10px;
+	height: 16px;
+	background-color: #F5F5F5;
+}
+
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track {
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+	background-color: #ccc;
+}
+
+.primary-color{
+	background-color: #006ada !important;
+}

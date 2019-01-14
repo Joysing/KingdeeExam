@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kingdee.exam.dao.QuestionBankMapper" >
+
+	<resultMap id="QuestionBankVoMap" type="com.kingdee.exam.entity.vo.QuestionBankVo">
+	    <id column="question_bank_id" property="questionBankId" jdbcType="INTEGER" />
+	    <result column="stem" property="stem" jdbcType="LONGVARCHAR" />
+	    <result column="answer" property="answer" jdbcType="VARCHAR" />
+	    <result column="tests_type" property="testsType" jdbcType="INTEGER" />
+	    <result column="state" property="state" jdbcType="INTEGER" />
+	    <collection property="options" ofType="com.kingdee.exam.entity.Options">
+		    <id column="options_id" property="optionsId" jdbcType="INTEGER" />
+		    <result column="op" property="op" jdbcType="VARCHAR" />
+		    <result column="content" property="content" jdbcType="VARCHAR" />
+	    </collection>
+	</resultMap>
+	
+	<!-- 查询所有题库 -->
+	<select id="findAllQuestionBank" resultMap="QuestionBankVoMap">
+		SELECT
+			question_bank.question_bank_id,
+			question_bank.stem,
+			question_bank.answer,
+			question_bank.tests_type,
+			question_bank.state,
+			`options`.options_id,
+			`options`.op,
+			`options`.content
+		FROM
+			`question_bank`
+		LEFT JOIN `options` ON question_bank.question_bank_id = `options`.question_bank_id
+		WHERE
+			question_bank.state = 1
+		ORDER BY
+			question_bank_id ASC		
+	</select>
+	
+	<!-- 添加题库 -->
+	<insert id="addQuestionBank" parameterType="com.kingdee.exam.entity.vo.QuestionBankVo" useGeneratedKeys="true" keyProperty="questionBankId">
+		INSERT INTO question_bank (
+			stem,
+			answer,
+			tests_type,
+			state
+		)
+		VALUES
+			(
+				#{stem},
+				#{answer},
+				#{testsType},
+				#{state}
+			)		
+	</insert>
+	
+	<!-- 添加题库选项 -->
+	<insert id="addOptions" parameterType="java.util.List">
+		INSERT INTO `options` (
+			op,
+			content,
+			question_bank_id
+		)
+		VALUES
+			<foreach collection="list" item="item" index="index" separator=",">(#{item.op}, #{item.content}, #{item.questionBankId})</foreach>	
+	</insert>
+	
+	<!-- 更新状态 代替删除 -->
+	<update id="updateQuestionBankState" parameterType="String">
+		UPDATE question_bank
+		SET question_bank.state = 0
+		WHERE
+			question_bank.question_bank_id = #{value}
+	</update>
+	
+	<!-- 更新题目 -->
+	<update id="updateQuestionBank" parameterType="com.kingdee.exam.entity.vo.QuestionBankVo">
+		UPDATE question_bank
+		SET stem = #{stem},
+		 answer = #{answer},
+		 tests_type = #{testsType}
+		WHERE
+			question_bank_id = #{questionBankId}
+	</update>
+	
+	<!-- 删除题目的选项内容 -->
+	<delete id="deleteQuestionBankOptions" parameterType="String">
+		DELETE
+		FROM
+			`options`
+		WHERE
+			question_bank_id = #{value}		
+	</delete>
+
+</mapper>
