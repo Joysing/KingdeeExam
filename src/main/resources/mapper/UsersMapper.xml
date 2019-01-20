@@ -5,10 +5,9 @@
     <id column="user_id" property="userId" jdbcType="VARCHAR" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="VARCHAR" />
-    <result column="permission" property="permission" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
-    user_id, username, password, permission
+    user_id, username, password
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
@@ -21,9 +20,9 @@
     where user_id = #{userId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.kingdee.exam.entity.User" >
-    insert into users (user_id,username, password,true_name,permission,enabled,roles)
+    insert into users (user_id,username, password,true_name,enabled,roles)
     values (#{userId,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{trueName,jdbcType=INTEGER},#{permission,jdbcType=INTEGER},#{enable,jdbcType=INTEGER},#{roles,jdbcType=VARCHAR})
+      #{trueName,jdbcType=INTEGER},#{enable,jdbcType=INTEGER},#{roles,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.kingdee.exam.entity.User" >
     insert into users
@@ -37,9 +36,6 @@
       <if test="password != null" >
         password,
       </if>
-      <if test="permission != null" >
-        permission,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="userId != null" >
@@ -50,9 +46,6 @@
       </if>
       <if test="password != null" >
         #{password,jdbcType=VARCHAR},
-      </if>
-      <if test="permission != null" >
-        #{permission,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -65,9 +58,6 @@
       <if test="password != null" >
         password = #{password,jdbcType=VARCHAR},
       </if>
-      <if test="permission != null" >
-        permission = #{permission,jdbcType=INTEGER},
-      </if>
     </set>
     where user_id = #{userId,jdbcType=VARCHAR}
   </update>
@@ -75,7 +65,6 @@
     update users
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
-      permission = #{permission,jdbcType=INTEGER}
     where user_id = #{userId,jdbcType=VARCHAR}
   </update>
   

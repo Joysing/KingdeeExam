@@ -26,7 +26,6 @@ public class User implements UserDetails {
     private String trueName;
     private String roles;
     private String code;
-    private Integer permission;
     private boolean enabled;
 
     @Override
@@ -61,5 +60,13 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean equals(Object obj) {
+        if ( obj instanceof User ) {
+            User anotherUser = (User)obj;
+            return anotherUser.getUserId().equals(userId);
+        }
+        return false;
     }
 }

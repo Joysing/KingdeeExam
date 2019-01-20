@@ -52,7 +52,7 @@ public class Problem implements Serializable {
     /**
      * 试题是否公开.
      */
-    @Column(name = "problem_is_public")
+    @Column(name = "problem_is_public",columnDefinition = "NOT NULL DEFAULT '1'")
     private boolean isPublic;
 
     /**

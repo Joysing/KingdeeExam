@@ -1,42 +1,3 @@
-/* Verwandlung Online Judge - A cross-platform judge online system
- * Copyright (C) 2018 Haozhe Xie <cshzxie@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- *                              _ooOoo_  
- *                             o8888888o  
- *                             88" . "88  
- *                             (| -_- |)  
- *                             O\  =  /O  
- *                          ____/`---'\____  
- *                        .'  \\|     |//  `.  
- *                       /  \\|||  :  |||//  \  
- *                      /  _||||| -:- |||||-  \  
- *                      |   | \\\  -  /// |   |  
- *                      | \_|  ''\---/''  |   |  
- *                      \  .-\__  `-`  ___/-. /  
- *                    ___`. .'  /--.--\  `. . __  
- *                 ."" '<  `.___\_<|>_/___.'  >'"".  
- *                | | :  `- \`.;`\ _ /`;.`/ - ` : | |  
- *                \  \ `-.   \_ __\ /__ _/   .-` /  /  
- *           ======`-.____`-.___\_____/___.-`____.-'======  
- *                              `=---=' 
- *
- *                          HERE BE BUDDHA
- *
- */
 package com.kingdee.exam.voj.controller;
 
 import com.kingdee.exam.entity.User;
@@ -62,8 +23,6 @@ import java.util.Map;
 
 /**
  * 加载/显示评测的相关信息.
- * 
- * @author Haozhe Xie
  */
 @Controller
 @RequestMapping(value="/submission")
@@ -150,8 +109,6 @@ public class SubmissionController {
 		if ( submission == null ) {
 			throw new ResourceNotFoundException();
 		}
-//		ModelAndView view = new ModelAndView("submissions/submission");
-//		view.addObject("submission", submission);
 		return submission;
 	}
 	
@@ -162,13 +119,11 @@ public class SubmissionController {
 	 * @throws IOException 
 	 */
 	@RequestMapping("/getRealTimeJudgeResult.action")
-
 	public SseEmitter getRealTimeJudgeResultAction(
             @RequestParam(value="submissionId") long submissionId,
             HttpServletRequest request, HttpServletResponse response) throws IOException {
 		User currentUser = HttpSessionParser.getCurrentUser(request.getSession());
 		Submission submission = submissionService.getSubmission(submissionId);
-		
 		if ( submission == null ||
 				!submission.getUser().equals(currentUser) ||
 				!submission.getJudgeResult().getJudgeResultSlug().equals("PD") ) {

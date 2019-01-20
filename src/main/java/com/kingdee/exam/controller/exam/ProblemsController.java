@@ -202,8 +202,7 @@ public class ProblemsController {
 		String ipAddress = HttpRequestParser.getRemoteAddr(request);
 		User currentUser = HttpSessionParser.getCurrentUser(session);
 
-		Map<String, Object> result = submissionService.createSubmission(
-				currentUser, problemId, languageSlug, code);
+		Map<String, Object> result = submissionService.createSubmission(currentUser, problemId, languageSlug, code);
 		boolean isSuccessful = (Boolean)result.get("isSuccessful");
 		if ( isSuccessful ) {
 			long submissionId = (Long)result.get("submissionId");

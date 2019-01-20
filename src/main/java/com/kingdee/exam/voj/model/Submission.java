@@ -54,13 +54,13 @@ public class Submission implements Serializable {
 	/**
 	 * 评测提交时间.
 	 */
-	@Column(name="submission_submit_time")
+	@Column(name="submission_submit_time",columnDefinition = "timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP")
 	private Date submitTime;
 	
 	/**
 	 * 评测开始执行时间.
 	 */
-    @Column(name="submission_execute_time")
+    @Column(name="submission_execute_time",columnDefinition = "timestamp")
 	private Date executeTime;
 	
 	/**
@@ -78,7 +78,7 @@ public class Submission implements Serializable {
 	/**
 	 * 评测结果.
 	 */
-	@Column(name="submission_judge_result")
+	@Column(name = "submission_judge_result",columnDefinition="varchar(8) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PD'")
 	private JudgeResult judgeResult;
 	
 	/**

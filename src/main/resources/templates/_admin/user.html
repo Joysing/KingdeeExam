@@ -72,7 +72,7 @@
 							<tr id="${allUsers.userId}">
 								<td>${allUsers.userId!}</td>
 								<td>${allUsers.username}</td>
-								<td><#if allUsers.permission==1><span>管理员</span><#elseif allUsers.permission==0><span>用户</span></#if></td>
+								<td><#if allUsers.roles=="ROLE_ADMIN"><span>管理员</span><#elseif allUsers.roles=="ROLE_USER"><span>用户</span></#if></td>
 								<td>
 									<a class="btn btn-xs" onclick="delete1(${allUsers.userId})">删除</a>
 								</td>

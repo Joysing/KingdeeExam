@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Table(name="voj_judge_results")
 public class JudgeResult implements Serializable {
 
-	public JudgeResult(int judgeResultId, String judgeResultSlug, String judgeResultName) {
+	public JudgeResult(Integer judgeResultId, String judgeResultSlug, String judgeResultName) {
 		this.judgeResultId = judgeResultId;
 		this.judgeResultSlug = judgeResultSlug;
 		this.judgeResultName = judgeResultName;
@@ -22,7 +22,7 @@ public class JudgeResult implements Serializable {
 	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int judgeResultId;
+    private Integer judgeResultId;
 	
 	/**
 	 * 评测结果的英文唯一缩写.

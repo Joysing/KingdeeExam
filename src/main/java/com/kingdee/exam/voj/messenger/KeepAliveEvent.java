@@ -1,6 +1,6 @@
 package com.kingdee.exam.voj.messenger;
 
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Date;
@@ -8,14 +8,8 @@ import java.util.Date;
 /**
  * 评测机心跳事件消息.
  */
-@Data
+@Getter
 public class KeepAliveEvent extends ApplicationEvent {
-	/**
-	 * KeepAliveEvent的构造函数.
-	 * @param source - 消息发布源
-	 * @param judgerUsername - 评测机的用户名
-	 * @param judgerDescription - 评测机的描述信息
-	 */
 	public KeepAliveEvent(Object source, String judgerUsername, String judgerDescription, Date heartbeatTime) {
 		super(source);
 		this.judgerUsername = judgerUsername;

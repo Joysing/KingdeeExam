@@ -82,18 +82,15 @@ public class AdminController {
 		User user = adminMapper.findByUser(users);
 		if (user != null) {
 			session.setAttribute("myUser", user);// 存SESSION
-			Integer permission = user.getPermission();// 权限 0 普通用户 1管理员
-			if (permission == 1) {
+			String role=user.getRoles();
+			if (role.contentEquals("ROLE_ADMIN")) {
 				// 跳转管理员
-				System.out.println("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:2");
 				return "2";
 			} else {
 				// 跳转用户考试选题界面
-				System.out.println("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:3");
 				return "3";
 			}
 		}
-		System.out.println("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:1");
 		return "1";// 账号密码错误
 	}
 

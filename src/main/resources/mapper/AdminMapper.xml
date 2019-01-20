@@ -7,12 +7,11 @@
 		<id column="user_id" property="userId" jdbcType="VARCHAR" />
 		<result column="username" property="username" jdbcType="VARCHAR" />
 		<result column="password" property="password" jdbcType="VARCHAR" />
-		<result column="permission" property="permission" jdbcType="INTEGER" />
 	</resultMap>
 
 	<!-- 用户SQL段 -->
 	<sql id="User_Column_List">
-		user_id, username, password, permission
+		user_id, username, password
 	</sql>
 
 	<select id="findByUser" parameterType="com.kingdee.exam.entity.User"

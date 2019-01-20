@@ -17,7 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.*;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -52,7 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
             String inputCode = request.getParameter("code");
             String sessionCode = (String) request.getSession().getAttribute("code");
-            if (sessionCode==null||!sessionCode.contentEquals(inputCode)) {
+            if (sessionCode==null||!sessionCode.equals(inputCode.toUpperCase())) {
                 throw new CaptchaException("captcha code not matched!");
             }
             return super.attemptAuthentication(request, response);
@@ -63,7 +66,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             }
         }
     }
-
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers(UNSECURED_RESOURCE_LIST);

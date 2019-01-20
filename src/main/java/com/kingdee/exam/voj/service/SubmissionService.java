@@ -61,7 +61,15 @@ import java.util.*;
 @Service
 @Transactional
 public class SubmissionService {
-	/**
+    @Autowired
+    public SubmissionService(SubmissionMapper submissionMapper, ProblemMapper problemMapper, LanguageMapper languageMapper, MessageSender messageSender) {
+        this.submissionMapper = submissionMapper;
+        this.problemMapper = problemMapper;
+        this.languageMapper = languageMapper;
+        this.messageSender = messageSender;
+    }
+
+    /**
 	 * [此方法仅供管理员使用]
 	 * 获取指定时间内提交的数量.
 	 * @param startTime - 统计起始时间
@@ -332,8 +340,8 @@ public class SubmissionService {
 	 * @param submission - 待创建的提交记录对象
 	 * @return 一个包含提交记录的验证结果的Map<String, Boolean>对象
 	 */
-	private Map<String, ? extends Object> getSubmissionCreationResult(Submission submission) {
-		Map<String, Boolean> result = new HashMap<>(6, 1);
+	private Map<String, ?> getSubmissionCreationResult(Submission submission) {
+		Map<String, Boolean> result = new HashMap<>(5, 1);
 		String code = submission.getCode();
 		result.put("isUserLogined", submission.getUser() != null);
 		result.put("isProblemExists", submission.getProblem() != null);
@@ -371,24 +379,20 @@ public class SubmissionService {
 	/**
 	 * 自动注入的SubmissionMapper对象.
 	 */
-	@Autowired
-	private SubmissionMapper submissionMapper;
+	private final SubmissionMapper submissionMapper;
 	
 	/**
 	 * 自动注入的ProblemMapper对象.
 	 */
-	@Autowired
-	private ProblemMapper problemMapper;
+	private final ProblemMapper problemMapper;
 	
 	/**
 	 * 自动注入的LanguageMapper对象.
 	 */
-	@Autowired
-	private LanguageMapper languageMapper;
+	private final LanguageMapper languageMapper;
 	
 	/**
 	 * 自动注入的MessageSender对象.
 	 */
-	@Autowired
-	private MessageSender messageSender;
+	private final MessageSender messageSender;
 }

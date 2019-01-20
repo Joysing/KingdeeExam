@@ -60,7 +60,6 @@ public class UsersController {
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		user.setEnabled(true);
 		user.setRoles("ROLE_USER");
-		user.setPermission(1);
 		return usersService.addUser(user);
 	}
 

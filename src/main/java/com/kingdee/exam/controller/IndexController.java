@@ -22,7 +22,7 @@ public class IndexController {
 	@RequestMapping("/errors/404")
 	public ModelAndView errors(){
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("_error/400");
+		modelAndView.setViewName("404");
 		return modelAndView;
 	}
 	
