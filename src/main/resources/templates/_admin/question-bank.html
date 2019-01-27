@@ -3,32 +3,30 @@
 <html lang="zh-cn" xmlns:v-on="http://www.w3.org/1999/xhtml">
 
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Exam</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>题库管理 金蝶在线笔试</title>
 
-<!-- Bootstrap -->
-<link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/style.css" />
-<link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
+    <!-- Bootstrap -->
+    <link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
 
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+          <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
 
 <style>
   .backs{
-  
-  background: url(/static/img/backs1.jpg);
-  background-size:100%;
-  background-attachment: fixed;
+      background-size:100%;
+      background: url(/static/img/kdBuilding.jpg) fixed;
   }
-  
  .box{
   box-shadow:0 0 10px #000 !important;
   }
@@ -36,7 +34,7 @@
   margin-top:1.5%;
   margin-left:0.5%;
   }
-  </style>
+</style>
 <body class="backs">
 
 <@sidbarTemplet.header />
@@ -49,7 +47,6 @@
 		</div>
 		<div class="col-xs-10 col-xs-offset-2 content" id="content">
 			<!--content-->
-
 			<div class="panel panel-primary box pad" >
 				<div class="panel-heading primary-color">
 					<h2 class="panel-title pull-left" style="line-height: 39px;">题库</h2>
@@ -104,7 +101,7 @@
 						</div>
 						<!--添加题-->
 						<div class="modal-body">
-							<form class="form-horizontal" id="optionsForm" action="/admin/addquestionbank" method="post" onsubmit="return mySubmit(true)">
+							<form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post" onsubmit="return mySubmit(true)">
 								<div class="form-group">
 									<label class="col-xs-2 control-label">题目：</label>
 									<div class="col-sm-10">
@@ -154,15 +151,100 @@
 								<!-- 结束  放一个对象里面-->
 								</div>
 								<div class="form-group" v-if="QuestionBank.testsType == 2">
-									<label class="col-xs-2 control-label">最低通过率：</label>
-									<div class="col-sm-5">
-										<select class="form-control" v-model="QuestionBank.answer">
-										  <option value="70">70%</option>
-										  <option value="80">80%</option>
-										  <option value="90">90%</option>
-										  <option value="100">100%</option>
-										</select>
-									</div>
+                                    <!-- Content -->
+                                    <div id="content1">
+                                        <h2 class="page-header"><i class="fa fa-file"></i>添加新试题</h2>
+                                        <div id="problem-form">
+                                            <div class="row-fluid">
+                                                <div class="span8">
+                                                    <div class="alert alert-error hide"></div> <!-- .alert-error -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="problem-name">试题名称</label>
+                                                        <input id="problem-name" class="span12" type="text" maxlength="128" />
+                                                    </div> <!-- .control-group -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="time-limit">时间限制 (ms)</label>
+                                                        <input id="time-limit" class="span12" type="text" maxlength="8" />
+                                                    </div> <!-- .control-group -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="memory-limit">内存限制 (KB)</label>
+                                                        <input id="memory-limit" class="span12" type="text" maxlength="8" />
+                                                    </div> <!-- .control-group -->
+                                                    <div class="row-fluid">
+                                                        <div class="span12">
+                                                            <label for="wmd-input">试题描述</label>
+                                                            <div id="markdown-editor">
+                                                                <div class="wmd-panel">
+                                                                    <div id="wmd-button-bar" class="wmd-button-bar"></div> <!-- #wmd-button-bar -->
+                                                                    <textarea id="wmd-input" class="wmd-input"></textarea>
+                                                                </div> <!-- .wmd-panel -->
+                                                                <div id="wmd-preview" class="wmd-panel wmd-preview"></div> <!-- .wmd-preview -->
+                                                            </div> <!-- #markdown-editor -->
+                                                        </div> <!-- .span12 -->
+                                                    </div> <!-- .row-fluid -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="hint">提示</label>
+                                                        <textarea id="hint" class="span12"></textarea>
+                                                    </div> <!-- .control-group -->
+                                                    <h4>输入输出</h4>
+                                                    <div class="control-group row-fluid">
+                                                        <label for="input-format">输入格式</label>
+                                                        <textarea id="input-format" class="span12"></textarea>
+                                                    </div> <!-- .control-group -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="output-format">输出格式</label>
+                                                        <textarea id="output-format" class="span12"></textarea>
+                                                    </div> <!-- .control-group -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="input-sample">输入样例</label>
+                                                        <textarea id="input-sample" class="span12"></textarea>
+                                                    </div> <!-- .control-group -->
+                                                    <div class="control-group row-fluid">
+                                                        <label for="output-sample">输出样例</label>
+                                                        <textarea id="output-sample" class="span12"></textarea>
+                                                    </div> <!-- .control-group -->
+                                                    <div class="row-fluid">
+                                                        <div class="span6">
+                                                            <h4>测试用例</h4>
+                                                        </div> <!-- .span6 -->
+                                                        <div class="span6 text-right">
+                                                            <a id="new-test-case" title="添加测试用例" href="javascript:newTestCase();">
+                                                            <i class="fa fa-plus-circle"></i>
+                                                            </a>
+                                                        </div> <!-- .span6 -->
+                                                    </div> <!-- .row-fluid -->
+                                                    <div class="row-fluid">
+                                                        <div class="span12">
+                                                            <div id="test-cases">
+                                                                <p id="no-test-cases">暂无测试用例.</p>
+                                                                <ul></ul>
+                                                            </div> <!-- #test-cases -->
+                                                        </div> <!-- .span12 -->
+                                                    </div> <!-- .row-fluid -->
+                                                </div> <!-- .span8 -->
+                                                <div class="span4">
+                                                    <div class="section">
+                                                        <div class="header">
+                                                            <h5>创建试题</h5>
+                                                        </div> <!-- .header -->
+                                                        <div class="body">
+                                                            <div class="row-fluid">
+                                                                <div class="span8">
+                                                                    精确匹配测试用例
+                                                                </div> <!--- .span8 -->
+                                                                <div class="span4 text-right">
+                                                                    <input id="problem-is-exactly-match" type="checkbox" data-toggle="switch"  title=""/>
+                                                                </div> <!-- .span4 -->
+                                                            </div> <!-- .row-fluid -->
+                                                        </div> <!-- .body -->
+                                                        <div class="footer text-right">
+                                                            <button class="btn btn-primary" v-on:click="onSubmit()" type="button">发布</button>
+                                                        </div> <!-- .footer -->
+                                                    </div> <!-- .section -->
+                                                </div> <!-- .span4 -->
+                                            </div> <!-- .row-fluid -->
+                                        </div>
+                                    </div> <!-- #content -->
 								</div>
 								<div class="form-group" v-if="QuestionBank.testsType == 1">
 									<label class="col-xs-2 control-label">正确答案：</label>
@@ -215,7 +297,8 @@
 					answer: 'A',
 					testsType: 1,
 					questionBankId: null,
-					options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}],/* 这里 */
+                    codingProblem:null,
+					options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]/* 这里 */
 				};
 				var vm = new Vue({
 				  el: '#content',
@@ -226,120 +309,158 @@
 					  btnState: 0
 				  },
 				  methods: {
-					  addQuestionBank: function() {
-						var temp = JSON.stringify(QuestionBank);
-						console.log(temp);
-						ajaxSubmitJSON("/admin/addquestionbank", JSON.stringify(QuestionBank), 
-									function(data) {
-										if(data) {
-											toastr.success('操作成功!', '新增题');
-											$('#myModal').modal('hide');
-											vm.QuestionBank.stem = '';
-											vm.QuestionBank.answer = 'A';
-											for (var i = 0; i <= 3; i++) {
-												vm.QuestionBank.options[i].content = '';
-											}
-											vm.page(vm.QuestionBankVoList.pageNum);
-										} else {
-											toastr.error('操作失败!', '新增题');
-										}
-									},
-									function(data) {
-										toastr.error('网络错误');
-									}
-							);
-						},
-				  		coding: function() {
-				  			if(this.QuestionBank.answer != 100 || this.QuestionBank.answer!= 90|| this.QuestionBank.answer!= 80|| this.QuestionBank.answer!= 70) {
-				  				this.QuestionBank.answer = 100;
-				  				this.QuestionBank.testsType = 2;
-				  			}
-				  			$("#options-views").hide();
-				  		},
-				  		judge: function() {
-				  			if(this.QuestionBank.answer != 1 || this.QuestionBank.answer!= 0) {
-				  				this.QuestionBank.answer = 1;
-				  				this.QuestionBank.testsType = 0;
-				  			}
-				  			$("#options-views").hide();
-				  		},
-                        choose: function() {
-				  			if(this.QuestionBank.answer != 'A' || this.QuestionBank.answer!= 'B' || this.QuestionBank.answer!= 'C' || this.QuestionBank.answer!= 'D') {
-				  				this.QuestionBank.answer = 'A';
-				  				this.QuestionBank.testsType = 1;
-				  			}
-				  			$("#options-views").show();
-				  		},
-				  		deleteQuestionBank: function(id) {
-							ajaxSubmitJSON("/admin/deletequestionbank", JSON.stringify({"questionBankId": id}), 
-									function(data) {
-										if(data) {
-											toastr.success('操作成功!', '删除题');
-											vm.page(vm.QuestionBankVoList.pageNum);
-										}else {
-											toastr.error('操作失败!', '删除题');
-										}
-									},
-									function(data) {
-										toastr.error('网络错误');
-									}
-							);
-						},
-						add: function() {
-							$('#myModal').modal({
-								backdrop: 'static',
-								keyboard: false
-							});
-						},
-						update: function(data) {
-							this.btnState = 1;
-							vm.QuestionBank.stem = data.stem;
-							vm.QuestionBank.answer = data.answer;
-							vm.QuestionBank.testsType = data.testsType;
-							vm.questionBankId = data.questionBankId;
-							if(data.testsType == 1) {
-								vm.QuestionBank.options = data.options;
-							} else {
-								vm.hide();
-							}
-							
-							$('#myModal').modal({
-								backdrop: 'static',
-								keyboard: false
-							});
-						},
-						sbUpdate: function() {
-							console.log(vm.questionBankId);
-							ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(QuestionBank), 
-									function(data) {
-										if(data) {
-											toastr.success('操作成功!', '修改题');
-											$('#myModal').modal('hide');
-											vm.QuestionBank.stem = '';
-											vm.QuestionBank.answer = 'A';
-											for (var i = 0; i <= 3; i++) {
-												vm.QuestionBank.options[i].content = '';
-											}
-											vm.page(vm.QuestionBankVoList.pageNum);
-										} else {
-											toastr.error('操作失败!', '修改题');
-										}
-									},
-									function(data) {
-										toastr.error('网络错误');
-									}
-							);							
-						},
-						page: function(pageNum) {
-							ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({'pageNum':pageNum}),
-								function(data) {
-									vm.QuestionBankVoList = data;
-								},
-								function(data) {
-									toastr.error('网络错误');
-								}
-							);
-						}
+                      addQuestionBank: function() {
+                          var temp = JSON.stringify(QuestionBank);
+                          console.log(temp);
+
+                          if(this.QuestionBank.testsType === '2'){
+                              var testCasesArr   = [];
+                              var problemCategoriesArr = [];
+                              var problemTagsArr = '';
+
+                              if ( problemTagsArr === '' ) {
+                                  problemTagsArr = [];
+                              } else {
+                                  problemTagsArr = problemTagsArr.split(',');
+                              }
+                              $('li.test-case').each(function() {
+                                  var input   = $('.standard-input', $(this)).val(),
+                                      output  = $('.standard-output', $(this)).val();
+
+                                  testCasesArr.push({
+                                      'input': input,
+                                      'output': output
+                                  });
+                              });
+                              $('label.checked', '.parent-categories').each(function() {
+                                  problemCategoriesArr.push($(this).attr('for'));
+                              });
+                              QuestionBank.answer=100;
+                              QuestionBank.codingProblem={
+                                  problemName: $('#problem-name').val(),
+                                  timeLimit: $('#time-limit').val(),
+                                  memoryLimit: $('#memory-limit').val(),
+                                  description: $('#wmd-input').val(),
+                                  hint: $('#hint').val(),
+                                  inputFormat: $('#input-format').val(),
+                                  outputFormat: $('#output-format').val(),
+                                  sampleInput: $('#input-sample').val(),
+                                  sampleOutput: $('#output-sample').val(),
+                                  testCases: JSON.stringify(testCasesArr),
+                                  problemCategories: JSON.stringify(problemCategoriesArr),
+                                  problemTags: JSON.stringify(problemTagsArr),
+                                  isExactlyMatch: $('#problem-is-exactly-match').parent().hasClass('switch-on')
+                              };
+                          }
+                          ajaxSubmitJSON("/admin/addQuestionBank", JSON.stringify(QuestionBank),
+                              function(data) {
+                                  if(data) {
+                                      toastr.success('操作成功!', '新增题');
+                                      $('#myModal').modal('hide');
+                                      vm.QuestionBank.stem = '';
+                                      vm.QuestionBank.answer = 'A';
+                                      for (var i = 0; i <= 3; i++) {
+                                          vm.QuestionBank.options[i].content = '';
+                                      }
+                                      vm.page(vm.QuestionBankVoList.pageNum);
+                                  } else {
+                                      toastr.error('操作失败!', '新增题');
+                                  }
+                              },
+                              function(data) {
+                                  toastr.error('网络错误:'+data);
+                              }
+                          );
+                      },
+                      coding: function() {
+                              this.QuestionBank.answer = 100;
+                              this.QuestionBank.testsType = 2;
+                          $("#options-views").hide();
+                      },
+                      judge: function() {
+                          if(this.QuestionBank.answer !== 1 || this.QuestionBank.answer!== 0) {
+                              this.QuestionBank.answer = 1;
+                              this.QuestionBank.testsType = 0;
+                          }
+                          $("#options-views").hide();
+                      },
+                      choose: function() {
+                          if(this.QuestionBank.answer !== 'A' || this.QuestionBank.answer!== 'B' || this.QuestionBank.answer!== 'C' || this.QuestionBank.answer!== 'D') {
+                              this.QuestionBank.answer = 'A';
+                              this.QuestionBank.testsType = 1;
+                          }
+                          $("#options-views").show();
+                      },
+                      deleteQuestionBank: function(id) {
+                          ajaxSubmitJSON("/admin/deletequestionbank", JSON.stringify({"questionBankId": id}),
+                              function(data) {
+                                  if(data) {
+                                      toastr.success('操作成功!', '删除题');
+                                      vm.page(vm.QuestionBankVoList.pageNum);
+                                  }else {
+                                      toastr.error('操作失败!', '删除题');
+                                  }
+                              },
+                              function(data) {
+                                  toastr.error('网络错误');
+                              }
+                          );
+                      },
+                      add: function() {
+                          $('#myModal').modal({
+                              backdrop: 'static',
+                              keyboard: false
+                          });
+                      },
+                      update: function(data) {
+                          this.btnState = 1;
+                          vm.QuestionBank.stem = data.stem;
+                          vm.QuestionBank.answer = data.answer;
+                          vm.QuestionBank.testsType = data.testsType;
+                          vm.questionBankId = data.questionBankId;
+                          if(data.testsType == 1) {
+                              vm.QuestionBank.options = data.options;
+                          } else {
+                              vm.hide();
+                          }
+
+                          $('#myModal').modal({
+                              backdrop: 'static',
+                              keyboard: false
+                          });
+                      },
+                      sbUpdate: function() {
+                          console.log(vm.questionBankId);
+                          ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(QuestionBank),
+                              function(data) {
+                                  if(data) {
+                                      toastr.success('操作成功!', '修改题');
+                                      $('#myModal').modal('hide');
+                                      vm.QuestionBank.stem = '';
+                                      vm.QuestionBank.answer = 'A';
+                                      for (var i = 0; i <= 3; i++) {
+                                          vm.QuestionBank.options[i].content = '';
+                                      }
+                                      vm.page(vm.QuestionBankVoList.pageNum);
+                                  } else {
+                                      toastr.error('操作失败!', '修改题');
+                                  }
+                              },
+                              function(data) {
+                                  toastr.error('网络错误');
+                              }
+                          );
+                      },
+                      page: function(pageNum) {
+                          ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({'pageNum':pageNum}),
+                              function(data) {
+                                  vm.QuestionBankVoList = data;
+                              },
+                              function(data) {
+                                  toastr.error('网络错误');
+                              }
+                          );
+                      }
 				  }
 				});
 				ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({}),
@@ -350,9 +471,113 @@
 						toastr.error('网络错误');
 					}
 				);
+                $('#test-cases').on('click', 'i.fa-edit', function() {
+                    var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
+                        isBodyUnfolded      = $('.body', $(testCaseContainer)).is(':visible');
+
+                    if ( isBodyUnfolded ) {
+                        $('.body', $(testCaseContainer)).addClass('hide');
+                    } else {
+                        $('.body', $(testCaseContainer)).removeClass('hide');
+                    }
+                });
+
+                $('#test-cases').on('click', 'i.fa-trash', function() {
+                    var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
+                        testCases         = $('li.test-case', '#test-cases').length,
+                        testCaseName      = '测试用例 #%s';
+
+                    $(testCaseContainer).remove();
+                    $('li.test-case', '#test-cases').each(function(index) {
+                        $('h5', this).html(testCaseName.format(index));
+                    });
+
+                    if ( testCases == 1 ) {
+                        $('#no-test-cases').removeClass('hide');
+                    }
+                });});
+            $('label.checkbox.parent-category').click(function() {
+                var currentControl = $(this);
+                // Fix the bug for Checkbox in FlatUI
+                setTimeout(function() {
+                    var isChecked = $(currentControl).hasClass('checked');
+
+                    if ( !isChecked ) {
+                        $('label.checkbox.child-category', $(currentControl).parent()).removeClass('checked');
+                    }
+                }, 50);
+            });
+            $('label.checkbox.child-category').click(function() {
+                var currentControl = $(this);
+                // Fix the bug for Checkbox in FlatUI
+                setTimeout(function() {
+                    var isChecked = $(currentControl).hasClass('checked');
+
+                    if ( isChecked ) {
+                        $('label.checkbox.parent-category', $(currentControl).parent().parent().parent()).addClass('checked');
+                    }
+                }, 50);
 			});
 
 		</script>
+
+<!--添加编程题-->
+<script type='text/javascript'>
+    // $.getScript('/static/js/markdown.min.js', function() {
+    //     var converter = Markdown.getSanitizingConverter();
+    //     var editor    = new Markdown.Editor(converter);
+    //
+    //     editor.run();
+    //
+    //     $('.markdown').each(function() {
+    //         var plainContent    = $(this).text(),
+    //             markdownContent = converter.makeHtml(plainContent.replace(/\\\n/g, '\\n'));
+    //
+    //         $(this).html(markdownContent);
+    //     });
+    // });
+</script>
+<script type="text/javascript">
+    function newTestCase() {
+        var testCaseId = $('li.test-case', '#test-cases').length;
+        $('#no-test-cases').addClass('hide');
+        $('#test-cases > ul').append(getTestCaseContainer(testCaseId));
+
+    }
+</script>
+<script type="text/javascript">
+    function getTestCaseContainer(testCaseId) {
+        var containerTemplate = '<li class="test-case">' +
+            '    <div class="header">' +
+            '        <h5>测试用例 #%s</h5>' +
+            '        <ul class="inline">' +
+            '            <li><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></li>' +
+            '            <li><a href="javascript:void(0);"><i class="fa fa-trash"></i></a></li>' +
+            '        </ul>' +
+            '    </div> <!-- .header -->' +
+            '    <div class="body">' +
+            '        <div class="row-fluid">' +
+            '            <div class="span4">' +
+            '                <label>标准输入</label>' +
+            '            </div> <!-- .span4 -->' +
+            '            <div class="span8">' +
+            '                <textarea class="standard-input span12"></textarea>' +
+            '            </div> <!-- .span8 -->' +
+            '        </div> <!-- .row-fluid -->' +
+            '        <div class="row-fluid">' +
+            '            <div class="span4">' +
+            '                <label>标准输出</label>' +
+            '            </div> <!-- .span4 -->' +
+            '            <div class="span8">' +
+            '                <textarea class="standard-output span12"></textarea>' +
+            '            </div> <!-- .span8 -->' +
+            '        </div> <!-- .row-fluid -->' +
+            '    </div> <!-- .body -->' +
+            '</li> <!-- .test-case -->';
+
+        return containerTemplate.format(testCaseId);
+    }
+</script>
 </body>
 
 </html>

@@ -4,7 +4,6 @@ import com.kingdee.exam.entity.User;
 
 /**
  * 业务管业务类
- * @author XiaoBingBy
  *
  */
 public interface AdminService {

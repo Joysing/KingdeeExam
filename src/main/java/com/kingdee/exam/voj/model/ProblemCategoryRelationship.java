@@ -51,7 +51,4 @@ public class ProblemCategoryRelationship implements Serializable {
 	 */
     @Transient
 	private String problemCategoryName;
-
-    @Transient
-	private static final long serialVersionUID = 5108958918621777517L;
 }

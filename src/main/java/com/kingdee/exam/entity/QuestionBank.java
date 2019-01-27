@@ -18,6 +18,9 @@ public class QuestionBank {
 
     private String answer;
 
+    /**
+     * 判断题=0 选择题=1 编程题=2
+     */
     @Column(name = "tests_type")
     private Integer testsType;
 

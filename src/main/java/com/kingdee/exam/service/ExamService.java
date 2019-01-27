@@ -16,7 +16,7 @@ public interface ExamService {
 	void findJudgmentQuestionAndChoiceQuestion(ModelAndView modelAndView, String id, HttpSession session);
 
 	//判题系统
-	List<QuestionBankVo> JudgmentSystem(List<QuestionBankVo> questionBankVos, HttpSession session);
+    Object JudgmentSystem(List<QuestionBankVo> questionBankVos, HttpSession session);
 
 	boolean autoGenerate(HttpSession session, Integer id);
 

@@ -34,7 +34,4 @@ public class Option implements Serializable {
 	private String optionName;
 	private String optionValue;
 	private boolean isAutoload;
-
-	@Transient
-	private static final long serialVersionUID = -1533277464247886659L;
 }

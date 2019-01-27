@@ -24,7 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -35,10 +34,14 @@ import java.util.Set;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private UserDetailService userDetailService;
+    private final UserDetailService userDetailService;
     private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/static/**", "/code","/","/favicon.ico"};
+
+    @Autowired
+    public WebSecurityConfig(UserDetailService userDetailService) {
+        this.userDetailService = userDetailService;
+    }
 
 
     public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -60,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             }
             return super.attemptAuthentication(request, response);
         }
-        public class CaptchaException extends AuthenticationException {
+        class CaptchaException extends AuthenticationException {
             CaptchaException(String msg) {
                 super(msg);
             }
@@ -117,7 +120,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public SavedRequestAwareAuthenticationSuccessHandler loginSuccessHandler() { //登入处理
         return new SavedRequestAwareAuthenticationSuccessHandler() {
             @Override
-            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
                 User userDetails = (User) authentication.getPrincipal();
                 Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
                 logger.info("USER : " + userDetails.getUsername() + " LOGIN SUCCESS !  ");

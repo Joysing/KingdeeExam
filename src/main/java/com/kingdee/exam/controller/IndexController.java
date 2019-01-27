@@ -1,7 +1,5 @@
 package com.kingdee.exam.controller;
 
-import com.kingdee.exam.voj.service.SubmissionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -9,10 +7,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 public class IndexController {
 
-	@Autowired
-	SubmissionService submissionService;
-
-	@RequestMapping(value = {"/", "/index.html"})
+    @RequestMapping(value = {"/", "/index.html"})
 	public ModelAndView index() {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("index");
@@ -22,7 +17,7 @@ public class IndexController {
 	@RequestMapping("/errors/404")
 	public ModelAndView errors(){
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("404");
+		modelAndView.setViewName("_error/404");
 		return modelAndView;
 	}
 	

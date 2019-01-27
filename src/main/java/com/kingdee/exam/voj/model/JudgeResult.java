@@ -33,7 +33,4 @@ public class JudgeResult implements Serializable {
 	 * 评测结果的名称.
 	 */
 	private String judgeResultName;
-	
-	@Transient
-	private static final long serialVersionUID = -1572920076997918781L;
 }

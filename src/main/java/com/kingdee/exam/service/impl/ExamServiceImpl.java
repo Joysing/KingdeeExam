@@ -8,6 +8,7 @@ import com.kingdee.exam.entity.Times;
 import com.kingdee.exam.entity.User;
 import com.kingdee.exam.entity.vo.QuestionBankVo;
 import com.kingdee.exam.service.ExamService;
+import com.kingdee.exam.util.AESEncryptor;
 import com.kingdee.exam.voj.model.Language;
 import com.kingdee.exam.voj.model.Problem;
 import com.kingdee.exam.voj.service.LanguageService;
@@ -17,8 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ExamServiceImpl implements ExamService {
@@ -47,9 +50,9 @@ public class ExamServiceImpl implements ExamService {
 		 */
 		Score score = new Score();
 		score.setTestpaperId(Integer.parseInt(id));
-//		User users = (User) session.getAttribute("myUser");
-//		score.setUsersId(users.getUserId());
-        score.setUsersId("149000301");
+		User users = (User) session.getAttribute("myUser");
+		score.setUsersId(users.getUserId());
+//        score.setUsersId("149000301");
 		Score ifExistenceScore = examMapper.findIfExistenceScore(score);
 		if (ifExistenceScore != null) {
 			modelAndView.addObject("Fraction", ifExistenceScore.getFraction());
@@ -62,33 +65,37 @@ public class ExamServiceImpl implements ExamService {
 		List<QuestionBankVo> findAllJudgmentQuestion = examMapper.findAllJudgmentQuestion(Integer.parseInt(id));
 		for (QuestionBankVo questionBankVo : findAllJudgmentQuestion) {
 			session.setAttribute(questionBankVo.getQuestionBankId().toString(), questionBankVo.getAnswer());
+            session.setAttribute(questionBankVo.getQuestionBankId().toString()+"Type", "JudgmentQuestion");
 		}
 		// 选择题
 		List<QuestionBankVo> findAllChoiceQuestion = examMapper.findAllChoiceQuestion(Integer.parseInt(id));
 		for (QuestionBankVo questionBankVo : findAllChoiceQuestion) {
 			session.setAttribute(questionBankVo.getQuestionBankId().toString(), questionBankVo.getAnswer());
+            session.setAttribute(questionBankVo.getQuestionBankId().toString()+"Type", "ChoiceQuestion");
 		}
 		// 编程题
 		Problem problem=new Problem();
 		List<QuestionBankVo> findAllCodingQuestion = examMapper.findAllCodingQuestion(Integer.parseInt(id));
 		for (QuestionBankVo questionBankVo : findAllCodingQuestion) {
 			session.setAttribute(questionBankVo.getQuestionBankId().toString(), questionBankVo.getAnswer());
+			session.setAttribute(questionBankVo.getQuestionBankId().toString()+"Type", "CodingQuestion");
 			problem = problemService.getProblemByQuestionBankId(questionBankVo.getQuestionBankId());
 		}
 
         List<Language> languages = languageService.getAllLanguages();
 
 		Times times = new Times();// 当前试卷-当前用户的试卷如果没时间设置时间
-//		times.setUserId(users.getUserId());
-		times.setUserId("149000301");
+		times.setUserId(users.getUserId());
+//		times.setUserId("149000301");
 		times.setTestpaperId(Integer.parseInt(id));
 		Times ifExamTimes = examMapper.findExamTimes(times);
 		if (ifExamTimes == null) {
-			times.setDataMin(60.0);
+			times.setStartTime(new Date());
 			examMapper.addExamTimes(times);
 			session.setAttribute("ExamTime", "60:00");
 		} else {
-			session.setAttribute("ExamTime", String.valueOf(ifExamTimes.getDataMin().intValue()));
+		    long seconds=60*60-(new Date().getTime()-ifExamTimes.getStartTime().getTime())/1000;
+			session.setAttribute("ExamTime", seconds/60+":"+seconds%60);
 		}
 
 		modelAndView.addObject("JudgmentQuestion", findAllJudgmentQuestion);
@@ -103,19 +110,33 @@ public class ExamServiceImpl implements ExamService {
 	 * 判题方法
 	 */
 	@Override
-	public List<QuestionBankVo> JudgmentSystem(List<QuestionBankVo> questionBankVos, HttpSession session) {
+	public Object JudgmentSystem(List<QuestionBankVo> questionBankVos, HttpSession session) {
 		double fraction = 0;
 		for (QuestionBankVo questionBankVo : questionBankVos) {
 			if (questionBankVo.getAnswer() != null) {
-				if (session.getAttribute(questionBankVo.getQuestionBankId().toString())
-						.equals(questionBankVo.getAnswer())) {
-					fraction = fraction + 10;
-					questionBankVo.setIfCorrect(true);
-				} else {
-					questionBankVo.setIfCorrect(false);
-					questionBankVo
-							.setAnswer(session.getAttribute(questionBankVo.getQuestionBankId().toString()).toString());
-				}
+			    if(session.getAttribute(questionBankVo.getQuestionBankId().toString()+"Type").equals("CodingQuestion")){
+                    questionBankVo.setTestsType(2);
+			        String userAnswer=new AESEncryptor().decrypt(questionBankVo.getAnswer());
+                    if (session.getAttribute(questionBankVo.getQuestionBankId().toString())
+                            .equals(userAnswer)) {
+                        fraction = fraction + 30;
+                        questionBankVo.setIfCorrect(true);
+                    } else {
+                        questionBankVo.setIfCorrect(false);
+                        questionBankVo
+                                .setAnswer(session.getAttribute(questionBankVo.getQuestionBankId().toString()).toString());
+                    }
+                }else {
+                    if (session.getAttribute(questionBankVo.getQuestionBankId().toString())
+                            .equals(questionBankVo.getAnswer())) {
+                        fraction = fraction + 7;
+                        questionBankVo.setIfCorrect(true);
+                    } else {
+                        questionBankVo.setIfCorrect(false);
+                        questionBankVo
+                                .setAnswer(session.getAttribute(questionBankVo.getQuestionBankId().toString()).toString());
+                    }
+                }
 			} else {
 				questionBankVo.setIfCorrect(false);
 				questionBankVo
@@ -130,8 +151,10 @@ public class ExamServiceImpl implements ExamService {
 		if (insertSelective == 0) {// 设置分数是否成功
 			return null;
 		}
-
-		return questionBankVos;// 返回状态
+        Map<String,Object> map=new HashMap<>();
+		map.put("questionBankVos",questionBankVos);
+		map.put("score",fraction);
+		return map;// 返回状态
 	}
 
 	/**
@@ -149,7 +172,6 @@ public class ExamServiceImpl implements ExamService {
 			hashMap.put("JudgmentQuestion", findAllJudgmentQuestion);
 			hashMap.put("ChoiceQuestion", findAllChoiceQuestion);
 			session.setAttribute("question", hashMap);
-			session.setAttribute("XiaoBing", "XiaoBingBy");
 			session.setAttribute("JudgmentQuestion", findAllJudgmentQuestion);
 			session.setAttribute("ChoiceQuestion", findAllChoiceQuestion);
 			// 存入时间

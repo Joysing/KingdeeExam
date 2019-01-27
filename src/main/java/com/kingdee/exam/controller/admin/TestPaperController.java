@@ -16,26 +16,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class TestPaperController {
 	
-	@Autowired
-	private TestPaperService testPaperService;
-	@Autowired
-	private QuestionBankMapper questionBankMapper;
-	@Autowired
-	private TestPaperTestService testPaperTestService;
-	@Autowired
-	private TestPaperMapper testPaperController;
-	
-	
-	//查询数据库中有效试卷
+	private final TestPaperService testPaperService;
+	private final QuestionBankMapper questionBankMapper;
+	private final TestPaperTestService testPaperTestService;
+	private final TestPaperMapper testPaperController;
+
+    @Autowired
+    public TestPaperController(TestPaperService testPaperService, QuestionBankMapper questionBankMapper, TestPaperTestService testPaperTestService, TestPaperMapper testPaperController) {
+        this.testPaperService = testPaperService;
+        this.questionBankMapper = questionBankMapper;
+        this.testPaperTestService = testPaperTestService;
+        this.testPaperController = testPaperController;
+    }
+
+
+    //查询数据库中有效试卷
 	@RequestMapping(value="/testPaper.html")
 	public ModelAndView findTestPaperInfo(){
 		ModelAndView modelAndView = new ModelAndView();
@@ -48,8 +50,7 @@ public class TestPaperController {
 	@ResponseBody
 	@RequestMapping(value = "/getalltestpaper")
 	public List<TestPaper> getAllTestPaper() {
-		List<TestPaper> testPaper = testPaperService.findTestPaperInfo();
-		return testPaper;
+        return testPaperService.findTestPaperInfo();
 	}
 	
 	//更改试卷状态 即为删除
@@ -68,7 +69,7 @@ public class TestPaperController {
 	//编辑试卷信息
 	@RequestMapping(value="/editTestPaperInfo.html")
 	@ResponseBody
-	public ModelAndView editTestPaperInfo(HttpServletRequest request, HttpServletResponse response){
+	public ModelAndView editTestPaperInfo(HttpServletRequest request){
 		int testpaperId=Integer.parseInt(request.getParameter("testpaperId"));
 		TestPaper testPaper=testPaperService.selectByPrimaryKey(testpaperId);
 		ModelAndView modelAndView = new ModelAndView();
@@ -79,7 +80,7 @@ public class TestPaperController {
 	}
     @RequestMapping(value = "/testPaperEdit")
     @ResponseBody
-    public String userEdti(TestPaper testPaper)throws Exception{
+    public String userEdti(TestPaper testPaper) {
 
     	int j=testPaperService.updateTestPaperInfo(testPaper);
     	if (j >= 1) {
@@ -106,10 +107,7 @@ public class TestPaperController {
     @ResponseBody
     @RequestMapping(value = "/findalltestpager")
 	public List<QuestionBankVo> findAllQuestionBank() {
-		
-		List<QuestionBankVo> findAllQuestionBank = questionBankMapper.findAllQuestionBank();
-		
-		return findAllQuestionBank;
+        return questionBankMapper.findAllQuestionBank();
 	}
     
     @RequestMapping(value = "/addaddtestpaer")
@@ -133,8 +131,8 @@ public class TestPaperController {
     //修改试卷试题
     @RequestMapping(value="/editTestPaperQuestion")
     @ResponseBody
-    public String editTestPaperQuestion(@RequestBody TestPaperTestsList testPaperTestsList, HttpServletRequest request, HttpServletResponse response){
-    	int j=testPaperTestService.deleteTestPaperTestById(testPaperTestsList.getTestpaperId());
+    public String editTestPaperQuestion(@RequestBody TestPaperTestsList testPaperTestsList){
+    	testPaperTestService.deleteTestPaperTestById(testPaperTestsList.getTestpaperId());
     	int addTestPaperQuestion = testPaperTestService.addTestPaperQuestion(testPaperTestsList);
     	System.out.println(addTestPaperQuestion);
     	if(addTestPaperQuestion>=1){
@@ -150,10 +148,7 @@ public class TestPaperController {
     public boolean addTestPaper(TestPaper testPaper) {
     	testPaper.setTestpaperState(1);
     	int insertSelective = testPaperController.insertSelective(testPaper);
-    	if (insertSelective>=1) {
-			return true;
-		}
-    	return false;
+        return insertSelective >= 1;
     }
 
 

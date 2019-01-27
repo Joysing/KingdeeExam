@@ -139,6 +139,7 @@
                             <textarea name="codemirror-editor" id="codemirror-editor">${'#include<stdio.h>
                                 int main(){int a,b;scanf("%d %d",&a,&b);printf("%d",a+b);return 0;}'}
                             </textarea>
+                            <input type="text" id="accessRate" name="${item.questionBankId}" value="" style="display: none">
 							<div class="row-fluid">
 								<div class="span4">
 									<select id="languages">
@@ -217,7 +218,7 @@
 	</section>
 	
 	<div id="mmm" style="background: #ccc; border-radius: 10px; opacity:0.5; width: 200px;  right: 0; top: 0; margin-right: 10px; margin-top: 10px;  position: fixed; ">
-		<h1 style="font-size: 48px;text-align: center; margin-top: 10px"><span id="time">${ExamTime}:00</span></h1>
+		<h1 style="font-size: 48px;text-align: center; margin-top: 10px"><span id="time">${ExamTime}</span></h1>
 	</div>	
 	
 	<div>
@@ -229,7 +230,7 @@
 	<div class="remodal " data-remodal-id="modal" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
 	  <button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
 	  <div>
-		<h2 id="modal1Title">是否提交试卷</h2>
+		<h2 class="modal1Title">是否提交试卷</h2>
 		<p id="modal1Desc">
 			你好！是否提交试卷。
 		</p>
@@ -242,7 +243,7 @@
 	<div class="remodal" data-remodal-id="modal-score" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
 	  <button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
 	  <div>
-		<h2 id="modal1Title">考试成绩 <span id="score">0</span>分</h2>
+		<h2 class="modal1Title">考试成绩 <span id="score">0</span>分</h2>
 	  </div>
 	  <br>
 	  <button data-remodal-action="cancel" class="remodal-cancel">查看答案</button>
@@ -271,26 +272,47 @@
 		history.pushState(null, null, document.URL);
 	});
 
-	function submitPapers(arr) {
+	function submitPapers() {
+        $("#testpaperBt").remove();
+        clearInterval(timeSetInterval);
+        var arr = [];
+        <#list JudgmentQuestion as item>
+            var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
+            arr.push({
+                'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
+                'answer': item${item.questionBankId}.val()
+        });
+        </#list>
+            <#list ChoiceQuestion as item>
+            var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
+            arr.push({
+                'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
+                'answer': item${item.questionBankId}.val()
+        });
+        </#list>
+            <#list CodingQuestion as item>
+            var item${item.questionBankId} = $('input[name="${item.questionBankId}"]');
+            arr.push({
+                'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
+                'answer': item${item.questionBankId}.val()
+        });
+        </#list>
+        console.log(JSON.stringify({"list":arr}));
 		ajaxSubmitJSON("/exam/submitpapers", JSON.stringify(arr),
 				function(data) {
-					var score = 0;
 					$("#mmm").remove();
-					data.forEach(function(e) {
-						if(e.ifCorrect) {
-							score+=10;
-						}
-						$("#score").text(score);
-						inst.open();
+                    $("#score").text(data["score"]);
+                    inst.open();
+                    data["questionBankVos"].forEach(function(e) {
 						console.log(e);
 						if(e.ifCorrect) {
 							$(".success-"+e.questionBankId).removeClass("hidden");
 						} else {
 							$(".danger-"+e.questionBankId).removeClass("hidden");
-							if(e.answer == 0) {
+							if(e.answer === 0) {
 								e.answer = "错";
 							}
-							if(e.answer == 1) {
+							if(e.answer === 1) {
 								e.answer = "对";
 							}
 							$(".danger-"+e.questionBankId+" span").text(e.answer);
@@ -305,57 +327,33 @@
 	}
     </script>
     <script type="text/javascript">
-	var arr = [];
+
 	$("#testpaper").on("click", function(){
-		<#list JudgmentQuestion as item>
-		var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
-		arr.push({
-			'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
-			'answer': item${item.questionBankId}.val()
-		});
-		</#list>
-		<#list ChoiceQuestion as item>
-		var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
-		arr.push({
-			'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
-			'answer': item${item.questionBankId}.val()
-		});
-		</#list>
-		<#list CodingQuestion as item>
-		var item${item.questionBankId} = $('input[name="${item.questionBankId}"]:checked ');
-		arr.push({
-			'questionBankId': $('input[name="${item.questionBankId}"]').attr('name'),
-			'answer': item${item.questionBankId}.val()
-		});
-		</#list>
-		console.log(arr);
-		console.log(JSON.stringify({"list":arr}));
-		$("#testpaperBt").remove();
-		submitPapers(arr);
-		clearInterval(timeSetInterval);
+		submitPapers();
 	});
 
 	var timeSetInterval = setInterval(function() {
 		var time = $("#time").text();
 		var min = parseInt(time.split(":")[0]);
 		var sec = parseInt(time.split(":")[1]);
-		if(sec==0){
-			sec=59;
-			min--;
+		if(sec===0){
+		    if(min>0){
+                sec=59;
+                min--;
+            }
 		}else{
 			sec--;
 		}
-		if(sec<10){
-			sec="0"+sec;
+        if(min<10){
+            min="0"+min;
+        }
+        if(sec<10){
+            sec="0"+sec;
+        }
+        $("#time").text(min+":"+sec);
+        if(min==='00'&&sec==='00') {
+			submitPapers();
 		}
-		$("#time").text(min+":"+sec);
-
-		if(min==0) {
-			$("#testpaperBt").remove();
-			submitPapers(arr);
-			clearInterval(timeSetInterval);
-		}
-
 	},1000);
     </script>
     <script type="text/javascript">
@@ -435,13 +433,16 @@
                     lastMessage = message;
 
                     if (message === 'Established') {
-                        $('#judge-log').html('<p>已连接到服务器.</p>');
+                        $('#judge-log').html('<p>已连接到服务器，开始编译代码.</p>');
                         return;
                     }
                     var mapMessage = JSON.parse(message),
+                        accessRate = mapMessage['accessRate'],
                         judgeResult = mapMessage['judgeResult'],
                         judgeLog = mapMessage['message'];
-
+                    if(accessRate!==undefined) {
+                        $('#accessRate').val(accessRate);
+                    }
                     $('#judge-result').html(judgeResult);
                     $('#judge-log').append('<p>'+judgeLog+'</p>');
                 }

@@ -17,13 +17,16 @@ import java.util.List;
 @RequestMapping("/admin")
 public class UsersController {
 	
-	@Autowired
-	private UsersService usersService;
-	
-	/**
+	private final UsersService usersService;
+
+    @Autowired
+    public UsersController(UsersService usersService) {
+        this.usersService = usersService;
+    }
+
+    /**
 	 * 1.首页访问用户界面 对应下面  /user.html
 	 * 2.查询页面用户数据
-	 * @return
 	 */
 	@RequestMapping(value="/user.html",method=RequestMethod.GET)
 	public ModelAndView AllUsers(){
@@ -52,7 +55,6 @@ public class UsersController {
 
 	/**
 	 * 添加账号
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/adduser")

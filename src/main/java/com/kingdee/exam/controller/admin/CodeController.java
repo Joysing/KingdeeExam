@@ -15,18 +15,18 @@ import java.util.Random;
 
 @Controller
 public class CodeController {
-	private int width = 90;// 定义图片的width
-	private int height = 30;// 定义图片的height
-	private int codeCount = 4;// 定义图片上显示验证码的个数
-	private int xx = 15;
-	private int fontHeight = 20;
-	private int codeY = 23;
+
 	private char[] codeSequence = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
 			'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 	@RequestMapping("/code")
 	public void getCode(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
+        int width = 90;// 定义图片的width
+        int height = 30;// 定义图片的height
+        int codeCount = 4;// 定义图片上显示验证码的个数
+        int xx = 15;
+        int fontHeight = 20;
+        int codeY = 23;
 		// 定义图像buffer
 		BufferedImage buffImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// Graphics2D gd = buffImg.createGraphics();
@@ -58,8 +58,8 @@ public class CodeController {
 		}
 
 		// randomCode用于保存随机产生的验证码，以便用户登录后进行验证。
-		StringBuffer randomCode = new StringBuffer();
-		int red = 0, green = 0, blue = 0;
+		StringBuilder randomCode = new StringBuilder();
+		int red, green, blue;
 
 		// 随机产生codeCount数字的验证码。
 		for (int i = 0; i < codeCount; i++) {

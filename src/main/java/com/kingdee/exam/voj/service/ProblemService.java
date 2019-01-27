@@ -1,42 +1,3 @@
-/* Verwandlung Online Judge - A cross-platform judge online system
- * Copyright (C) 2018 Haozhe Xie <cshzxie@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- *                              _ooOoo_  
- *                             o8888888o  
- *                             88" . "88  
- *                             (| -_- |)  
- *                             O\  =  /O  
- *                          ____/`---'\____  
- *                        .'  \\|     |//  `.  
- *                       /  \\|||  :  |||//  \  
- *                      /  _||||| -:- |||||-  \  
- *                      |   | \\\  -  /// |   |  
- *                      | \_|  ''\---/''  |   |  
- *                      \  .-\__  `-`  ___/-. /  
- *                    ___`. .'  /--.--\  `. . __  
- *                 ."" '<  `.___\_<|>_/___.'  >'"".  
- *                | | :  `- \`.;`\ _ /`;.`/ - ` : | |  
- *                \  \ `-.   \_ __\ /__ _/   .-` /  /  
- *           ======`-.____`-.___\_____/___.-`____.-'======  
- *                              `=---=' 
- *
- *                          HERE BE BUDDHA
- *
- */
 package com.kingdee.exam.voj.service;
 
 import com.alibaba.fastjson.JSON;
@@ -45,9 +6,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.kingdee.exam.voj.mapper.CheckpointMapper;
 import com.kingdee.exam.voj.mapper.ProblemCategoryMapper;
 import com.kingdee.exam.voj.mapper.ProblemMapper;
-import com.kingdee.exam.voj.mapper.ProblemTagMapper;
-import com.kingdee.exam.voj.model.*;
-import com.kingdee.exam.voj.util.SlugifyUtils;
+import com.kingdee.exam.voj.model.Checkpoint;
+import com.kingdee.exam.voj.model.Problem;
+import com.kingdee.exam.voj.model.ProblemCategory;
+import com.kingdee.exam.voj.model.ProblemCategoryRelationship;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +18,6 @@ import java.util.*;
 
 /**
  * 试题类(Problem)的业务逻辑层.
- * @author Haozhe Xie
  */
 @Service
 @Transactional
@@ -102,15 +63,13 @@ public class ProblemService {
 	 * @param offset - 试题唯一标识符的起始序号
 	 * @param keyword - 关键字
 	 * @param problemCategorySlug - 试题分类的别名
-	 * @param problemTagSlug - 试题标签的别名
 	 * @param isPublicOnly - 是否只筛选公开试题
 	 * @param limit - 每次加载试题的数量
 	 * @return 试题列表(List<Problem>对象)
 	 */
 	public List<Problem> getProblemsUsingFilters(long offset, String keyword, String problemCategorySlug,
-			String problemTagSlug, boolean isPublicOnly, int limit) {
+                                                 boolean isPublicOnly, int limit) {
 		ProblemCategory problemCategory = problemCategoryMapper.getProblemCategoryUsingCategorySlug(problemCategorySlug);
-		ProblemTag problemTag = problemTagMapper.getProblemTagUsingTagSlug(SlugifyUtils.getSlug(problemTagSlug));
 		int problemCategoryId = 0;
 		long problemTagId = 0;
 		if ( offset < 0 ) {
@@ -118,9 +77,6 @@ public class ProblemService {
 		}
 		if ( problemCategory != null ) {
 			problemCategoryId = problemCategory.getProblemCategoryId();
-		}
-		if ( problemTag != null ) {
-			problemTagId = problemTag.getProblemTagId();
 		}
 		return problemMapper.getProblemsUsingFilters(keyword, problemCategoryId, problemTagId, isPublicOnly, offset, limit);
 	}
@@ -177,41 +133,6 @@ public class ProblemService {
 	}
 
 	/**
-	 * 获取某个区间内各试题的标签.
-	 * @param problemIdLowerBound - 试题ID区间的下界
-	 * @param problemIdUpperBound - 试题ID区间的上界
-	 * @return 包含试题标签信息的列表
-	 */
-	public Map<Long, List<ProblemTag>> getProblemTagsOfProblems(
-			long problemIdLowerBound, long problemIdUpperBound) {
-		List<ProblemTagRelationship> problemTagRelationships =
-				problemTagMapper.getProblemTagsOfProblems(problemIdLowerBound, problemIdUpperBound);
-
-		Map<Long, List<ProblemTag>> problemTagsOfProblems = new HashMap<>();
-		for ( ProblemTagRelationship ptr : problemTagRelationships ) {
-			long problemId = ptr.getProblemId();
-			if ( !problemTagsOfProblems.containsKey(problemId) ) {
-				problemTagsOfProblems.put(problemId, new ArrayList<>());
-			}
-
-			List<ProblemTag> problemTags = problemTagsOfProblems.get(problemId);
-			problemTags.add(new ProblemTag(
-					ptr.getProblemTagId(), ptr.getProblemTagSlug(),
-					ptr.getProblemTagName()));
-		}
-		return problemTagsOfProblems;
-	}
-	
-	/**
-	 * 获取试题的标签列表.
-	 * @param problemId - 试题的唯一标识符.
-	 * @return 包含试题标签的列表
-	 */
-	public List<ProblemTag> getProblemTagsUsingProblemId(long problemId) {
-		return problemTagMapper.getProblemTagsUsingProblemId(problemId);
-	}
-
-	/**
 	 * 获得具有层次关系的试题分类列表.
 	 * @return 包含试题分类及其继承关系的Map<ProblemCategory, List<ProblemCategory>>对象
 	 */
@@ -222,7 +143,7 @@ public class ProblemService {
 
 		// 将无父亲的试题分类加入列表
 		for ( ProblemCategory pc : problemCategories ) {
-			if ( pc.getProblemCategoryParentId() == 0 ) {
+			if ( pc.getParentProblemCategoryId() == 0 ) {
 				List<ProblemCategory> subProblemCategories = new ArrayList<>();
 				problemCategoriesHierarchy.put(pc, subProblemCategories);
 				problemCategoriesIndexer.put(pc.getProblemCategoryId(), subProblemCategories);
@@ -230,7 +151,7 @@ public class ProblemService {
 		}
 		// 将其他试题分类加入列表
 		for ( ProblemCategory pc : problemCategories ) {
-			int parentProblemCategoryId = pc.getProblemCategoryParentId() ;
+			int parentProblemCategoryId = pc.getParentProblemCategoryId() ;
 			if ( parentProblemCategoryId != 0 ) {
 				List<ProblemCategory> subProblemCategories = problemCategoriesIndexer.get(parentProblemCategoryId);
 				if ( subProblemCategories != null ) {
@@ -292,16 +213,13 @@ public class ProblemService {
 	 * @param outputSample - 输出样例
 	 * @param testCases - 测试用例(JSON 格式)
 	 * @param problemCategories - 试题分类(JSON 格式)
-	 * @param problemTags - 试题标签((JSON 格式)
-	 * @param isPublic - 试题是否公开
 	 * @param isExactlyMatch - 测试点是否精确匹配
 	 * @return 包含试题创建结果的Map<String, Object>对象
 	 */
-	public Map<String, Object> createProblem(String problemName, int timeLimit, int memoryLimit, 
+	public Map<String, Object> createProblem(String problemName,int questionBankId, int timeLimit, int memoryLimit,
 			String description, String hint, String inputFormat, String outputFormat, 
-			String inputSample, String outputSample, String testCases, String problemCategories, 
-			String problemTags, boolean isPublic, boolean isExactlyMatch) {
-		Problem problem = new Problem(isPublic, problemName, timeLimit, memoryLimit, 
+			String inputSample, String outputSample, String testCases, String problemCategories, boolean isExactlyMatch) {
+		Problem problem = new Problem(questionBankId, problemName, timeLimit, memoryLimit,
 				description, inputFormat, outputFormat, inputSample, outputSample, hint);
 		@SuppressWarnings("unchecked")
 		Map<String, Object> result = (Map<String, Object>) getProblemCreationResult(problem);
@@ -312,8 +230,7 @@ public class ProblemService {
 			long problemId = problem.getProblemId();
 			createTestCases(problemId, testCases, isExactlyMatch);
 			createProblemCategoryRelationships(problemId, problemCategories);
-			createProblemTags(problemId, problemTags);
-			
+
 			result.put("problemId", problemId);
 		}
 		return result;
@@ -324,7 +241,7 @@ public class ProblemService {
 	 * @param problem - 待创建的试题
 	 * @return 包含试题创建结果的Map<String, Boolean>对象
 	 */
-	private Map<String, ? extends Object> getProblemCreationResult(Problem problem) {
+	private Map<String, ?> getProblemCreationResult(Problem problem) {
 		Map<String, Boolean> result = new HashMap<>();
 		result.put("isProblemNameEmpty", problem.getProblemName().isEmpty());
 		result.put("isProblemNameLegal", isProblemNameLegal(problem.getProblemName()));
@@ -360,16 +277,14 @@ public class ProblemService {
 	 * @param outputSample - 输出样例
 	 * @param testCases - 测试用例(JSON 格式)
 	 * @param problemCategories - 试题分类(JSON 格式)
-	 * @param problemTags - 试题标签((JSON 格式)
-	 * @param isPublic - 试题是否公开
 	 * @param isExactlyMatch - 测试点是否精确匹配
 	 * @return 包含试题创建结果的Map<String, Object>对象
 	 */
-	public Map<String, Boolean> editProblem(long problemId, String problemName, int timeLimit, 
-			int memoryLimit, String description, String hint, String inputFormat, String outputFormat, 
-			String inputSample, String outputSample, String testCases, String problemCategories, 
-			String problemTags, boolean isPublic, boolean isExactlyMatch) {
-		Problem problem = new Problem(problemId, isPublic, problemName, timeLimit, memoryLimit, 
+	public Map<String, Boolean> editProblem(long problemId, int questionBankId, String problemName, int timeLimit,
+                                            int memoryLimit, String description, String hint, String inputFormat, String outputFormat,
+                                            String inputSample, String outputSample, String testCases, String problemCategories,
+                                            boolean isExactlyMatch) {
+		Problem problem = new Problem(problemId, questionBankId, problemName, timeLimit, memoryLimit,
 				description, inputFormat, outputFormat, inputSample, outputSample, hint);
 		Map<String, Boolean> result = getProblemEditResult(problem);
 		
@@ -378,7 +293,6 @@ public class ProblemService {
 			
 			updateTestCases(problemId, testCases, isExactlyMatch);
 			updateProblemCategoryRelationships(problemId, problemCategories);
-			updateProblemTags(problemId, problemTags);
 		}
 		return result;
 	}
@@ -466,44 +380,6 @@ public class ProblemService {
 	private void updateProblemCategoryRelationships(long problemId, String problemCategories) {
 		problemCategoryMapper.deleteProblemCategoryRelationship(problemId);
 		createProblemCategoryRelationships(problemId, problemCategories);
-	}
-	
-	/**
-	 * 创建试题标签.
-	 * @param problemId - 试题的唯一标识符
-	 * @param problemTags - 试题标签的JSON数组
-	 */
-	private void createProblemTags(long problemId, String problemTags) {
-		Set<String> problemTagSlugs = new HashSet<>();
-		JSONArray jsonArray = JSON.parseArray(problemTags);
-		
-		for ( int i = 0; i < jsonArray.size(); ++ i ) {
-			String problemTagName = jsonArray.getString(i);
-			String problemTagSlug = SlugifyUtils.getSlug(problemTagName);
-			
-			ProblemTag pt = problemTagMapper.getProblemTagUsingTagSlug(problemTagSlug);
-			if ( pt == null ) {
-				pt = new ProblemTag(problemTagSlug, problemTagName);
-				problemTagMapper.createProblemTag(pt);
-			}
-			// Fix Bug: Two tags have different tag name but the same tag slug.
-			// Example: Hello World / Hello-World
-			if ( !problemTagSlugs.contains(problemTagSlug) ) {
-				problemTagMapper.createProblemTagRelationship(problemId, pt);
-				problemTagSlugs.add(problemTagSlug);
-			}
-		}
-	}
-	
-	/**
-	 * 更新试题标签.
-	 * 首先删除该试题的全部标签, 然后重新创建标签与试题的关系.
-	 * @param problemId - 试题的唯一标识符
-	 * @param problemTags - 试题标签的JSON数组
-	 */
-	private void updateProblemTags(long problemId, String problemTags) {
-		problemTagMapper.deleteProblemTagRelationship(problemId);
-		createProblemTags(problemId, problemTags);
 	}
 	
 	/**
@@ -723,13 +599,7 @@ public class ProblemService {
 	 */
 	@Autowired
 	private ProblemCategoryMapper problemCategoryMapper;
-	
-	/**
-	 * 自动注入的ProblemTagMapper对象.
-	 */
-	@Autowired
-	private ProblemTagMapper problemTagMapper;
-	
+
 	/**
 	 * 自动注入的CheckpointMapper对象.
 	 */

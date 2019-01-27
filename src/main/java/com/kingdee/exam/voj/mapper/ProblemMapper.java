@@ -47,8 +47,6 @@ import java.util.List;
 
 /**
  * Problem Data Access Object.
- * 
- * @author Haozhe Xie
  */
 @CacheNamespace(implementation = org.mybatis.caches.ehcache.EhcacheCache.class)
 public interface ProblemMapper {

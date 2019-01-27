@@ -116,7 +116,7 @@
 		SELECT
 			testpaper_id AS testpaperId,
 			user_id AS userId,
-			data_min AS dataMin,
+			start_time AS startTime,
 			times_state AS timesState
 		FROM
 			`times`
@@ -132,7 +132,7 @@
 			times_id AS timesId,
 			testpaper_id as testpaperId,
 			user_id as userId,
-			data_min as dataMin,
+            start_time AS startTime,
 			times_state as timesState
 		FROM
 			`times`
@@ -145,14 +145,14 @@
 		INSERT INTO times (
 			testpaper_id,
 			user_id,
-			data_min,
+            start_time,
 			times_state
 		)
 		VALUES
 			(
 				#{testpaperId},
 				#{userId},
-				#{dataMin},
+                #{startTime},
 				'1'
 			)
 	</insert>
@@ -160,8 +160,7 @@
 	<!-- 更新用户时间 -->
 	<update id="updateExamTimes" parameterType="com.kingdee.exam.entity.Times">
 		UPDATE times
-		SET data_min = #{dataMin},
-		 times_state = #{timesState}
+		SET times_state = #{timesState}
 		WHERE
 		times_id = #{timesId}
 	</update>

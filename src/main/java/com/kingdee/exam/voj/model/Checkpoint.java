@@ -54,7 +54,4 @@ public class Checkpoint implements Serializable {
 	 */
     @Column(name = "checkpoint_output",columnDefinition = "longtext")
 	private String output;
-	
-	@Transient
-	private static final long serialVersionUID = -8129670699537187948L;
 }

@@ -8,9 +8,9 @@ import com.kingdee.exam.voj.model.Submission;
 import com.kingdee.exam.voj.service.LanguageService;
 import com.kingdee.exam.voj.service.ProblemService;
 import com.kingdee.exam.voj.service.SubmissionService;
-import com.kingdee.exam.voj.util.CsrfProtector;
-import com.kingdee.exam.voj.util.HttpRequestParser;
-import com.kingdee.exam.voj.util.HttpSessionParser;
+import com.kingdee.exam.util.CsrfProtector;
+import com.kingdee.exam.util.HttpRequestParser;
+import com.kingdee.exam.util.HttpSessionParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,28 +30,33 @@ import java.util.Map;
 @Controller
 @RequestMapping(value="/p")
 public class ProblemsController {
-	/**
+    @Autowired
+    public ProblemsController(ProblemService problemService, SubmissionService submissionService, LanguageService languageService) {
+        this.problemService = problemService;
+        this.submissionService = submissionService;
+        this.languageService = languageService;
+    }
+
+    /**
 	 * 显示试题库中的全部试题.
 	 * @param startIndex - 试题的起始下标
 	 * @param keyword - 关键词
 	 * @param problemCategorySlug - 试题分类的别名
 	 * @param request - HttpRequest对象
-	 * @param response - HttpResponse对象
 	 * @return 包含试题库页面信息的ModelAndView对象
-	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value="", method=RequestMethod.GET)
 	public ModelAndView problemsView(
-            @RequestParam(value="start", required=false, defaultValue="1") long startIndex,
-            @RequestParam(value="keyword", required = false) String keyword,
-            @RequestParam(value="category", required = false) String problemCategorySlug,
-            HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
+            @RequestParam(value = "start", required = false, defaultValue = "1") long startIndex,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "category", required = false) String problemCategorySlug,
+            HttpServletRequest request) {
 		long startIndexOfProblems = getFirstIndexOfProblems();
 		if ( startIndex < startIndexOfProblems ) {
 			startIndex = startIndexOfProblems;
 		}
 		
-		List<Problem> problems = problemService.getProblemsUsingFilters(startIndex, keyword, problemCategorySlug, null, true, NUMBER_OF_PROBLEMS_PER_PAGE);
+		List<Problem> problems = problemService.getProblemsUsingFilters(startIndex, keyword, problemCategorySlug,  true, NUMBER_OF_PROBLEMS_PER_PAGE);
 		long totalProblems = problemService.getNumberOfProblemsUsingFilters(keyword, problemCategorySlug, true);
 		ModelAndView view = new ModelAndView("problems/problems");
 		view.addObject("problems", problems)
@@ -94,7 +97,7 @@ public class ProblemsController {
 			@RequestParam(value="category", required = false) String problemCategorySlug,
 			HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		List<Problem> problems = problemService.getProblemsUsingFilters(startIndex, keyword, problemCategorySlug, null, true, NUMBER_OF_PROBLEMS_PER_PAGE);
+		List<Problem> problems = problemService.getProblemsUsingFilters(startIndex, keyword, problemCategorySlug,  true, NUMBER_OF_PROBLEMS_PER_PAGE);
 		Map<Long, Submission> submissionOfProblems = null;
 		if ( isLoggedIn(session) ) {
 			long userId = (Long)session.getAttribute("uid");
@@ -116,39 +119,25 @@ public class ProblemsController {
 	 */
 	private boolean isLoggedIn(HttpSession session) {
 		Boolean isLoggedIn = (Boolean)session.getAttribute("isLoggedIn");
-		if ( isLoggedIn == null || !isLoggedIn.booleanValue() ) {
-			return false;
-		}
-		return true;
-	}
+        return isLoggedIn != null && isLoggedIn;
+    }
 	
 	/**
 	 * 加载试题的详细信息.
 	 * @param problemId - 试题的唯一标识符
 	 * @param request - HttpRequest对象
-	 * @param response - HttpResponse对象
 	 * @return 包含试题详细信息的ModelAndView对象
 	 */
 	@RequestMapping(value="/{problemId}", method=RequestMethod.GET)
 	public ModelAndView problemView(
             @PathVariable("problemId") long problemId,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		boolean isLoggedIn = isLoggedIn(session);
 		Problem problem = problemService.getProblem(problemId);
 		
 		if ( problem == null ) {
 			throw new ResourceNotFoundException();
-		} else if ( !problem.isPublic() ) {
-			boolean isAllowToAccess = false;
-			
-			if ( isLoggedIn ) {
-				User currentUser = HttpSessionParser.getCurrentUser(session);
-					isAllowToAccess = true;
-			}
-			if ( !isAllowToAccess ) {
-				throw new ResourceNotFoundException();
-			}
 		}
 		
 		ModelAndView view = new ModelAndView("problems/problem");
@@ -170,17 +159,12 @@ public class ProblemsController {
 	/**
 	 * 加载试题题解页面.
 	 * @param problemId - 试题的唯一标识符
-	 * @param request - HttpRequest对象
-	 * @param response - HttpResponse对象
 	 * @return 包含试题题解信息的ModelAndView对象
 	 */
 	@RequestMapping(value="/{problemId}/solution", method=RequestMethod.GET)
 	public ModelAndView solutionView(
-            @PathVariable("problemId") long problemId,
-            HttpServletRequest request, HttpServletResponse response) {
-
-		ModelAndView view = new ModelAndView("discussion/thread");
-		return view;
+            @PathVariable("problemId") long problemId) {
+        return new ModelAndView("discussion/thread");
 	}
 	
 	/**
@@ -222,33 +206,12 @@ public class ProblemsController {
 	 */
 	private static final int NUMBER_OF_SUBMISSIONS_PER_PROBLEM = 10;
 
-	/**
-	 * 每个试题加载讨论的数量.
-	 */
-	private static final int NUMBER_OF_DISCUSSTION_THREADS_PER_PROBLEM = 10;
+
+	private final ProblemService problemService;
 	
-	/**
-	 * 自动注入的ProblemService对象.
-	 * 用于完成试题的逻辑操作.
-	 */
-	@Autowired
-	private ProblemService problemService;
+	private final SubmissionService submissionService;
 	
-	/**
-	 * 自动注入的SubmissionService对象.
-	 * 用于处理试题详情页的提交请求.
-	 */
-	@Autowired
-	private SubmissionService submissionService;
-	
-	/**
-	 * 自动注入的LanguageService对象.
-	 * 用于加载试题详情页的语言选项.
-	 */
-	@Autowired
-	private LanguageService languageService;
-	/**
-	 * 日志记录器.
-	 */
+	private final LanguageService languageService;
+
 	private static final Logger LOGGER = LogManager.getLogger(ProblemsController.class);
 }

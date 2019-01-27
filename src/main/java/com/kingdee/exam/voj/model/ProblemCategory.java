@@ -13,12 +13,12 @@ import java.io.Serializable;
 @Entity
 @Table(name="voj_problem_categories")
 public class ProblemCategory implements Serializable {
-
+    public ProblemCategory(){}
 	public ProblemCategory(String problemCategorySlug,
-			String problemCategoryName, int problemCategoryParentId) {
+			String problemCategoryName, int parentProblemCategoryId) {
 		this.problemCategorySlug = problemCategorySlug;
 		this.problemCategoryName = problemCategoryName;
-		this.problemCategoryParentId = problemCategoryParentId;
+		this.parentProblemCategoryId = parentProblemCategoryId;
 	}
 	
 	public ProblemCategory(int problemCategoryId, String problemCategorySlug,
@@ -56,8 +56,6 @@ public class ProblemCategory implements Serializable {
 	/**
 	 * 试题分类的父类.
 	 */
-	private int problemCategoryParentId;
-
-	@Transient
-	private static final long serialVersionUID = 7093703712360669823L;
+	@Column(name = "problem_category_parent_id")
+	private int parentProblemCategoryId;
 }

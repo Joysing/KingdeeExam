@@ -15,12 +15,13 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping(value = "/admin")
 public class QuestionBankController {
 
-	@Autowired
-	private QuestionBankService questionBankService;
-	
-	/**
-	 * 映射主页模板
-	 */
+	private final QuestionBankService questionBankService;
+
+    @Autowired
+    public QuestionBankController(QuestionBankService questionBankService) {
+        this.questionBankService = questionBankService;
+    }
+
 	@RequestMapping(value = "/question-bank.html")
 	public ModelAndView questionBank() {
 		ModelAndView modelAndView = new ModelAndView();
@@ -31,53 +32,36 @@ public class QuestionBankController {
 	
 	/**
 	 * 获取所有实体
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getAllQuestionBank")
 	public PageInfo<QuestionBankVo> getAllQuestionBank(@RequestBody PageInfo<QuestionBankVo> pageInfo) {
-		
-		
-		PageInfo<QuestionBankVo> findAllQuestionBank = questionBankService.findAllQuestionBank(pageInfo);
-		
-		return findAllQuestionBank;
+        return questionBankService.findAllQuestionBank(pageInfo);
 	}
 	
 	/**
 	 * 添加题目
-	 * @return
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/addquestionbank")
+	@RequestMapping(value = "/addQuestionBank")
 	public boolean addQuestionBank(@RequestBody QuestionBankVo questionBankVo) {
-		
-		//添加题目
-		boolean addQuestionBank = questionBankService.addQuestionBank(questionBankVo);
-		
-		return addQuestionBank;
+        return questionBankService.addQuestionBank(questionBankVo);
 	}
 	
 	/**
 	 * 删除试卷
-	 * @param questionBankId
-	 * @return
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/deletequestionbank")
 	public boolean deleteQuestionBank(@RequestBody QuestionBankVo questionBankVo) {
-		
-		boolean deleteQuestionBankState = questionBankService.deleteQuestionBank(questionBankVo.getQuestionBankId().toString());
-		
-		return deleteQuestionBankState;
+        return questionBankService.deleteQuestionBank(questionBankVo.getQuestionBankId().toString());
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "/updatequestionbank-{id}")
 	public boolean updateQuestionBank(@RequestBody QuestionBankVo questionBankVo, @PathVariable String id) {
 		questionBankVo.setQuestionBankId(Integer.parseInt(id));
-		boolean updateQuestionBank = questionBankService.updateQuestionBank(questionBankVo);
-		
-		return updateQuestionBank;
+        return questionBankService.updateQuestionBank(questionBankVo);
 	}
 	
 }

@@ -98,7 +98,4 @@ public class Submission implements Serializable {
 	 */
 	@Column(name="submission_code",columnDefinition = "text")
 	private String code;
-	
-	@Transient
-	private static final long serialVersionUID = -1984683070957842963L;
 }

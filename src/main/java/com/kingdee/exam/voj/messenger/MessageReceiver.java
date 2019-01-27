@@ -75,7 +75,7 @@ public class MessageReceiver implements MessageListener {
 		boolean isSuccessful = mapMessage.getBoolean("isSuccessful");
 		String log = mapMessage.getString("log");
 		if ( isSuccessful ) {
-			String message = "Compile Successfully.\n\n";
+			String message = "代码编译成功。开始测试数据。\n\n";
 			eventPublisher.publishEvent(new SubmissionEvent(this, submissionId, "Running", message, false));
 			LOGGER.info(String.format("Submission #%d returned [Compile Successfully].", submissionId));
 		} else {

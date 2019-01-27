@@ -1,5 +1,6 @@
 package com.kingdee.exam.voj.messenger;
 
+import com.kingdee.exam.util.AESEncryptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.event.EventListener;
@@ -65,6 +66,10 @@ public class ApplicationEventListener {
 		Map<String, String> mapMessage = new HashMap<>(3, 1);
 		mapMessage.put("judgeResult", judgeResult);
 		mapMessage.put("message", message);
+        if ( isCompleted ) {
+            String accessRate = new AESEncryptor().encrypt(message.split("通过率 ")[1].split("%")[0]);
+            mapMessage.put("accessRate", accessRate);
+        }
 		sseEmitter.send(mapMessage);
 		
 		if ( isCompleted ) {

@@ -6,7 +6,6 @@
 	<!-- ResultMap -->
 	<resultMap id="ProblemResultMap" type="com.kingdee.exam.voj.model.Problem">
 		<id property="problemId" column="problem_id" />
-		<result property="isPublic" column="problem_is_public" />
 		<result property="problemName" column="problem_name" />
 		<result property="totalSubmission" column="total_submission" />
 		<result property="acceptedSubmission" column="accepted_submission" />
@@ -36,9 +35,6 @@
 		NATURAL JOIN voj_problem_category_relationships pcr
 		NATURAL JOIN voj_problem_categories pc
 		<where>
-			<if test="isPublicOnly == true">
-				problem_is_public = 1
-			</if>
 			<if test="keyword != null and keyword != ''">
 				AND problem_name LIKE "%"#{keyword}"%"
 			</if>
@@ -68,9 +64,6 @@
 			SELECT problem_id
 			FROM voj_problems
 			WHERE problem_id >= #{problemId}
-			<if test="isPublicOnly == true">
-				AND problem_is_public = 1
-			</if>
 			LIMIT #{limit}
 		) p
 	</select>
@@ -110,7 +103,7 @@
 		parameterType="map"
 		resultMap="ProblemResultMap"
 		useCache="true">
-		SELECT DISTINCT(p.problem_id), problem_name, problem_is_public, (
+		SELECT DISTINCT(p.problem_id), problem_name, (
 			SELECT COUNT(*) 
 			FROM voj_submissions s 
 			WHERE s.problem_id = p.problem_id
@@ -121,21 +114,12 @@
 		) AS accepted_submission
 		FROM voj_problems p 
 		NATURAL JOIN voj_problem_category_relationships pcr
-		<if test="problemTagId != 0">
-			NATURAL JOIN voj_problem_tag_relationships ptr
-		</if>
 		WHERE p.problem_id &gt;= #{problemId}
-		<if test="isPublicOnly == true">
-			AND problem_is_public = 1
-		</if>
 		<if test="keyword != null and keyword != ''">
 			AND problem_name LIKE "%"#{keyword}"%"
 		</if>
 		<if test="problemCategoryId != 0">
 			AND problem_category_id = #{problemCategoryId}
-		</if>
-		<if test="problemTagId != 0">
-			AND problem_tag_id = #{problemTagId}
 		</if>
 		LIMIT #{limit}
 	</select>
@@ -145,14 +129,14 @@
 		keyProperty="problemId" 
 		keyColumn="problem_id"
 		useGeneratedKeys="true">
-		INSERT INTO voj_problems (problem_is_public, problem_name, problem_time_limit, problem_memory_limit, problem_description, problem_input_format, problem_output_format, problem_sample_input, problem_sample_output, problem_hint) 
-		VALUES (#{isPublic}, #{problemName}, #{timeLimit}, #{memoryLimit}, #{description}, #{inputFormat}, #{outputFormat}, #{sampleInput}, #{sampleOutput}, #{hint})
+		INSERT INTO voj_problems (question_bank_id,problem_name, problem_time_limit, problem_memory_limit, problem_description, problem_input_format, problem_output_format, problem_sample_input, problem_sample_output, problem_hint)
+		VALUES (#{questionBankId}, #{problemName}, #{timeLimit}, #{memoryLimit}, #{description}, #{inputFormat}, #{outputFormat}, #{sampleInput}, #{sampleOutput}, #{hint})
 	</insert>
 	<update id="updateProblem"
 		parameterType="com.kingdee.exam.voj.model.Problem"
 		flushCache="true">
 		UPDATE voj_problems 
-		SET problem_is_public = #{isPublic}, problem_name = #{problemName}, problem_time_limit = #{timeLimit}, problem_memory_limit = #{memoryLimit}, problem_description = #{description}, problem_input_format = #{inputFormat}, problem_output_format = #{outputFormat}, problem_sample_input = #{sampleInput}, problem_sample_output = #{sampleOutput}, problem_hint = #{hint} 
+		SET problem_name = #{problemName}, problem_time_limit = #{timeLimit}, problem_memory_limit = #{memoryLimit}, problem_description = #{description}, problem_input_format = #{inputFormat}, problem_output_format = #{outputFormat}, problem_sample_input = #{sampleInput}, problem_sample_output = #{sampleOutput}, problem_hint = #{hint}
 		WHERE problem_id = #{problemId}
 	</update>
 	<delete id="deleteProblem"

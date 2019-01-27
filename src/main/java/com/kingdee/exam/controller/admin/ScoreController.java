@@ -14,10 +14,14 @@ import java.util.List;
 @RequestMapping("/admin")
 public class ScoreController {
 	
-	@Autowired
-	private ScoreService scoreService;
-	
-	@RequestMapping(value="/score.html",method = RequestMethod.GET)
+	private final ScoreService scoreService;
+
+    @Autowired
+    public ScoreController(ScoreService scoreService) {
+        this.scoreService = scoreService;
+    }
+
+    @RequestMapping(value="/score.html",method = RequestMethod.GET)
 	public ModelAndView findUserExamInfo(){
 		List<scoreVo> listScore=scoreService.findUserExamInfo();
 		System.out.println("---------------------");

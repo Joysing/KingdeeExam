@@ -55,7 +55,4 @@ public class Language implements Serializable {
 	@JsonIgnore
     @Column(name="language_run_command")
 	private String runCommand;
-
-    @Transient
-	private static final long serialVersionUID = 9065824880175832696L;
 }
