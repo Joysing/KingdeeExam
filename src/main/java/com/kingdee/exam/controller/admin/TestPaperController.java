@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin")
@@ -120,14 +122,24 @@ public class TestPaperController {
     @ResponseBody
     public ModelAndView editItemList(String testpaperId){
     	List<QuestionBankVo> findAllQuestionBank = questionBankMapper.findAllQuestionBank();
-    	List<TestPaperTestsVo> selectIdTestPaperQuesion=testPaperTestService.findSelectTestPaperQuesion(Integer.parseInt(testpaperId));
+    	List<TestPaperTestsVo> selectIdTestPaperQuestion=testPaperTestService.findSelectTestPaperQuesion(Integer.parseInt(testpaperId));
 		ModelAndView modelAndView = new ModelAndView();
     	modelAndView.addObject("findAllQuestionBank", findAllQuestionBank);
-    	modelAndView.addObject("selectIdTestPaperQuesion", selectIdTestPaperQuesion);
+    	modelAndView.addObject("selectIdTestPaperQuesion", selectIdTestPaperQuestion);
     	modelAndView.setViewName("_admin/editItemList");   	
     	return modelAndView;
     }
-    
+
+    @RequestMapping(value="/getAllQuestions")
+    @ResponseBody
+    public Object getAllQuestions(String testpaperId){
+        List<QuestionBankVo> AllQuestionBank = questionBankMapper.findAllQuestionBank();
+        List<TestPaperTestsVo> selectIdTestPaperQuestion=testPaperTestService.findSelectTestPaperQuesion(Integer.parseInt(testpaperId));
+        Map<String,List<?>> resultMap=new HashMap<>();
+        resultMap.put("allQuestionBank", AllQuestionBank);
+        resultMap.put("selectIdTestPaperQuestion", selectIdTestPaperQuestion);
+        return resultMap;
+    }
     //修改试卷试题
     @RequestMapping(value="/editTestPaperQuestion")
     @ResponseBody

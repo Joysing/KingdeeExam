@@ -1,0 +1,258 @@
+<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:v-on="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exam</title>
+
+    <!-- Bootstrap -->
+    <link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css"/>
+    <link rel="stylesheet" href="/static/css/style.css"/>
+    <link rel="stylesheet" href="/static/assets/jedate/skin/jedate.css">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<style>
+    .backs {
+        background: url(/static/img/kdBuilding.jpg);
+        background-size: 100%;
+    }
+
+    .box {
+        box-shadow: 0 0 10px #000 !important;
+    }
+
+    .pad {
+        margin-top: 1.5%;
+        margin-left: 0.5%;
+    }
+</style>
+<body class="backs">
+
+<@sidbarTemplet.header />
+
+<div class="container-fluid" id="app">
+    <div class="col-xs-2 sidebar box ">
+        <ul class="nav nav-sidebar">
+            <@sidbarTemplet.sidbar "test-paper.html" />
+        </ul>
+    </div>
+    <div class="col-xs-10 col-xs-offset-2 content" id="content">
+        <!--content-->
+
+        <div class="panel panel-primary box pad">
+            <div class="panel-heading primary-color">
+                <h2 class="panel-title pull-left" style="line-height: 39px;">试卷</h2>
+                <button class="pull-right btn btn-primary" data-toggle="modal"
+                        v-on:click="addTestPaper()">新增试卷
+                </button>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">
+
+                <table class="table table-hover text-center table-bordered">
+                    <thead>
+                    <tr>
+                        <th class="text-center">id</th>
+                        <th class="text-center">描述</th>
+                        <th class="text-center">开始时间</th>
+                        <th class="text-center">结束时间</th>
+                        <th class="text-center">试卷状态</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="item in TestPaper">
+                        <td v-text="item.testpaperId"></td>
+                        <td v-text="item.testpaperName"></td>
+                        <td v-text="item.startDate"></td>
+                        <td v-text="item.endDate"></td>
+                        <td v-text="item.isStart"></td>
+                        <td>
+                            <a class="btn btn-xs"
+                               v-bind:href="'/admin/editTestPaperInfo.html?testpaperId='+item.testpaperId">修改信息</a>
+                            <a class="btn btn-xs"
+                               v-bind:href="'/admin/editItemList.html?testpaperId='+item.testpaperId">增加试题</a>
+                            <a class="btn btn-xs" v-bind:onclick="'deletel('+item.testpaperId+')'">删除</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <!--content-->
+
+    <div class="modal fade bs-example-modal-lg" id="addTestPaper">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary primary-color">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">新增试卷</h4>
+                </div>
+                <!--添加题-->
+                <div class="modal-body">
+                    <form class="form-horizontal container" id="defaultForm" role="form" onsubmit="return mySubmit()">
+                        <div class="form-group">
+                            <label for="firstname" class="col-xs-2 control-label">描述：</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="testpaperName" name="testpaperName"
+                                       placeholder="请输入描述">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">开始时间：</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="inpstart" name="startDate" readonly value=""
+                                       placeholder="请选择开始时间">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-2 control-label">结束时间：</label>
+                            <div class="col-sm-5">
+                                <input type="text" class="form-control" id="inpend" name="endDate" readonly
+                                       placeholder="请选择结束时间">
+                            </div>
+                        </div>
+                    </form>
+                    <!--end添加题-->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            关闭
+                        </button>
+                        <button type="button" class="btn btn-primary" v-on:click="addTestPaperModel()">
+                            新增试卷
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/assets/jedate/jedate.js"></script>
+<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
+<script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+<script>
+    function deletel(testpaperId) {
+        if (confirm("是否要删除考卷 ?") == false) {
+            return;
+        }
+        $.ajax({
+            url: "/admin/testDelete",
+            data: {"testpaperId": testpaperId},
+            contentType: "application/json",
+            dataType: "json",
+            type: "GET",
+            traditional: true,
+            success: function (data) {
+                toastr.success('操作成功!', "删除试卷");
+                getAllTestPaper();
+                var idObject = document.getElementById(testpaperId);
+                idObject.parentNode.removeChild(idObject);
+            }
+        });
+
+    }
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            TestPaper: {}
+        },
+        methods: {
+            addTestPaper: function () {
+                $('#addTestPaper').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            },
+            addTestPaperModel: function () {
+                ajaxSubmit("/admin/addtestpaper", $("#defaultForm").serialize(),
+                    function (data) {
+                        if (data) {
+                            toastr.success('操作成功!', "新增试卷");
+                            getAllTestPaper();
+                            $('#addTestPaper').modal('hide')
+                            $("#testpaperName").val("");
+                            $("#inpstart").val("");
+                            $("#inpend").val("");
+                        } else {
+                            toastr.error('操作失败!', "新增试卷");
+                        }
+                    },
+                    function (data) {
+                        toastr.error('网络错误');
+                    }
+                );
+            }
+        }
+    });
+
+    function getAllTestPaper() {
+        ajaxSubmitJSON("/admin/getalltestpaper", "",
+            function (data) {
+                vm.TestPaper = data;
+                console.log(data);
+            },
+            function (data) {
+                toastr.error('网络错误');
+            }
+        );
+    }
+
+    getAllTestPaper();
+
+
+    var start = {
+        dateCell: '#inpstart',
+        format: 'YYYY-MM-DD hh:mm',
+        minDate: '2014-06-16 23:59:59', //设定最小日期为当前日期
+        festival: true,
+        maxDate: '2099-06-16 23:59:59', //最大日期
+        isTime: true,
+        choosefun: function (datas) {
+            end.minDate = datas; //开始日选好后，重置结束日的最小日期
+        }
+    };
+    var end = {
+        dateCell: '#inpend',
+        format: 'YYYY-MM-DD hh:mm',
+        minDate: jeDate.now(0), //设定最小日期为当前日期
+        festival: true,
+        maxDate: '2099-06-16 23:59:59', //最大日期
+        isTime: true,
+        choosefun: function (datas) {
+            start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
+        },
+        okfun: function (val) {
+            alert(val)
+        }
+    };
+    jeDate(start);
+    jeDate(end);
+
+    function mySubmit() {
+        return false;
+    }
+</script>
+</body>
+
+</html>

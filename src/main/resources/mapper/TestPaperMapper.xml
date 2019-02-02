@@ -25,7 +25,7 @@
   <insert id="insert" parameterType="com.kingdee.exam.entity.TestPaper">
     insert into testpaper (testpaper_id, testpaper_name, testpaper_state, 
       start_date, end_date)
-    values (#{testpaperId,jdbcType=INTEGER}, #{testpaperName,jdbcType=VARCHAR}, #{testpaperState,jdbcType=INTEGER}, 
+    values (#{testpaperId,jdbcType=INTEGER}, #{testpaperName,jdbcType=VARCHAR}, #{testpaperState,jdbcType=INTEGER},
       #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.kingdee.exam.entity.TestPaper">
