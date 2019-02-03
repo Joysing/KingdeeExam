@@ -1,106 +1,64 @@
-<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
 <!DOCTYPE html>
+<#import "/_admin/common/template.html" as template>
 <html lang="zh-cn">
-
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Exam</title>
-
-<!-- Bootstrap -->
-<link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
-<link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
-<link href="/static/assets/data-tables/DT_bootstrap.css"/>
-<link rel="stylesheet" href="/static/css/style.css" />
-<link rel="stylesheet" href="/static/css/quanju.css" />
-<link rel="" href=""/>
-
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exam</title>
+    <link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
 </head>
-<style>
-  .backs{
-  
-  background: url(/static/img/kdBuilding.jpg);
-  background-size:100%;
-  }
-   .box{
-  box-shadow:0 0 10px #000 !important;
-  }
-   .pad{
-  margin-top:1.5%;
-  margin-left:0.5%;
-  }
-  </style>
+<@template.header "index.html"/>
+<div class="container-fluid " id="box">
+    <div class="col-xs-12 content" id="content">
+        <!--content-->
 
-<body class="backs">
+        <div class="panel panel-primary box pad">
+            <div class="panel-heading primary-color">
+                <h2 class="panel-title pull-left" style="line-height: 39px;">成绩</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="adv-table editable-table ">
+            <div class="panel-body">
+                <table id="editable-sample" class="table table-striped table-hover table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">学号</th>
+                            <th class="text-center">姓名</th>
+                            <th class="text-center">试卷</th>
+                            <th class="text-center">分数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <#list listScore as listScore>
+                        <tr>
+                            <td>${listScore.usersId}</td>
+                            <td>${listScore.username!}</td>
+                            <td>${listScore.testpaperId!}</td>
+                            <td>${listScore.fraction}</td>
+                        </tr>
+                        </#list>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
 
-<@sidbarTemplet.header />
+    </div>
+    <!--content-->
+</div>
 
-	<div class="container-fluid " id="box">
-		<div class="col-xs-2 sidebar box">
-			<ul class="nav nav-sidebar">
-				<@sidbarTemplet.sidbar "score.html" />
-			</ul>
-		</div>
-		<div class="col-xs-10 col-xs-offset-2 content" id="content">
-			<!--content-->
-
-			<div class="panel panel-primary box pad">
-				<div class="panel-heading primary-color">
-					<h2 class="panel-title pull-left" style="line-height: 39px;">成绩</h2>
-					<div class="clearfix"></div>
-				</div>
-				<div class="adv-table editable-table ">
-				<div class="panel-body">
-					<table id="editable-sample" class="table table-striped table-hover table-bordered">
-						<thead>
-							<tr>
-								<th class="text-center">学号</th>
-								<th class="text-center">姓名</th>
-								<th class="text-center">试卷</th>
-								<th class="text-center">分数</th>
-							</tr>
-						</thead>
-						<tbody>
-						<#list listScore as listScore>
-							<tr>
-								<td>${listScore.usersId}</td>
-								<td>${listScore.username!}</td>
-								<td>${listScore.testpaperId!}</td>
-								<td>${listScore.fraction}</td>
-							</tr>
-							</#list>
-						</tbody>
-					</table>
-				</div>
-				</div>
-			</div>
-
-		</div>
-		<!--content-->
-	</div>
-
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="/static/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
-		<script type="text/javascript" src="/static/js/common.js"></script>
-		<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
-		<script src="/static/js/editable-table.js"></script>
-		<script type="text/javascript" src="/static/assets/data-tables/DT_bootstrap.js"></script>
-		<script class="include" type="text/javascript" src="/static/js/jquery.dcjqaccordion.2.7.js"></script>
-		<script>
-        jQuery(document).ready(function() {   
-            var a = EditableTable.init();
-        }); 
-		</script>
-</body>
-
+<script type="text/javascript" src="/static/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
+<script src="/static/js/editable-table.js"></script>
+<script type="text/javascript" src="/static/assets/data-tables/DT_bootstrap.js"></script>
+<script class="include" type="text/javascript" src="/static/js/jquery.dcjqaccordion.2.7.js"></script>
+<script>
+jQuery(document).ready(function() {
+    var a = EditableTable.init();
+});
+</script>
+<@template.footer/>
 </html>

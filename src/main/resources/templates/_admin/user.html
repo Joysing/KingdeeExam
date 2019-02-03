@@ -1,52 +1,16 @@
-<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
 <!DOCTYPE html>
+<#import "/_admin/common/template.html" as template>
 <html lang="zh-cn" xmlns:v-on="http://www.w3.org/1999/xhtml">
-
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Exam</title>
-
-<!-- Bootstrap -->
-<link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/style.css" />
-<link rel="stylesheet" href="/static/css/quanju.css" />
-<link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
-<link href="/static/assets/data-tables/DT_bootstrap.css"/>
-
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-      <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Exam</title>
+    <link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
 </head>
-<style>
-  .backs{
-  
-  background: url(/static/img/kdBuilding.jpg);
-  background-size:100%;
-  }
-   .box{
-  box-shadow:0 0 10px #000 !important;
-  }
-  .pad{
-  margin-top:1.5%;
-  margin-left:0.5%;
-  }
-  </style>
-<body class="backs">
-
-<@sidbarTemplet.header />
-
+<@template.header "index.html"/>
 	<div class="container-fluid">
-		<div class="col-xs-2 sidebar box">
-			<ul class="nav nav-sidebar">
-				<@sidbarTemplet.sidbar "user.html" />
-			</ul>
-		</div>
-		<div class="col-xs-10 col-xs-offset-2 content" id="content">
+		<div class="col-xs-12 content" id="content">
 			<!--content-->
 
 			<div class="panel panel-primary box pad">
@@ -181,13 +145,6 @@
                    }
                    $("#options-views").hide();
                },
-               show: function() {
-                   if(this.QuestionBank.answer != 'A' || this.QuestionBank.answer!= 'B' || this.QuestionBank.answer!= 'C' || this.QuestionBank.answer!= 'D') {
-                       this.QuestionBank.answer = 'A';
-                       this.QuestionBank.testsType = 1;
-                   }
-                   $("#options-views").show();
-               },
                deleteQuestionBank: function(id) {
                    ajaxSubmitJSON("/admin/deletequestionbank", JSON.stringify({"questionBankId": id}),
                        function(data) {
@@ -215,7 +172,7 @@
                    vm.QuestionBank.answer = data.answer;
                    vm.QuestionBank.testsType = data.testsType;
                    vm.questionBankId = data.questionBankId;
-                   if(data.testsType == 1) {
+                   if(data.testsType === 1) {
                        vm.QuestionBank.options = data.options;
                    } else {
                        vm.hide();
@@ -262,7 +219,7 @@
        });
    });
     function delete1(userId){
-        if (confirm("是否要删除这位考生 ?") == false) {
+        if (confirm("是否要删除这位考生 ?") === false) {
             return;
         }
         $.ajax({
@@ -281,6 +238,6 @@
 
     }
     </script>
-</body>
 
+<@template.footer/>
 </html>

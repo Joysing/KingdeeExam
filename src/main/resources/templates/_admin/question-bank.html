@@ -1,295 +1,276 @@
-<#import "/_admin/lib/sidbar_templet.html" as sidbarTemplet>
 <!DOCTYPE html>
-<html lang="zh-cn" xmlns:v-on="http://www.w3.org/1999/xhtml">
-
+<#import "/_admin/common/template.html" as template>
+<html lang="zh-cn" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>题库管理 金蝶在线笔试</title>
-
-    <!-- Bootstrap -->
-    <link href="/static/assets/yeti/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
     <link rel="stylesheet" href="/static/css/font-awesome.min.css">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-          <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
+<@template.header "index.html"/>
+<div class="container-fluid box" >
+    <div class="col-xs-12 content" id="content">
+        <!--content-->
+        <div class="panel panel-primary box pad" >
+            <div class="panel-heading primary-color">
+                <h2 class="panel-title pull-left" style="line-height: 39px;">题库</h2>
+                <button class="pull-right btn btn-primary" data-toggle="modal"
+                    v-on:click="add()">新增题</button>
+                <div class="clearfix"></div>
+            </div>
+            <div class="panel-body">
+                <table class="table table-hover text-center table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">题干</th>
+                            <th class="text-center">选项答案</th>
+                            <th class="text-center">正确答案</th>
+                            <th class="text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in QuestionBankVoList.list">
+                            <td v-text="item.stem" width="40%"></td>
+                            <td width="30%">
+                                <span v-for="op in item.options" >
+                                    <span v-text="op.op+'、'+op.content" v-bind:class="[item.answer==op.op ? 'label-success':'','label']"></span>
+                                    &nbsp;
+                                </span>
+                            </td>
+                            <td v-text="item.answer"></td>
+                            <td>
+                                <a class="btn btn-xs btn-info" title="修改" v-on:click="update(item)">
+                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
+                                </a>
+                                <a class="btn btn-xs btn-danger" title="删除" v-on:click="deleteQuestionBank(item.questionBankId)">
+                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                                </a>
+                            </td>
+                        </tr>
+                     <tr v-if="QuestionBankVoList.list == 0">
+                         <td colspan="9" align="center"
+                             style="vertical-align: middle; padding-top: 10px; padding-bottom: 10px;">暂无数据</td>
+                     </tr>
+                    </tbody>
+                </table>
+                <div class="pull-right" v-if="QuestionBankVoList.list != 0">
+                    <ul class="pagination">
+                        <li :class="QuestionBankVoList.isFirstPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.prePage)">&laquo;</a></li>
+                        <li v-for="n in QuestionBankVoList.pages" :class="n == QuestionBankVoList.pageNum? 'active':''"><a href="javascript:void(0);" v-on:click="page(n)" v-text="n"></a></li>
+                        <li :class="QuestionBankVoList.isLastPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.nextPage)">&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
 
-<style>
-  .backs{
-      background-size:100%;
-      background: url(/static/img/kdBuilding.jpg) fixed;
-  }
- .box{
-  box-shadow:0 0 10px #000 !important;
-  }
-   .pad{
-  margin-top:1.5%;
-  margin-left:0.5%;
-  }
-</style>
-<body class="backs">
+        <!--新增题修改题-->
+        <div class="modal fade bs-example-modal-lg" id="myModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary primary-color">
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" v-if="btnState == 0">新增题</h4>
+                        <h4 class="modal-title" v-if="btnState == 1">修改题</h4>
+                    </div>
+                    <!--添加题-->
+                    <div class="modal-body">
+                        <form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post" onsubmit="return mySubmit(true)">
+                            <div class="form-group">
+                                <label class="col-xs-2 control-label">题目：</label>
+                                <div class="col-sm-10">
+                                    <textarea type="text" class="form-control" name="stem" v-model="QuestionBank.stem" placeholder="请输入题目">
+                                    </textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">类型：</label>
+                                <div class="col-sm-3">
+                                    <input id="op-choose" v-on:click="choose()" type="radio" value="1" v-model="QuestionBank.testsType">
+                                    <label for="op-choose">选择题</label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input id="op-judge" v-on:click="judge()" type="radio" value="0" v-model="QuestionBank.testsType">
+                                    <label for="op-judge">判断题</label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <input id="op-coding" v-on:click="coding()" type="radio" value="2" v-model="QuestionBank.testsType">
+                                    <label for="op-coding">编程题</label>
+                                </div>
+                            </div>
+                            <div id="options-views">
+                            <!-- 开始 -->
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">选项：</label>
+                                    <div class="col-sm-5">
+                                        <input type="hidden" v-model="QuestionBank.options" v-model="QuestionBank.options[0].op">
+                                        <input type="text" class="form-control" v-model="QuestionBank.options[0].content" placeholder="请输入A的内容">
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input type="hidden" v-model="QuestionBank.options[1].op">
+                                        <input type="text" class="form-control" v-model="QuestionBank.options[1].content" placeholder="请输入B的内容">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label"></label>
+                                    <div class="col-sm-5">
+                                        <input type="hidden" v-model="QuestionBank.options[2].op">
+                                        <input type="text" class="form-control" v-model="QuestionBank.options[2].content" placeholder="请输入C的内容">
+                                    </div>
+                                    <div class="col-sm-5">
+                                        <input type="hidden" v-model="QuestionBank.options[3].op">
+                                        <input type="text" class="form-control" v-model="QuestionBank.options[3].content" placeholder="请输入D的内容">
+                                    </div>
+                                </div>
+                            <!-- 结束  放一个对象里面-->
+                            </div>
+                            <div class="form-group" v-if="QuestionBank.testsType == 2"  id="problem-form">
+                                <!-- Content -->
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="time-limit"> 时间限制 (ms)：</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="time-limit" placeholder="时间限制 (ms)" class="col-xs-10 col-sm-5" maxlength="8"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="memory-limit"> 内存限制 (KB)：</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" id="memory-limit" placeholder="内存限制 (KB)" class="col-xs-10 col-sm-5" maxlength="8"/>
+                                    </div>
+                                </div>
+                                <div class="space-4"></div>
 
-<@sidbarTemplet.header />
-
-	<div class="container-fluid box" >
-		<div class="col-xs-2 sidebar box">
-			<ul class="nav nav-sidebar">
-				<@sidbarTemplet.sidbar "question-bank.html" />
-			</ul>
-		</div>
-		<div class="col-xs-10 col-xs-offset-2 content" id="content">
-			<!--content-->
-			<div class="panel panel-primary box pad" >
-				<div class="panel-heading primary-color">
-					<h2 class="panel-title pull-left" style="line-height: 39px;">题库</h2>
-					<button class="pull-right btn btn-primary" data-toggle="modal"
-						v-on:click="add()">新增题</button>
-					<div class="clearfix"></div>
-				</div>
-				<div class="panel-body">
-					<table class="table table-hover text-center table-bordered">
-						<thead>
-							<tr>
-								<th class="text-center">题干</th>
-								<th class="text-center">选项答案</th>
-								<th class="text-center">正确答案</th>
-								<th class="text-center">操作</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="item in QuestionBankVoList.list">
-								<td v-text="item.stem" width="40%"></td>
-								<td width="30%"><span v-for="op in item.options">【<i v-text="op.op"></i>、<i v-text="op.content"></i>】</span></td>
-								<td v-text="item.answer"></td>
-								<td>
-									<button class="btn btn-xs" v-on:click="update(item)">修改</button>
-									<button class="btn btn-xs" v-on:click="deleteQuestionBank(item.questionBankId)">删除</button>
-								</td>
-							</tr>
-                         <tr v-if="QuestionBankVoList.list == 0">
-                             <td colspan="9" align="center"
-                                 style="vertical-align: middle; padding-top: 10px; padding-bottom: 10px;">暂无数据</td>
-                         </tr>
-						</tbody>
-					</table>
-					<div class="pull-right" v-if="QuestionBankVoList.list != 0">
-						<ul class="pagination">
-							<li :class="QuestionBankVoList.isFirstPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.prePage)">&laquo;</a></li>
-							<li v-for="n in QuestionBankVoList.pages" :class="n == QuestionBankVoList.pageNum? 'active':''"><a href="javascript:void(0);" v-on:click="page(n)" v-text="n"></a></li>
-							<li :class="QuestionBankVoList.isLastPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.nextPage)">&raquo;</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="modal fade bs-example-modal-lg" id="myModal">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-						<div class="modal-header bg-primary primary-color">
-							<button type="button" class="close" data-dismiss="modal"
-								aria-hidden="true">&times;</button>
-							<h4 class="modal-title" v-if="btnState == 0">新增题</h4>
-							<h4 class="modal-title" v-if="btnState == 1">修改题</h4>
-						</div>
-						<!--添加题-->
-						<div class="modal-body">
-							<form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post" onsubmit="return mySubmit(true)">
-								<div class="form-group">
-									<label class="col-xs-2 control-label">题目：</label>
-									<div class="col-sm-10">
-										<textarea type="text" class="form-control" name="stem" v-model="QuestionBank.stem" placeholder="请输入题目">
-										</textarea>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label">类型：</label>
-									<div class="col-sm-3">
-										<input id="op-choose" v-on:click="choose()" type="radio" value="1" v-model="QuestionBank.testsType">
-										<label for="op-choose">选择题</label>
-									</div>
-									<div class="col-sm-3">
-										<input id="op-judge" v-on:click="judge()" type="radio" value="0" v-model="QuestionBank.testsType">
-                                        <label for="op-judge">判断题</label>
-									</div>
-									<div class="col-sm-3">
-										<input id="op-coding" v-on:click="coding()" type="radio" value="2" v-model="QuestionBank.testsType">
-                                        <label for="op-coding">编程题</label>
-									</div>
-								</div>
-								<div id="options-views">
-								<!-- 开始 -->
-									<div class="form-group">
-										<label class="col-sm-2 control-label">选项：</label>
-										<div class="col-sm-5">
-											<input type="hidden" v-model="QuestionBank.options" v-model="QuestionBank.options[0].op">
-											<input type="text" class="form-control" v-model="QuestionBank.options[0].content" placeholder="请输入A的内容">
-										</div>
-										<div class="col-sm-5">
-											<input type="hidden" v-model="QuestionBank.options[1].op">
-											<input type="text" class="form-control" v-model="QuestionBank.options[1].content" placeholder="请输入B的内容">
-										</div>
-									</div>
-									<div class="form-group">
-										<label class="col-sm-2 control-label"></label>
-										<div class="col-sm-5">
-											<input type="hidden" v-model="QuestionBank.options[2].op">
-											<input type="text" class="form-control" v-model="QuestionBank.options[2].content" placeholder="请输入C的内容">
-										</div>
-										<div class="col-sm-5">
-											<input type="hidden" v-model="QuestionBank.options[3].op">
-											<input type="text" class="form-control" v-model="QuestionBank.options[3].content" placeholder="请输入D的内容">
-										</div>
-									</div>
-								<!-- 结束  放一个对象里面-->
-								</div>
-								<div class="form-group" v-if="QuestionBank.testsType == 2">
-                                    <!-- Content -->
-                                    <div id="content1">
-                                        <h2 class="page-header"><i class="fa fa-file"></i>添加新试题</h2>
-                                        <div id="problem-form">
-                                            <div class="row-fluid">
-                                                <div class="span8">
-                                                    <div class="alert alert-error hide"></div> <!-- .alert-error -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="problem-name">试题名称</label>
-                                                        <input id="problem-name" class="span12" type="text" maxlength="128" />
-                                                    </div> <!-- .control-group -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="time-limit">时间限制 (ms)</label>
-                                                        <input id="time-limit" class="span12" type="text" maxlength="8" />
-                                                    </div> <!-- .control-group -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="memory-limit">内存限制 (KB)</label>
-                                                        <input id="memory-limit" class="span12" type="text" maxlength="8" />
-                                                    </div> <!-- .control-group -->
-                                                    <div class="row-fluid">
-                                                        <div class="span12">
-                                                            <label for="wmd-input">试题描述</label>
-                                                            <div id="markdown-editor">
-                                                                <div class="wmd-panel">
-                                                                    <div id="wmd-button-bar" class="wmd-button-bar"></div> <!-- #wmd-button-bar -->
-                                                                    <textarea id="wmd-input" class="wmd-input"></textarea>
-                                                                </div> <!-- .wmd-panel -->
-                                                                <div id="wmd-preview" class="wmd-panel wmd-preview"></div> <!-- .wmd-preview -->
-                                                            </div> <!-- #markdown-editor -->
-                                                        </div> <!-- .span12 -->
-                                                    </div> <!-- .row-fluid -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="hint">提示</label>
-                                                        <textarea id="hint" class="span12"></textarea>
-                                                    </div> <!-- .control-group -->
-                                                    <h4>输入输出</h4>
-                                                    <div class="control-group row-fluid">
-                                                        <label for="input-format">输入格式</label>
-                                                        <textarea id="input-format" class="span12"></textarea>
-                                                    </div> <!-- .control-group -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="output-format">输出格式</label>
-                                                        <textarea id="output-format" class="span12"></textarea>
-                                                    </div> <!-- .control-group -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="input-sample">输入样例</label>
-                                                        <textarea id="input-sample" class="span12"></textarea>
-                                                    </div> <!-- .control-group -->
-                                                    <div class="control-group row-fluid">
-                                                        <label for="output-sample">输出样例</label>
-                                                        <textarea id="output-sample" class="span12"></textarea>
-                                                    </div> <!-- .control-group -->
-                                                    <div class="row-fluid">
-                                                        <div class="span6">
-                                                            <h4>测试用例</h4>
-                                                        </div> <!-- .span6 -->
-                                                        <div class="span6 text-right">
-                                                            <a id="new-test-case" title="添加测试用例" href="javascript:newTestCase();">
-                                                            <i class="fa fa-plus-circle"></i>
-                                                            </a>
-                                                        </div> <!-- .span6 -->
-                                                    </div> <!-- .row-fluid -->
-                                                    <div class="row-fluid">
-                                                        <div class="span12">
-                                                            <div id="test-cases">
-                                                                <p id="no-test-cases">暂无测试用例.</p>
-                                                                <ul></ul>
-                                                            </div> <!-- #test-cases -->
-                                                        </div> <!-- .span12 -->
-                                                    </div> <!-- .row-fluid -->
-                                                </div> <!-- .span8 -->
-                                                <div class="span4">
-                                                    <div class="section">
-                                                        <div class="header">
-                                                            <h5>创建试题</h5>
-                                                        </div> <!-- .header -->
-                                                        <div class="body">
-                                                            <div class="row-fluid">
-                                                                <div class="span8">
-                                                                    精确匹配测试用例
-                                                                </div> <!--- .span8 -->
-                                                                <div class="span4 text-right">
-                                                                    <input id="problem-is-exactly-match" type="checkbox" data-toggle="switch"  title=""/>
-                                                                </div> <!-- .span4 -->
-                                                            </div> <!-- .row-fluid -->
-                                                        </div> <!-- .body -->
-                                                        <div class="footer text-right">
-                                                            <button class="btn btn-primary" v-on:click="onSubmit()" type="button">发布</button>
-                                                        </div> <!-- .footer -->
-                                                    </div> <!-- .section -->
-                                                </div> <!-- .span4 -->
-                                            </div> <!-- .row-fluid -->
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="wmd-input">试题描述：</label>
+                                    <div class="col-sm-9">
+                                        <div class="pos-rel">
+                                            <textarea class="form-control limited autosize-transition" id="wmd-input" maxlength="50"></textarea>
                                         </div>
-                                    </div> <!-- #content -->
-								</div>
-								<div class="form-group" v-if="QuestionBank.testsType == 1">
-									<label class="col-xs-2 control-label">正确答案：</label>
-									<div class="col-sm-5">
-										<select class="form-control" v-model="QuestionBank.answer">
-										  <option value="A">A</option>
-										  <option value="B">B</option>
-										  <option value="C">C</option>
-										  <option value="D">D</option>
-										</select>
-									</div>
-								</div>
-								<div class="form-group" v-if="QuestionBank.testsType == 0">
-									<label class="col-xs-2 control-label">正确答案：</label>
-									<div class="col-sm-5">
-										<select class="form-control" v-model="QuestionBank.answer">
-										  <option value="0">错误</option>
-										  <option value="1">正确</option>
-										</select>
-									</div>
-								</div>																
-							</form>
-							<!--end添加题-->
-							<div class="modal-footer">
-								<button type="button" class="btn btn-default" data-dismiss="modal">
-									关闭</button>
-								<button type="button" class="btn btn-primary" v-on:click="addQuestionBank()" v-if="btnState == 0">提交试题</button>
-								<button type="button" class="btn btn-primary" v-on:click="sbUpdate()"  v-if="btnState == 1">修改试题</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="hint">提示：</label>
+                                    <div class="col-sm-9">
+                                        <div class="pos-rel">
+                                            <textarea class="form-control limited autosize-transition" id="hint" maxlength="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4>输入输出</h4>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="input-format">输入格式：</label>
+                                    <div class="col-sm-9">
+                                        <div class="pos-rel">
+                                            <textarea class="form-control limited autosize-transition" id="input-format" maxlength="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="output-format">输出格式：</label>
+                                    <div class="col-sm-9">
+                                        <div class="pos-rel">
+                                            <textarea class="form-control limited autosize-transition" id="output-format" maxlength="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="input-sample">输入样例：</label>
+                                    <div class="col-sm-9">
+                                        <div class="pos-rel">
+                                            <textarea class="form-control limited autosize-transition" id="input-sample" maxlength="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label no-padding-right" for="output-sample">输出样例：</label>
+                                    <div class="col-sm-9">
+                                        <div class="pos-rel">
+                                            <textarea class="form-control limited autosize-transition" id="output-sample" maxlength="50"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="span6">
+                                        <h4>测试用例</h4>
+                                    </div> <!-- .span6 -->
+                                    <div class="span6 text-right">
+                                        <a id="new-test-case" title="添加测试用例" href="javascript:newTestCase();">
+                                            <i class="fa fa-plus-circle"></i>
+                                        </a>
+                                    </div> <!-- .span6 -->
+                                </div> <!-- .row-fluid -->
+                                <div class="span8">
+                                    <div class="row-fluid">
+                                        <div class="span12">
+                                            <div id="test-cases">
+                                                <p id="no-test-cases">暂无测试用例.</p>
+                                                <ul></ul>
+                                            </div> <!-- #test-cases -->
+                                        </div> <!-- .span12 -->
+                                    </div> <!-- .row-fluid -->
+                                </div> <!-- .span8 -->
+                                <div class="col-xs-12 col-sm-3">
+                                    <div class="control-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="form-field-checkbox" id="problem-is-exactly-match" data-toggle="switch" type="checkbox" class="ace" />
+                                                <span class="lbl"> 精确匹配测试用例</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix form-actions">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button class="btn btn-info" type="button" v-on:click="onSubmit()">
+                                            <i class="ace-icon fa fa-check bigger-110"></i>
+                                            发布
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" v-if="QuestionBank.testsType == 1">
+                                <label class="col-xs-2 control-label">正确答案：</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" v-model="QuestionBank.answer" title="">
+                                      <option value="A">A</option>
+                                      <option value="B">B</option>
+                                      <option value="C">C</option>
+                                      <option value="D">D</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" v-if="QuestionBank.testsType == 0">
+                                <label class="col-xs-2 control-label">正确答案：</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control" v-model="QuestionBank.answer" title="">
+                                      <option value="0">错误</option>
+                                      <option value="1">正确</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <!--end添加题-->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">
+                                关闭</button>
+                            <button type="button" class="btn btn-primary" v-on:click="addQuestionBank()" v-if="btnState == 0">提交试题</button>
+                            <button type="button" class="btn btn-primary" v-on:click="sbUpdate()"  v-if="btnState == 1">修改试题</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-		</div>
-		<!--content-->
-	</div>
+    </div>
+    <!--content-->
+</div>
 
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="/static/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
-		<script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
-		<script type="text/javascript" src="/static/js/common.js"></script>
+<script type="text/javascript" src="/static/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
+<script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
 		<script>
 			$(function() {
 				var QuestionBank = {
@@ -413,15 +394,20 @@
                           });
                       },
                       update: function(data) {
+                          console.log(data)
                           this.btnState = 1;
                           vm.QuestionBank.stem = data.stem;
                           vm.QuestionBank.answer = data.answer;
                           vm.QuestionBank.testsType = data.testsType;
                           vm.questionBankId = data.questionBankId;
-                          if(data.testsType == 1) {
+                          if(data.testsType === 1) {
                               vm.QuestionBank.options = data.options;
-                          } else {
-                              vm.hide();
+                          } else if(data.testsType === 0) {
+                              vm.QuestionBank.answer = data.answer;
+                              $("#options-views").hide();
+                          }else if(data.testsType === 2) {
+                              vm.QuestionBank.codingProblem=data.codingProblem;
+                              $("#options-views").hide();
                           }
 
                           $('#myModal').modal({
@@ -460,7 +446,113 @@
                                   toastr.error('网络错误');
                               }
                           );
-                      }
+                      },
+                      onSubmit: function() {
+                          var testCasesArr   = [];
+                          var problemCategoriesArr = [];
+                          var problemTagsArr = '';
+
+                          if ( problemTagsArr === '' ) {
+                              problemTagsArr = [];
+                          } else {
+                              problemTagsArr = problemTagsArr.split(',');
+                          }
+                          $('li.test-case').each(function() {
+                              var input   = $('.standard-input', $(this)).val(),
+                                  output  = $('.standard-output', $(this)).val();
+
+                              testCasesArr.push({
+                                  'input': input,
+                                  'output': output
+                              });
+                          });
+                          $('label.checked', '.parent-categories').each(function() {
+                              problemCategoriesArr.push($(this).attr('for'));
+                          });
+                          var problemName         = vm.QuestionBank.stem,
+                              timeLimit           = $('#time-limit').val(),
+                              memoryLimit         = $('#memory-limit').val(),
+                              description         = $('#wmd-input').val(),
+                              hint                = $('#hint').val(),
+                              inputFormat         = $('#input-format').val(),
+                              outputFormat        = $('#output-format').val(),
+                              inputSample         = $('#input-sample').val(),
+                              outputSample        = $('#output-sample').val(),
+                              testCases           = JSON.stringify(testCasesArr),
+                              problemCategories   = JSON.stringify(problemCategoriesArr),
+                              problemTags         = JSON.stringify(problemTagsArr),
+                              isPublic            = $('#problem-is-public').parent().hasClass('switch-on'),
+                              isExactlyMatch      = $('#problem-is-exactly-match').parent().hasClass('switch-on');
+
+                          $('.alert-success', '#problem-form').addClass('hide');
+                          $('.alert-error', '#problem-form').addClass('hide');
+                          $('button[type=submit]', '#problem-form').attr('disabled', 'disabled');
+                          $('button[type=submit]', '#problem-form').html('请稍等...');
+
+                          var postData = {
+                              'problemName': problemName,
+                              'timeLimit': timeLimit,
+                              'memoryLimit': memoryLimit,
+                              'description': description,
+                              'hint': hint,
+                              'inputFormat': inputFormat,
+                              'outputFormat': outputFormat,
+                              'inputSample': inputSample,
+                              'outputSample': outputSample,
+                              'testCases': testCases,
+                              'problemCategories': problemCategories,
+                              'problemTags': problemTags,
+                              'isPublic': isPublic,
+                              'isExactlyMatch': isExactlyMatch
+                          };
+
+                          ajaxSubmit("/administration/createProblem.action", postData,
+                              function(result) {
+                                  if ( result['isSuccessful'] ) {
+                                      var problemId = result['problemId'];
+                                      window.location.href = '/administration/edit-problem/' + problemId;
+                                  } else {
+                                      var errorMessage  = '';
+
+                                      if ( result['isProblemNameEmpty'] ) {
+                                          errorMessage += '请填写试题名称.<br>';
+                                      } else if ( !result['isProblemNameLegal'] ) {
+                                          errorMessage += '试题名称的长度不得超过128个字符.<br>';
+                                      }
+                                      if ( !result['isTimeLimitLegal'] ) {
+                                          errorMessage += '时间限制必须是大于0的整数.<br>';
+                                      }
+                                      if ( !result['isMemoryLimitLegal'] ) {
+                                          errorMessage += '内存限制必须是大于0的整数.<br>';
+                                      }
+                                      if ( result['isDescriptionEmpty'] ) {
+                                          errorMessage += '请填写试题描述.<br>';
+                                      }
+                                      if ( result['isInputFormatEmpty'] ) {
+                                          errorMessage += '请填写输入格式.<br>';
+                                      }
+                                      if ( result['isOutputFormatEmpty'] ) {
+                                          errorMessage += '请填写输出格式.<br>';
+                                      }
+                                      if ( result['isInputSampleEmpty'] ) {
+                                          errorMessage += '请填写输入样例.<br>';
+                                      }
+                                      if ( result['isOutputSampleEmpty'] ) {
+                                          errorMessage += '请填写输出样例.<br>';
+                                      }
+
+                                      $('.alert-error', '#problem-form').html(errorMessage);
+                                      $('.alert-error', '#problem-form').removeClass('hide');
+                                  }
+                                  $('button[type=submit]', '#problem-form').removeAttr('disabled');
+                                  $('button[type=submit]', '#problem-form').html('发布');
+                              },
+                              function(error) {
+                                console.log(error);
+                                  alert(error.message);
+                              }
+                          );
+                      },
 				  }
 				});
 				ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({}),
@@ -578,6 +670,5 @@
         return containerTemplate.format(testCaseId);
     }
 </script>
-</body>
-
+<@template.footer/>
 </html>
