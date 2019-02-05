@@ -13,6 +13,17 @@
 		    <result column="op" property="op" jdbcType="VARCHAR" />
 		    <result column="content" property="content" jdbcType="VARCHAR" />
 	    </collection>
+        <collection property="codingProblem" ofType="com.kingdee.exam.voj.model.Problem">
+            <id column="problem_id" property="problemId" jdbcType="INTEGER" />
+            <result column="description" property="description" jdbcType="VARCHAR" />
+            <result column="hint" property="hint" jdbcType="VARCHAR" />
+            <result column="input_format" property="inputFormat" jdbcType="VARCHAR" />
+            <result column="output_format" property="outputFormat" jdbcType="VARCHAR" />
+            <result column="sample_input" property="inputSample" jdbcType="VARCHAR" />
+            <result column="sample_output" property="outputSample" jdbcType="VARCHAR" />
+            <result column="memory_limit" property="memoryLimit" jdbcType="VARCHAR" />
+            <result column="time_limit" property="timeLimit" jdbcType="VARCHAR" />
+        </collection>
 	</resultMap>
 	
 	<!-- 查询所有题库 -->
@@ -23,12 +34,21 @@
 			question_bank.answer,
 			question_bank.tests_type,
 			question_bank.state,
-			`options`.options_id,
-			`options`.op,
-			`options`.content
+			options.options_id,
+			options.op,
+			options.content,
+			`description`,
+			`hint`,
+			`input_format`,
+			`output_format`,
+			`sample_input`,
+			`sample_output`,
+			`memory_limit`,
+			`time_limit`
 		FROM
-			`question_bank`
-		LEFT JOIN `options` ON question_bank.question_bank_id = `options`.question_bank_id
+			question_bank
+		LEFT JOIN options ON question_bank.question_bank_id = options.question_bank_id
+		LEFT JOIN voj_problems ON question_bank.question_bank_id = voj_problems.question_bank_id
 		WHERE
 			question_bank.state = 1
 		ORDER BY

@@ -27,8 +27,8 @@ public class Problem implements Serializable {
         this.description = description;
         this.inputFormat = inputFormat;
         this.outputFormat = outputFormat;
-        this.sampleInput = sampleInput;
-        this.sampleOutput = sampleOutput;
+        this.inputSample = sampleInput;
+        this.outputSample = sampleOutput;
         this.hint = hint;
     }
 
@@ -59,56 +59,48 @@ public class Problem implements Serializable {
     /**
      * 最大运行时间.
      */
-    @Column(name = "problem_time_limit")
     private int timeLimit;
 
     /**
      * 最大运行内存.
      */
-    @Column(name = "problem_memory_limit")
     private int memoryLimit;
 
     /**
      * 试题描述.
      */
-    @Column(name = "problem_description",columnDefinition = "text")
+    @Column(name = "description",columnDefinition = "text")
     private String description;
 
     /**
      * 输入格式.
      */
-    @Column(name = "problem_input_format",columnDefinition = "text")
+    @Column(name = "input_format",columnDefinition = "text")
     private String inputFormat;
 
     /**
      * 输出格式.
      */
-    @Column(name = "problem_output_format",columnDefinition = "text")
+    @Column(name = "output_format",columnDefinition = "text")
     private String outputFormat;
 
     /**
      * 样例输入.
      */
-    @Column(name = "problem_sample_input",columnDefinition = "text")
-    private String sampleInput;
+    @Column(name = "sample_input",columnDefinition = "text")
+    private String inputSample;
 
     /**
      * 样例输出.
      */
-    @Column(name = "problem_sample_output",columnDefinition = "text")
-    private String sampleOutput;
+    @Column(name = "sample_output",columnDefinition = "text")
+    private String outputSample;
 
     /**
      * 试题提示.
      */
-    @Column(name = "problem_hint",columnDefinition = "text")
+    @Column(name = "hint",columnDefinition = "text")
     private String hint;
-
-    /**
-     * 试题包含的标签.
-     */
-//    @Transient
-//    private List<ProblemTag> problemTags;
 
     /**
      * 试题的总提交总数.

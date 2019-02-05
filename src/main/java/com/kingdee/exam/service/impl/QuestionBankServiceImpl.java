@@ -66,8 +66,8 @@ public class QuestionBankServiceImpl implements QuestionBankService {
 
                 Map<String, Object> result = problemService.createProblem(problem.getProblemName(),questionBankVo.getQuestionBankId(),
                         problem.getTimeLimit(), problem.getMemoryLimit(), problem.getDescription(), problem.getHint(),
-                        problem.getInputFormat(), problem.getOutputFormat(), problem.getSampleInput(),
-                        problem.getSampleOutput(), problem.getTestCases(), "[]",
+                        problem.getInputFormat(), problem.getOutputFormat(), problem.getInputSample(),
+                        problem.getOutputSample(), problem.getTestCases(), "[]",
                         true);
 
                 return (boolean) result.get("isSuccessful");

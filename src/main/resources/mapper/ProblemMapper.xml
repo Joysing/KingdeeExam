@@ -9,13 +9,13 @@
 		<result property="problemName" column="problem_name" />
 		<result property="totalSubmission" column="total_submission" />
 		<result property="acceptedSubmission" column="accepted_submission" />
-		<result property="timeLimit" column="problem_time_limit" />
-		<result property="memoryLimit" column="problem_memory_limit" />
-		<result property="description" column="problem_description" />
-		<result property="inputFormat" column="problem_input_format" />
-		<result property="outputFormat" column="problem_output_format" />
-		<result property="sampleInput" column="problem_sample_input" />
-		<result property="sampleOutput" column="problem_sample_output" />
+		<result property="timeLimit" column="time_limit" />
+		<result property="memoryLimit" column="memory_limit" />
+		<result property="description" column="description" />
+		<result property="inputFormat" column="input_format" />
+		<result property="outputFormat" column="output_format" />
+		<result property="sampleInput" column="sample_input" />
+		<result property="sampleOutput" column="sample_output" />
 		<result property="hint" column="problem_hint" />
 	</resultMap>
 
@@ -129,14 +129,14 @@
 		keyProperty="problemId" 
 		keyColumn="problem_id"
 		useGeneratedKeys="true">
-		INSERT INTO voj_problems (question_bank_id,problem_name, problem_time_limit, problem_memory_limit, problem_description, problem_input_format, problem_output_format, problem_sample_input, problem_sample_output, problem_hint)
-		VALUES (#{questionBankId}, #{problemName}, #{timeLimit}, #{memoryLimit}, #{description}, #{inputFormat}, #{outputFormat}, #{sampleInput}, #{sampleOutput}, #{hint})
+		INSERT INTO voj_problems (question_bank_id,problem_name, time_limit, memory_limit, description, input_format, output_format, sample_input, sample_output, hint)
+		VALUES (#{questionBankId}, #{problemName}, #{timeLimit}, #{memoryLimit}, #{description}, #{inputFormat}, #{outputFormat}, #{inputSample}, #{outputSample}, #{hint})
 	</insert>
 	<update id="updateProblem"
 		parameterType="com.kingdee.exam.voj.model.Problem"
 		flushCache="true">
 		UPDATE voj_problems 
-		SET problem_name = #{problemName}, problem_time_limit = #{timeLimit}, problem_memory_limit = #{memoryLimit}, problem_description = #{description}, problem_input_format = #{inputFormat}, problem_output_format = #{outputFormat}, problem_sample_input = #{sampleInput}, problem_sample_output = #{sampleOutput}, problem_hint = #{hint}
+		SET problem_name = #{problemName}, time_limit = #{timeLimit}, memory_limit = #{memoryLimit}, description = #{description}, input_format = #{inputFormat}, output_format = #{outputFormat}, sample_input = #{inputSample}, sample_output = #{outputSample}, hint = #{hint}
 		WHERE problem_id = #{problemId}
 	</update>
 	<delete id="deleteProblem"

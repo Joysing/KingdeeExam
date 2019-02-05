@@ -250,8 +250,8 @@ public class ProblemService {
 		result.put("isDescriptionEmpty", problem.getDescription().isEmpty());
 		result.put("isInputFormatEmpty", problem.getInputFormat().isEmpty());
 		result.put("isOutputFormatEmpty", problem.getOutputFormat().isEmpty());
-		result.put("isInputSampleEmpty", problem.getSampleInput().isEmpty());
-		result.put("isOutputSampleEmpty", problem.getSampleOutput().isEmpty());
+		result.put("isInputSampleEmpty", problem.getInputSample().isEmpty());
+		result.put("isOutputSampleEmpty", problem.getOutputSample().isEmpty());
 		
 		boolean isSuccessful = !result.get("isProblemNameEmpty")  &&  result.get("isProblemNameLegal") &&
 								result.get("isTimeLimitLegal")	&&  result.get("isMemoryLimitLegal") &&

@@ -131,13 +131,13 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label no-padding-right" for="time-limit"> 时间限制 (ms)：</label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="time-limit" placeholder="时间限制 (ms)" class="col-xs-10 col-sm-5" maxlength="8"/>
+                                        <input type="text" id="time-limit" placeholder="时间限制 (ms)" v-model="QuestionBank.codingProblem.timeLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label no-padding-right" for="memory-limit"> 内存限制 (KB)：</label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="memory-limit" placeholder="内存限制 (KB)" class="col-xs-10 col-sm-5" maxlength="8"/>
+                                        <input type="text" id="memory-limit" placeholder="内存限制 (KB)" v-model="QuestionBank.codingProblem.memoryLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
                                     </div>
                                 </div>
                                 <div class="space-4"></div>
@@ -146,7 +146,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="wmd-input">试题描述：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" id="wmd-input" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.description" id="wmd-input" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="hint">提示：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" id="hint" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.hint" id="hint" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -163,7 +163,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="input-format">输入格式：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" id="input-format" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.inputFormat" id="input-format" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -171,7 +171,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="output-format">输出格式：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" id="output-format" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.outputFormat" id="output-format" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -179,7 +179,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="input-sample">输入样例：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" id="input-sample" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.inputSample" id="input-sample" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -187,7 +187,7 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="output-sample">输出样例：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" id="output-sample" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.outputSample" id="output-sample" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -325,8 +325,8 @@
                                   hint: $('#hint').val(),
                                   inputFormat: $('#input-format').val(),
                                   outputFormat: $('#output-format').val(),
-                                  sampleInput: $('#input-sample').val(),
-                                  sampleOutput: $('#output-sample').val(),
+                                  inputSample: $('#input-sample').val(),
+                                  outputSample: $('#output-sample').val(),
                                   testCases: JSON.stringify(testCasesArr),
                                   problemCategories: JSON.stringify(problemCategoriesArr),
                                   problemTags: JSON.stringify(problemTagsArr),
