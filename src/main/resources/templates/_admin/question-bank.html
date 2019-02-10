@@ -35,7 +35,8 @@
                             <td v-text="item.stem" width="40%"></td>
                             <td width="30%">
                                 <span v-for="op in item.options" >
-                                    <span v-text="op.op+'、'+op.content" v-bind:class="[item.answer==op.op ? 'label-success':'','label']"></span>
+                                    <span v-text="op.op+'、'+op.content"
+                                          v-bind:class="[item.answer==op.op ? 'label-success':'','label']"></span>
                                     &nbsp;
                                 </span>
                             </td>
@@ -57,9 +58,15 @@
                 </table>
                 <div class="pull-right" v-if="QuestionBankVoList.list != 0">
                     <ul class="pagination">
-                        <li :class="QuestionBankVoList.isFirstPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.prePage)">&laquo;</a></li>
-                        <li v-for="n in QuestionBankVoList.pages" :class="n == QuestionBankVoList.pageNum? 'active':''"><a href="javascript:void(0);" v-on:click="page(n)" v-text="n"></a></li>
-                        <li :class="QuestionBankVoList.isLastPage? 'disabled':''"><a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.nextPage)">&raquo;</a></li>
+                        <li :class="QuestionBankVoList.isFirstPage? 'disabled':''">
+                            <a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.prePage)">&laquo;</a>
+                        </li>
+                        <li v-for="n in QuestionBankVoList.pages" :class="n == QuestionBankVoList.pageNum? 'active':''">
+                            <a href="javascript:void(0);" v-on:click="page(n)" v-text="n"></a>
+                        </li>
+                        <li :class="QuestionBankVoList.isLastPage? 'disabled':''">
+                            <a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.nextPage)">&raquo;</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -77,11 +84,13 @@
                     </div>
                     <!--添加题-->
                     <div class="modal-body">
-                        <form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post" onsubmit="return mySubmit(true)">
+                        <form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post"
+                              onsubmit="return mySubmit(true)">
                             <div class="form-group">
                                 <label class="col-xs-2 control-label">题目：</label>
                                 <div class="col-sm-10">
-                                    <textarea type="text" class="form-control" name="stem" v-model="QuestionBank.stem" placeholder="请输入题目">
+                                    <textarea type="text" class="form-control" name="stem"
+                                              v-model="QuestionBank.stem" placeholder="请输入题目">
                                     </textarea>
                                 </div>
                             </div>
@@ -106,22 +115,26 @@
                                     <label class="col-sm-2 control-label">选项：</label>
                                     <div class="col-sm-5">
                                         <input type="hidden" v-model="QuestionBank.options" v-model="QuestionBank.options[0].op">
-                                        <input type="text" class="form-control" v-model="QuestionBank.options[0].content" placeholder="请输入A的内容">
+                                        <input type="text" class="form-control"
+                                               v-model="QuestionBank.options[0].content" placeholder="请输入A的内容">
                                     </div>
                                     <div class="col-sm-5">
                                         <input type="hidden" v-model="QuestionBank.options[1].op">
-                                        <input type="text" class="form-control" v-model="QuestionBank.options[1].content" placeholder="请输入B的内容">
+                                        <input type="text" class="form-control"
+                                               v-model="QuestionBank.options[1].content" placeholder="请输入B的内容">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label"></label>
                                     <div class="col-sm-5">
                                         <input type="hidden" v-model="QuestionBank.options[2].op">
-                                        <input type="text" class="form-control" v-model="QuestionBank.options[2].content" placeholder="请输入C的内容">
+                                        <input type="text" class="form-control"
+                                               v-model="QuestionBank.options[2].content" placeholder="请输入C的内容">
                                     </div>
                                     <div class="col-sm-5">
                                         <input type="hidden" v-model="QuestionBank.options[3].op">
-                                        <input type="text" class="form-control" v-model="QuestionBank.options[3].content" placeholder="请输入D的内容">
+                                        <input type="text" class="form-control"
+                                               v-model="QuestionBank.options[3].content" placeholder="请输入D的内容">
                                     </div>
                                 </div>
                             <!-- 结束  放一个对象里面-->
@@ -131,13 +144,15 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label no-padding-right" for="time-limit"> 时间限制 (ms)：</label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="time-limit" placeholder="时间限制 (ms)" v-model="QuestionBank.codingProblem.timeLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
+                                        <input type="text" id="time-limit" placeholder="时间限制 (ms)"
+                                               v-model="QuestionBank.codingProblem.timeLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label no-padding-right" for="memory-limit"> 内存限制 (KB)：</label>
                                     <div class="col-sm-9">
-                                        <input type="text" id="memory-limit" placeholder="内存限制 (KB)" v-model="QuestionBank.codingProblem.memoryLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
+                                        <input type="text" id="memory-limit" placeholder="内存限制 (KB)"
+                                               v-model="QuestionBank.codingProblem.memoryLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
                                     </div>
                                 </div>
                                 <div class="space-4"></div>
@@ -146,7 +161,9 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="wmd-input">试题描述：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.description" id="wmd-input" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition"
+                                                      v-model="QuestionBank.codingProblem.description"
+                                                      id="wmd-input" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +171,9 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="hint">提示：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.hint" id="hint" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition"
+                                                      v-model="QuestionBank.codingProblem.hint"
+                                                      id="hint" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -163,7 +182,9 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="input-format">输入格式：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.inputFormat" id="input-format" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition"
+                                                      v-model="QuestionBank.codingProblem.inputFormat"
+                                                      id="input-format" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -171,7 +192,9 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="output-format">输出格式：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.outputFormat" id="output-format" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition"
+                                                      v-model="QuestionBank.codingProblem.outputFormat"
+                                                      id="output-format" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -179,7 +202,9 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="input-sample">输入样例：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.inputSample" id="input-sample" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition"
+                                                      v-model="QuestionBank.codingProblem.inputSample"
+                                                      id="input-sample" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -187,7 +212,9 @@
                                     <label class="col-sm-3 control-label no-padding-right" for="output-sample">输出样例：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition" v-model="QuestionBank.codingProblem.outputSample" id="output-sample" maxlength="50"></textarea>
+                                            <textarea class="form-control limited autosize-transition"
+                                                      v-model="QuestionBank.codingProblem.outputSample"
+                                                      id="output-sample" maxlength="50"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -205,8 +232,38 @@
                                     <div class="row-fluid">
                                         <div class="span12">
                                             <div id="test-cases">
-                                                <p id="no-test-cases">暂无测试用例.</p>
-                                                <ul></ul>
+                                                <p v-if="QuestionBank.codingProblem.testCases == null" id="no-test-cases">暂无测试用例.</p>
+                                                <ul>
+                                                    <li v-for="item in QuestionBank.codingProblem.testCases" class="test-case">
+                                                        <div class="header">
+                                                            <h5>测试用例 #%s</h5>
+                                                            <ul class="inline">
+                                                                <li><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></li>
+                                                                <li><a href="javascript:void(0);"><i class="fa fa-trash"></i></a></li>
+                                                            </ul>
+                                                        </div> <!-- .header -->
+                                                        <div class="body">
+                                                            <div class="row-fluid">
+                                                                <div class="span4">
+                                                                    <label>标准输入</label>
+                                                                </div> <!-- .span4 -->
+                                                                <div class="span8">
+                                                                    <textarea class="standard-input span12" title=""
+                                                                              v-model="item.input"></textarea>
+                                                                </div> <!-- .span8 -->
+                                                            </div> <!-- .row-fluid -->
+                                                            <div class="row-fluid">
+                                                                <div class="span4">
+                                                                    <label>标准输出</label>
+                                                                </div> <!-- .span4 -->
+                                                                <div class="span8">
+                                                                    <textarea class="standard-output span12" title=""
+                                                                              v-model="item.output"></textarea>
+                                                                </div> <!-- .span8 -->
+                                                            </div> <!-- .row-fluid -->
+                                                        </div> <!-- .body -->
+                                                    </li> <!-- .test-case -->
+                                                </ul>
                                             </div> <!-- #test-cases -->
                                         </div> <!-- .span12 -->
                                     </div> <!-- .row-fluid -->
@@ -215,7 +272,8 @@
                                     <div class="control-group">
                                         <div class="checkbox">
                                             <label>
-                                                <input name="form-field-checkbox" id="problem-is-exactly-match" data-toggle="switch" type="checkbox" class="ace" />
+                                                <input name="form-field-checkbox" id="problem-is-exactly-match"
+                                                       data-toggle="switch" type="checkbox" class="ace" />
                                                 <span class="lbl"> 精确匹配测试用例</span>
                                             </label>
                                         </div>
@@ -255,8 +313,10 @@
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">
                                 关闭</button>
-                            <button type="button" class="btn btn-primary" v-on:click="addQuestionBank()" v-if="btnState == 0">提交试题</button>
-                            <button type="button" class="btn btn-primary" v-on:click="sbUpdate()"  v-if="btnState == 1">修改试题</button>
+                            <button type="button" class="btn btn-primary"
+                                    v-on:click="addQuestionBank()" v-if="btnState == 0">提交试题</button>
+                            <button type="button" class="btn btn-primary"
+                                    v-on:click="sbUpdate()"  v-if="btnState == 1">修改试题</button>
                         </div>
                     </div>
                 </div>
@@ -279,7 +339,7 @@
 					testsType: 1,
 					questionBankId: null,
                     codingProblem:null,
-					options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]/* 这里 */
+					options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]
 				};
 				var vm = new Vue({
 				  el: '#content',
@@ -366,7 +426,10 @@
                           $("#options-views").hide();
                       },
                       choose: function() {
-                          if(this.QuestionBank.answer !== 'A' || this.QuestionBank.answer!== 'B' || this.QuestionBank.answer!== 'C' || this.QuestionBank.answer!== 'D') {
+                          if(this.QuestionBank.answer !== 'A'
+                              || this.QuestionBank.answer!== 'B'
+                              || this.QuestionBank.answer!== 'C'
+                              || this.QuestionBank.answer!== 'D') {
                               this.QuestionBank.answer = 'A';
                               this.QuestionBank.testsType = 1;
                           }
@@ -394,7 +457,7 @@
                           });
                       },
                       update: function(data) {
-                          console.log(data)
+                          console.log(666,data);
                           this.btnState = 1;
                           vm.QuestionBank.stem = data.stem;
                           vm.QuestionBank.answer = data.answer;
@@ -407,6 +470,7 @@
                               $("#options-views").hide();
                           }else if(data.testsType === 2) {
                               vm.QuestionBank.codingProblem=data.codingProblem;
+                              vm.QuestionBank.codingProblem.testCases=JSON.parse(data.codingProblem.testCases);
                               $("#options-views").hide();
                           }
 
@@ -433,7 +497,7 @@
                                   }
                               },
                               function(data) {
-                                  toastr.error('网络错误');
+                                  toastr.error('网络错误：'+data);
                               }
                           );
                       },
@@ -443,7 +507,7 @@
                                   vm.QuestionBankVoList = data;
                               },
                               function(data) {
-                                  toastr.error('网络错误');
+                                  toastr.error('网络错误：'+data);
                               }
                           );
                       },
@@ -552,7 +616,7 @@
                                   alert(error.message);
                               }
                           );
-                      },
+                      }
 				  }
 				});
 				ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({}),
@@ -560,10 +624,11 @@
 						vm.QuestionBankVoList = data;
 					},
 					function(data) {
-						toastr.error('网络错误');
+						toastr.error('网络错误：'+data);
 					}
 				);
-                $('#test-cases').on('click', 'i.fa-edit', function() {
+				var testCasesEl=$('#test-cases');
+                testCasesEl.on('click', 'i.fa-edit', function() {
                     var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
                         isBodyUnfolded      = $('.body', $(testCaseContainer)).is(':visible');
 
@@ -574,7 +639,7 @@
                     }
                 });
 
-                $('#test-cases').on('click', 'i.fa-trash', function() {
+                testCasesEl.on('click', 'i.fa-trash', function() {
                     var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
                         testCases         = $('li.test-case', '#test-cases').length,
                         testCaseName      = '测试用例 #%s';
@@ -584,7 +649,7 @@
                         $('h5', this).html(testCaseName.format(index));
                     });
 
-                    if ( testCases == 1 ) {
+                    if ( testCases === 1 ) {
                         $('#no-test-cases').removeClass('hide');
                     }
                 });});

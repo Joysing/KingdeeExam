@@ -23,6 +23,7 @@
             <result column="sample_output" property="outputSample" jdbcType="VARCHAR" />
             <result column="memory_limit" property="memoryLimit" jdbcType="VARCHAR" />
             <result column="time_limit" property="timeLimit" jdbcType="VARCHAR" />
+            <result column="testCases" property="testCases" jdbcType="LONGVARCHAR" />
         </collection>
 	</resultMap>
 	
@@ -44,15 +45,22 @@
 			`sample_input`,
 			`sample_output`,
 			`memory_limit`,
-			`time_limit`
+			`time_limit`,
+            concat('[',testCases,']') as testCases
 		FROM
 			question_bank
 		LEFT JOIN options ON question_bank.question_bank_id = options.question_bank_id
 		LEFT JOIN voj_problems ON question_bank.question_bank_id = voj_problems.question_bank_id
+        LEFT JOIN (select problem_id,
+                       REPLACE(REPLACE(group_concat(
+                                               concat('{"input":"',`checkpoint_input`,'","output":"',`checkpoint_output`,'"}')),
+                                       CHAR(10), ''),
+                               CHAR(13), '') as testCases
+                   from voj_problem_checkpoints group by problem_id) as t3 ON voj_problems.problem_id=t3.problem_id
 		WHERE
 			question_bank.state = 1
 		ORDER BY
-			question_bank_id ASC		
+			question_bank_id ASC
 	</select>
 	
 	<!-- 添加题库 -->
