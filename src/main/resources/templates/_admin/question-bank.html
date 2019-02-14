@@ -8,6 +8,8 @@
     <title>题库管理 金蝶在线笔试</title>
     <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
     <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/new-problem.css">
 </head>
 <@template.header "index.html"/>
 <div class="container-fluid box" >
@@ -20,7 +22,7 @@
                     v-on:click="add()">新增题</button>
                 <div class="clearfix"></div>
             </div>
-            <div class="panel-body">
+            <div>
                 <table class="table table-hover text-center table-bordered">
                     <thead>
                         <tr>
@@ -84,8 +86,7 @@
                     </div>
                     <!--添加题-->
                     <div class="modal-body">
-                        <form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post"
-                              onsubmit="return mySubmit(true)">
+                        <form class="form-horizontal" id="problem-form">
                             <div class="form-group">
                                 <label class="col-xs-2 control-label">题目：</label>
                                 <div class="col-sm-10">
@@ -139,17 +140,17 @@
                                 </div>
                             <!-- 结束  放一个对象里面-->
                             </div>
-                            <div class="form-group" v-if="QuestionBank.testsType == 2"  id="problem-form">
+                            <div class="form-group" v-if="QuestionBank.testsType == 2">
                                 <!-- Content -->
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="time-limit"> 时间限制 (ms)：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="time-limit"> 时间限制 (ms)：</label>
                                     <div class="col-sm-9">
                                         <input type="text" id="time-limit" placeholder="时间限制 (ms)"
                                                v-model="QuestionBank.codingProblem.timeLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="memory-limit"> 内存限制 (KB)：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="memory-limit"> 内存限制 (KB)：</label>
                                     <div class="col-sm-9">
                                         <input type="text" id="memory-limit" placeholder="内存限制 (KB)"
                                                v-model="QuestionBank.codingProblem.memoryLimit" class="col-xs-10 col-sm-5" maxlength="8"/>
@@ -157,18 +158,20 @@
                                 </div>
                                 <div class="space-4"></div>
 
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="wmd-input">试题描述：</label>
-                                    <div class="col-sm-9">
-                                        <div class="pos-rel">
-                                            <textarea class="form-control limited autosize-transition"
+                                <div id="markdown-editor" class="form-group">
+                                    <label class="col-sm-2 control-label no-padding-right" for="wmd-input">试题描述：</label>
+                                    <div class="wmd-panel col-sm-9">
+                                        <div class="wmd-panel">
+                                            <div id="wmd-button-bar" class="wmd-button-bar pos-rel"></div> <!-- #wmd-button-bar -->
+                                            <textarea class="wmd-input form-control limited autosize-transition"
                                                       v-model="QuestionBank.codingProblem.description"
-                                                      id="wmd-input" maxlength="50"></textarea>
-                                        </div>
+                                                      id="wmd-input" maxlength="1000"></textarea>
+                                        </div> <!-- .wmd-panel -->
+                                        <div id="wmd-preview" class="wmd-panel wmd-preview"></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="hint">提示：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="hint">提示：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
                                             <textarea class="form-control limited autosize-transition"
@@ -179,7 +182,7 @@
                                 </div>
                                 <h4>输入输出</h4>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="input-format">输入格式：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="input-format">输入格式：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
                                             <textarea class="form-control limited autosize-transition"
@@ -189,7 +192,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="output-format">输出格式：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="output-format">输出格式：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
                                             <textarea class="form-control limited autosize-transition"
@@ -199,7 +202,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="input-sample">输入样例：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="input-sample">输入样例：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
                                             <textarea class="form-control limited autosize-transition"
@@ -209,7 +212,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label no-padding-right" for="output-sample">输出样例：</label>
+                                    <label class="col-sm-2 control-label no-padding-right" for="output-sample">输出样例：</label>
                                     <div class="col-sm-9">
                                         <div class="pos-rel">
                                             <textarea class="form-control limited autosize-transition"
@@ -218,25 +221,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="span6">
-                                        <h4>测试用例</h4>
-                                    </div> <!-- .span6 -->
-                                    <div class="span6 text-right">
-                                        <a id="new-test-case" title="添加测试用例" href="javascript:newTestCase();">
-                                            <i class="fa fa-plus-circle"></i>
-                                        </a>
-                                    </div> <!-- .span6 -->
-                                </div> <!-- .row-fluid -->
+                                <h4>测试用例 <a id="new-test-case" title="添加测试用例" href="javascript:newTestCase();">
+                                    <i class="fa fa-plus-circle"></i>
+                                </a></h4>
+
                                 <div class="span8">
                                     <div class="row-fluid">
                                         <div class="span12">
                                             <div id="test-cases">
                                                 <p v-if="QuestionBank.codingProblem.testCases == null" id="no-test-cases">暂无测试用例.</p>
                                                 <ul>
-                                                    <li v-for="item in QuestionBank.codingProblem.testCases" class="test-case">
-                                                        <div class="header">
-                                                            <h5>测试用例 #%s</h5>
+                                                    <li v-for="(item,index) in QuestionBank.codingProblem.testCases" class="test-case">
+                                                        <div class="test-cases-header">
+                                                            <h5 v-text="'测试用例 #'+index"></h5>
                                                             <ul class="inline">
                                                                 <li><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></li>
                                                                 <li><a href="javascript:void(0);"><i class="fa fa-trash"></i></a></li>
@@ -277,14 +274,6 @@
                                                 <span class="lbl"> 精确匹配测试用例</span>
                                             </label>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="clearfix form-actions">
-                                    <div class="col-md-offset-3 col-md-9">
-                                        <button class="btn btn-info" type="button" v-on:click="onSubmit()">
-                                            <i class="ace-icon fa fa-check bigger-110"></i>
-                                            发布
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -338,7 +327,7 @@
 					answer: 'A',
 					testsType: 1,
 					questionBankId: null,
-                    codingProblem:null,
+                    codingProblem:{},
 					options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]
 				};
 				var vm = new Vue({
@@ -378,7 +367,7 @@
                               });
                               QuestionBank.answer=100;
                               QuestionBank.codingProblem={
-                                  problemName: $('#problem-name').val(),
+                                  problemName: vm.QuestionBank.stem,
                                   timeLimit: $('#time-limit').val(),
                                   memoryLimit: $('#memory-limit').val(),
                                   description: $('#wmd-input').val(),
@@ -392,6 +381,11 @@
                                   problemTags: JSON.stringify(problemTagsArr),
                                   isExactlyMatch: $('#problem-is-exactly-match').parent().hasClass('switch-on')
                               };
+
+                              $('.alert-success', '#problem-form').addClass('hide');
+                              $('.alert-error', '#problem-form').addClass('hide');
+                              $('button[type=submit]', '#problem-form').attr('disabled', 'disabled');
+                              $('button[type=submit]', '#problem-form').html('请稍等...');
                           }
                           ajaxSubmitJSON("/admin/addQuestionBank", JSON.stringify(QuestionBank),
                               function(data) {
@@ -414,25 +408,34 @@
                           );
                       },
                       coding: function() {
-                              this.QuestionBank.answer = 100;
-                              this.QuestionBank.testsType = 2;
+                          this.QuestionBank.answer = 100;
+                          this.QuestionBank.testsType = 2;
                           $("#options-views").hide();
+                          $.getScript('/static/js/markdown.min.js', function() {
+                              var converter = Markdown.getSanitizingConverter();
+                              var editor    = new Markdown.Editor(converter);
+                              editor.run();
+
+                              $('.markdown').each(function() {
+                                  var plainContent    = $(this).text(),
+                                      markdownContent = converter.makeHtml(plainContent.replace(/\\\n/g, '\\n'));
+
+                                  $(this).html(markdownContent);
+                              });
+
+
+                          });
+
+
                       },
                       judge: function() {
-                          if(this.QuestionBank.answer !== 1 || this.QuestionBank.answer!== 0) {
-                              this.QuestionBank.answer = 1;
-                              this.QuestionBank.testsType = 0;
-                          }
+                          this.QuestionBank.answer = 1;
+                          this.QuestionBank.testsType = 0;
                           $("#options-views").hide();
                       },
                       choose: function() {
-                          if(this.QuestionBank.answer !== 'A'
-                              || this.QuestionBank.answer!== 'B'
-                              || this.QuestionBank.answer!== 'C'
-                              || this.QuestionBank.answer!== 'D') {
-                              this.QuestionBank.answer = 'A';
-                              this.QuestionBank.testsType = 1;
-                          }
+                          this.QuestionBank.answer = 'A';
+                          this.QuestionBank.testsType = 1;
                           $("#options-views").show();
                       },
                       deleteQuestionBank: function(id) {
@@ -705,7 +708,7 @@
 <script type="text/javascript">
     function getTestCaseContainer(testCaseId) {
         var containerTemplate = '<li class="test-case">' +
-            '    <div class="header">' +
+            '    <div class="test-cases-header">' +
             '        <h5>测试用例 #%s</h5>' +
             '        <ul class="inline">' +
             '            <li><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></li>' +

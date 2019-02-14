@@ -1,52 +1,3 @@
-.sidebar {
-	display: none;
-}
-
-.sidebar {
-	position: fixed;
-	top: 45px;
-	bottom: 0;
-	left: 0;
-	z-index: 1000;
-	display: block;
-	padding: 20px;
-	overflow-x: hidden;
-	overflow-y: auto;
-	/* Scrollable contents if viewport is shorter than content. */
-	background-color: #f5f5f5;
-	border-right: 1px solid #eee;
-}
-
-/* Sidebar navigation */
-.nav-sidebar {
-	margin-right: -4px;
-	/* 20px padding + 1px border */
-	margin-bottom: 10px;
-	margin-left: -3px;
-}
-
-.nav-sidebar> li {
-	margin-bottom: 5px;
-}
-
-.nav-sidebar> li> a {
-	padding-right: 20px;
-	padding-left: 20px;
-	color: #006ada;
-}
-
-.nav-sidebar> .active> a,
-.nav-sidebar> .active> a:hover,
-.nav-sidebar> .active> a:focus {
-	color: #fff;
-	background-color: #006ada;
-}
-
-.content {
-	margin-top: 53px;
-}
-
-
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
 ::-webkit-scrollbar {
 	width: 10px;
@@ -70,6 +21,112 @@
 	background-color: #ccc;
 }
 
-.primary-color{
-	background-color: #006ada !important;
+/* Style for Markdown Editor */
+div.wmd-button-bar {
+    background-color: transparent;
+    border: 2px solid #ccc;
+    border-bottom: 0;
+    clear: both;
+    margin: 10px 0 0 0;
+    padding: 0 12px;
+    -webkit-border-radius: 6px 6px 0 0;
+    -moz-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+}
+
+div.wmd-button-bar ul {
+    margin: 0;
+    padding: 15px 0;
+}
+
+div.wmd-button-bar li {
+    display: inline-block;
+    display: *inline;
+    list-style: none;
+    zoom: 1;
+}
+
+div.wmd-button-bar li.wmd-spacer {
+    width: 20px;
+}
+
+div.wmd-button-bar li.wmd-button > span {
+    background-image: url('../img/wmd-buttons.svg');
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    display: inline-block;
+    display: *inline;
+    height: 20px;
+    width: 20px;
+    zoom: 1;
+}
+
+div.wmd-panel textarea.wmd-input {
+    height: 240px;
+    line-height: 1.2;
+    padding: 10px;
+    resize: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+}
+
+div.wmd-preview {
+    background-image: url('../img/wmd-draft.png');
+    border: 1px dotted #ccc;
+    clear: both;
+    margin-top: 10px;
+    padding: 10px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+div.wmd-prompt-background {
+    background-color: #000;
+    opacity: .5;
+}
+
+div.wmd-prompt-dialog {
+    background-color: #fff;
+}
+
+/* Style for Markdown Style */
+div.markdown h1 {
+    font-size: 16px;
+}
+
+div.markdown h2 {
+    font-size: 14px;
+}
+
+div.markdown h3 {
+    font-size: 12px;
+}
+
+div.markdown h4 {
+    font-size: 10px;
+}
+
+div.markdown h5 {
+    font-size: 8px;
+}
+
+div.markdown h6 {
+    font-size: 6px;
+}
+
+div.markdown blockquote,
+div.markdown blockquote p {
+    font-size: 14px;
+    line-height: 120%;
+}
+
+div.markdown code {
+    color: #333;
+    word-wrap: break-word;
+    white-space: pre;
 }
