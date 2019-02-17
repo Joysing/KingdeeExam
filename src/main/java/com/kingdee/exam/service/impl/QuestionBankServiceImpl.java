@@ -98,11 +98,29 @@ public class QuestionBankServiceImpl implements QuestionBankService {
 		if (updateQuestionBank >= 1) {
 			questionBankMapper.deleteQuestionBankOptions(questionBankVo.getQuestionBankId().toString());
 			if (testsType == 1) {
+			    //选择题
 				for (Options op : questionBankVo.getOptions()) {
 					op.setQuestionBankId(questionBankVo.getQuestionBankId());
 				}
 				questionBankMapper.addOptions(questionBankVo.getOptions());
-			}
+			}else if (testsType == 2) {
+			    //编程题
+                Problem problem=questionBankVo.getCodingProblem();
+                if ( problem.getTimeLimit()<=0 ) {
+                    problem.setTimeLimit(-1);
+                }
+                if ( problem.getMemoryLimit()<=0 ) {
+                    problem.setMemoryLimit(-1);
+                }
+                Map<String, Boolean> result = problemService.editProblem(problem.getProblemId(),
+                        problem.getQuestionBankId(), problem.getProblemName(), problem.getTimeLimit(),
+                        problem.getMemoryLimit(), problem.getDescription(), problem.getHint(),
+                        problem.getInputFormat(), problem.getOutputFormat(), problem.getInputSample(),
+                        problem.getOutputSample(), problem.getTestCases(), "[]",
+                        true);
+
+                return result.get("isSuccessful");
+            }
 			return true;
 		}
 		

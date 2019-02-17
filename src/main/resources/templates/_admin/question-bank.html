@@ -235,8 +235,7 @@
                                                         <div class="test-cases-header">
                                                             <h5 v-text="'测试用例 #'+index"></h5>
                                                             <ul class="inline">
-                                                                <li><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></li>
-                                                                <li><a href="javascript:void(0);"><i class="fa fa-trash"></i></a></li>
+                                                                <li><a v-bind:href="'javascript:deleteTestCase('+index+');'"><i class="fa fa-trash"></i></a></li>
                                                             </ul>
                                                         </div> <!-- .header -->
                                                         <div class="body">
@@ -321,7 +320,7 @@
 <script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
 		<script>
-			$(function() {
+			//$(function() {
 				var QuestionBank = {
 					stem: '',
 					answer: 'A',
@@ -344,7 +343,7 @@
                           console.log(temp);
 
                           if(this.QuestionBank.testsType === '2'){
-                              var testCasesArr   = [];
+                              // var testCasesArr   = [];
                               var problemCategoriesArr = [];
                               var problemTagsArr = '';
 
@@ -353,15 +352,15 @@
                               } else {
                                   problemTagsArr = problemTagsArr.split(',');
                               }
-                              $('li.test-case').each(function() {
-                                  var input   = $('.standard-input', $(this)).val(),
-                                      output  = $('.standard-output', $(this)).val();
-
-                                  testCasesArr.push({
-                                      'input': input,
-                                      'output': output
-                                  });
-                              });
+                              // $('li.test-case').each(function() {
+                              //     var input   = $('.standard-input', $(this)).val(),
+                              //         output  = $('.standard-output', $(this)).val();
+                              //
+                              //     testCasesArr.push({
+                              //         'input': input,
+                              //         'output': output
+                              //     });
+                              // });
                               $('label.checked', '.parent-categories').each(function() {
                                   problemCategoriesArr.push($(this).attr('for'));
                               });
@@ -376,7 +375,7 @@
                                   outputFormat: $('#output-format').val(),
                                   inputSample: $('#input-sample').val(),
                                   outputSample: $('#output-sample').val(),
-                                  testCases: JSON.stringify(testCasesArr),
+                                  testCases: JSON.stringify(vm.QuestionBank.codingProblem.testCases),
                                   problemCategories: JSON.stringify(problemCategoriesArr),
                                   problemTags: JSON.stringify(problemTagsArr),
                                   isExactlyMatch: $('#problem-is-exactly-match').parent().hasClass('switch-on')
@@ -460,7 +459,6 @@
                           });
                       },
                       update: function(data) {
-                          console.log(666,data);
                           this.btnState = 1;
                           vm.QuestionBank.stem = data.stem;
                           vm.QuestionBank.answer = data.answer;
@@ -483,9 +481,16 @@
                           });
                       },
                       sbUpdate: function() {
-                          console.log(vm.questionBankId);
+                          if(QuestionBank.testsType===2){
+                              QuestionBank.codingProblem.testCases= JSON.stringify(QuestionBank.codingProblem.testCases);
+                              QuestionBank.codingProblem.problemCategories= '';
+                              QuestionBank.codingProblem.problemName=QuestionBank.stem;
+                              console.log(vm.questionBankId);
+                          }
+
                           ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(QuestionBank),
                               function(data) {
+
                                   if(data) {
                                       toastr.success('操作成功!', '修改题');
                                       $('#myModal').modal('hide');
@@ -500,7 +505,7 @@
                                   }
                               },
                               function(data) {
-                                  toastr.error('网络错误：'+data);
+                                  toastr.error('网络错误：'+data.status);
                               }
                           );
                       },
@@ -630,32 +635,7 @@
 						toastr.error('网络错误：'+data);
 					}
 				);
-				var testCasesEl=$('#test-cases');
-                testCasesEl.on('click', 'i.fa-edit', function() {
-                    var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
-                        isBodyUnfolded      = $('.body', $(testCaseContainer)).is(':visible');
-
-                    if ( isBodyUnfolded ) {
-                        $('.body', $(testCaseContainer)).addClass('hide');
-                    } else {
-                        $('.body', $(testCaseContainer)).removeClass('hide');
-                    }
-                });
-
-                testCasesEl.on('click', 'i.fa-trash', function() {
-                    var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
-                        testCases         = $('li.test-case', '#test-cases').length,
-                        testCaseName      = '测试用例 #%s';
-
-                    $(testCaseContainer).remove();
-                    $('li.test-case', '#test-cases').each(function(index) {
-                        $('h5', this).html(testCaseName.format(index));
-                    });
-
-                    if ( testCases === 1 ) {
-                        $('#no-test-cases').removeClass('hide');
-                    }
-                });});
+			//});
             $('label.checkbox.parent-category').click(function() {
                 var currentControl = $(this);
                 // Fix the bug for Checkbox in FlatUI
@@ -679,31 +659,43 @@
                 }, 50);
 			});
 
+            function newTestCase() {
+                if(vm.QuestionBank.codingProblem.testCases===null) {
+                    vm.QuestionBank.codingProblem.testCases=[];
+                }
+                vm.QuestionBank.codingProblem.testCases.push({
+                    "input":"",
+                    "output":""
+                });
+            }
+
+            function deleteTestCase(index){
+                vm.QuestionBank.codingProblem.testCases.splice(index,1);
+            }
 		</script>
 
-<!--添加编程题-->
-<script type='text/javascript'>
-    // $.getScript('/static/js/markdown.min.js', function() {
-    //     var converter = Markdown.getSanitizingConverter();
-    //     var editor    = new Markdown.Editor(converter);
-    //
-    //     editor.run();
-    //
-    //     $('.markdown').each(function() {
-    //         var plainContent    = $(this).text(),
-    //             markdownContent = converter.makeHtml(plainContent.replace(/\\\n/g, '\\n'));
-    //
-    //         $(this).html(markdownContent);
-    //     });
-    // });
-</script>
 <script type="text/javascript">
-    function newTestCase() {
-        var testCaseId = $('li.test-case', '#test-cases').length;
-        $('#no-test-cases').addClass('hide');
-        $('#test-cases > ul').append(getTestCaseContainer(testCaseId));
+    // $('#test-cases').on('click', 'i.fa-trash', function() {
+    //     console.log(666);
+    //     var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
+    //         testCases         = $('li.test-case', '#test-cases').length,
+    //         testCaseName      = '测试用例 #%s';
+    //
+    //     $(testCaseContainer).remove();
+    //     $('li.test-case', '#test-cases').each(function(index) {
+    //         $('h5', this).html(testCaseName.format(index));
+    //     });
+    //
+    //     if ( testCases === 1 ) {
+    //         $('#no-test-cases').removeClass('hide');
+    //     }
+    // });
+    // function newTestCase() {
+    //     var testCaseId = $('li.test-case', '#test-cases').length;
+    //     $('#no-test-cases').addClass('hide');
+    //     $('#test-cases > ul').append(getTestCaseContainer(testCaseId));
+    // }
 
-    }
 </script>
 <script type="text/javascript">
     function getTestCaseContainer(testCaseId) {
@@ -711,8 +703,7 @@
             '    <div class="test-cases-header">' +
             '        <h5>测试用例 #%s</h5>' +
             '        <ul class="inline">' +
-            '            <li><a href="javascript:void(0);"><i class="fa fa-edit"></i></a></li>' +
-            '            <li><a href="javascript:void(0);"><i class="fa fa-trash"></i></a></li>' +
+            '            <li><a href="javascript:deleteTestCase(%s);"><i class="fa fa-trash"></i></a></li>' +
             '        </ul>' +
             '    </div> <!-- .header -->' +
             '    <div class="body">' +
@@ -735,7 +726,7 @@
             '    </div> <!-- .body -->' +
             '</li> <!-- .test-case -->';
 
-        return containerTemplate.format(testCaseId);
+        return containerTemplate.format(testCaseId,testCaseId);
     }
 </script>
 <@template.footer/>

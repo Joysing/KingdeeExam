@@ -14,8 +14,8 @@
 		<result property="description" column="description" />
 		<result property="inputFormat" column="input_format" />
 		<result property="outputFormat" column="output_format" />
-		<result property="sampleInput" column="sample_input" />
-		<result property="sampleOutput" column="sample_output" />
+		<result property="inputSample" column="sample_input" />
+		<result property="outputSample" column="sample_output" />
 		<result property="hint" column="problem_hint" />
 	</resultMap>
 

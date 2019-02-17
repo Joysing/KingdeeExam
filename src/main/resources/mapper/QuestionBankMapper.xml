@@ -15,6 +15,7 @@
 	    </collection>
         <collection property="codingProblem" ofType="com.kingdee.exam.voj.model.Problem">
             <id column="problem_id" property="problemId" jdbcType="INTEGER" />
+            <id column="question_bank_id" property="questionBankId" jdbcType="INTEGER" />
             <result column="description" property="description" jdbcType="VARCHAR" />
             <result column="hint" property="hint" jdbcType="VARCHAR" />
             <result column="input_format" property="inputFormat" jdbcType="VARCHAR" />
@@ -38,6 +39,7 @@
 			options.options_id,
 			options.op,
 			options.content,
+            voj_problems.problem_id,
 			`description`,
 			`hint`,
 			`input_format`,
