@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin")
@@ -154,7 +152,51 @@ public class TestPaperController {
     	}
     	
     }
-    
+
+    //一键自动出题
+    @RequestMapping(value="/autoChoiceQuestion")
+    @ResponseBody
+    public boolean autoChoiceQuestion(Integer testPaperID){
+        TestPaperTestsList testPaperTestsList=new TestPaperTestsList();
+        testPaperTestsList.setTestpaperId(testPaperID);
+        List<QuestionBankVo> AllQuestionBank = questionBankMapper.findAllQuestionBank();
+        /*
+         * 判断题=0
+         * 选择题=1
+         * 编程题=2
+         */
+        List<Integer> judgeQuestionsID = new ArrayList<>();
+        List<Integer> choiceQuestionsID = new ArrayList<>();
+        List<Integer> codingQuestionsID = new ArrayList<>();
+        for (QuestionBankVo question:AllQuestionBank) {
+            switch (question.getTestsType()){
+                case 0:
+                    judgeQuestionsID.add(question.getQuestionBankId());
+                    break;
+                case 1:
+                    choiceQuestionsID.add(question.getQuestionBankId());
+                    break;
+                case 2:
+                    codingQuestionsID.add(question.getQuestionBankId());
+                    break;
+            }
+        }
+        List<Integer> questionBankId = new ArrayList<>();
+        Collections.shuffle(judgeQuestionsID);
+        Collections.shuffle(choiceQuestionsID);
+        Collections.shuffle(codingQuestionsID);
+        //随机选5道判断题，5道选择题，1道编程题
+        for(int i=0;i<5;i++){
+            questionBankId.add(judgeQuestionsID.get(i));
+            questionBankId.add(choiceQuestionsID.get(i));
+        }
+        questionBankId.add(codingQuestionsID.get(0));
+        testPaperTestsList.setQuestionBankId(questionBankId);
+        System.out.println(testPaperID);
+        testPaperTestService.deleteTestPaperTestById(testPaperID);
+        int addTestPaperQuestion = testPaperTestService.addTestPaperQuestion(testPaperTestsList);
+        return addTestPaperQuestion >= 1;
+    }
     @ResponseBody
     @RequestMapping(value = "/addtestpaper")
     public boolean addTestPaper(TestPaper testPaper) {

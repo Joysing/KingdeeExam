@@ -36,4 +36,15 @@ public class UsersServiceImpl implements UsersService {
         return userState >= 1;
     }
 
+	@Override
+	public boolean updateUser(User user) {
+		int userState = usersMapper.updateByPrimaryKey(user);
+        return userState >= 1;
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return usersMapper.getUserByUsername(username);
+    }
+
 }

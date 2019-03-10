@@ -119,9 +119,9 @@
 				</div> <!-- .section -->
 				<div id="io-sample" class="section">
 					<h5>输入样例</h5>
-					<div class="description"><pre>${problem.sampleInput}</pre></div> <!-- .description -->
+					<div class="description"><pre>${problem.inputSample}</pre></div> <!-- .description -->
 					<h5>输出样例</h5>
-					<div class="description"><pre>${problem.sampleOutput}</pre></div> <!-- .description -->
+					<div class="description"><pre>${problem.outputSample}</pre></div> <!-- .description -->
 				</div> <!-- .section -->
 				<div class="section">
 					<div class="description">
@@ -255,7 +255,54 @@
 <script type="text/javascript" src="/static/js/icheck.min.js" ></script>
 <script src="/static/assets/remodal-1.1.0/remodal.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
-    <script type="text/javascript" src="/static/js/site.js"></script>
+<script type="text/javascript" src="/static/js/site.js"></script>
+    <script type="text/javascript">
+    $.getScript('/static/js/markdown.min.js', function() {
+        var converter = Markdown.getSanitizingConverter();
+        var editor    = new Markdown.Editor(converter);
+        editor.run();
+
+        $('.markdown').each(function() {
+        var plainContent    = $(this).text(),
+        markdownContent = converter.makeHtml(plainContent.replace(/\\\n/g, '\\n'));
+
+        $(this).html(markdownContent);
+        });
+    });
+    </script>
+    <script type="text/javascript">
+        $.getScript('/static/js/codemirror.min.js', function() {
+            $.when(
+                $.getScript('/static/mode/clike.min.js'),
+                $.getScript('/static/mode/go.min.js'),
+                $.getScript('/static/mode/pascal.min.js'),
+                $.getScript('/static/mode/perl.min.js'),
+                $.getScript('/static/mode/php.min.js'),
+                $.getScript('/static/mode/python.min.js'),
+                $.getScript('/static/mode/ruby.min.js'),
+                $.Deferred(function(deferred) {
+                    $(deferred.resolve);
+                })
+            ).done(function() {
+                window.codeMirrorEditor = CodeMirror.fromTextArea(document.getElementById('codemirror-editor'), {
+                    mode: $('select#languages').val(),
+                    tabMode: 'indent',
+                    theme: 'neat',
+                    tabSize: 4,
+                    indentUnit: 4,
+                    lineNumbers: true,
+                    lineWrapping: true
+                });
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        $.getScript('/static/js/highlight.min.js', function() {
+            $('code').each(function(i, block) {
+                hljs.highlightBlock(block);
+            });
+        });
+    </script>
     <script type="text/javascript">
 	$(document).ready(function(){
 	  $('input').iCheck({

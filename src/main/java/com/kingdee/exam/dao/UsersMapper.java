@@ -23,4 +23,6 @@ public interface UsersMapper {
     List<User> findUserInfo();
 
     public User getUserByUserId(@Param("userId") long userId);
+
+    public User getUserByUsername(@Param("username") String username);
 }

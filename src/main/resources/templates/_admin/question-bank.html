@@ -10,70 +10,60 @@
     <link rel="stylesheet" href="/static/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/new-problem.css">
+    <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css">
 </head>
-<@template.header "index.html"/>
+<@template.header "question-bank.html"/>
 <div class="container-fluid box" >
     <div class="col-xs-12 content" id="content">
         <!--content-->
-        <div class="panel panel-primary box pad" >
-            <div class="panel-heading primary-color">
-                <h2 class="panel-title pull-left" style="line-height: 39px;">题库</h2>
-                <button class="pull-right btn btn-primary" data-toggle="modal"
-                    v-on:click="add()">新增题</button>
-                <div class="clearfix"></div>
-            </div>
-            <div>
-                <table class="table table-hover text-center table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="text-center">题干</th>
-                            <th class="text-center">选项答案</th>
-                            <th class="text-center">正确答案</th>
-                            <th class="text-center">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="item in QuestionBankVoList.list">
-                            <td v-text="item.stem" width="40%"></td>
-                            <td width="30%">
-                                <span v-for="op in item.options" >
-                                    <span v-text="op.op+'、'+op.content"
-                                          v-bind:class="[item.answer==op.op ? 'label-success':'','label']"></span>
-                                    &nbsp;
-                                </span>
-                            </td>
-                            <td v-text="item.answer"></td>
-                            <td>
-                                <a class="btn btn-xs btn-info" title="修改" v-on:click="update(item)">
-                                    <i class="ace-icon fa fa-pencil bigger-120"></i>
-                                </a>
-                                <a class="btn btn-xs btn-danger" title="删除" v-on:click="deleteQuestionBank(item.questionBankId)">
-                                    <i class="ace-icon fa fa-trash-o bigger-120"></i>
-                                </a>
-                            </td>
-                        </tr>
-                     <tr v-if="QuestionBankVoList.list == 0">
-                         <td colspan="9" align="center"
-                             style="vertical-align: middle; padding-top: 10px; padding-bottom: 10px;">暂无数据</td>
-                     </tr>
-                    </tbody>
-                </table>
-                <div class="pull-right" v-if="QuestionBankVoList.list != 0">
-                    <ul class="pagination">
-                        <li :class="QuestionBankVoList.isFirstPage? 'disabled':''">
-                            <a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.prePage)">&laquo;</a>
-                        </li>
-                        <li v-for="n in QuestionBankVoList.pages" :class="n == QuestionBankVoList.pageNum? 'active':''">
-                            <a href="javascript:void(0);" v-on:click="page(n)" v-text="n"></a>
-                        </li>
-                        <li :class="QuestionBankVoList.isLastPage? 'disabled':''">
-                            <a href="javascript:void(0);" v-on:click="page(QuestionBankVoList.nextPage)">&raquo;</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
 
+        <div class="panel panel-primary box pad">
+        <div class="panel-heading primary-color">
+            <h2 class="panel-title pull-left" style="line-height: 39px;">题库</h2>
+            <button class="pull-right btn btn-primary" data-toggle="modal"
+                v-on:click="add()">新增题</button>
+            <div class="clearfix"></div>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover text-center table-bordered" id="questionsTable">
+                <thead>
+                    <tr>
+                        <th class="text-center">题型</th>
+                        <th class="text-center">题干</th>
+                        <th class="text-center">选项</th>
+                        <th class="text-center">答案</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in QuestionBankVoList.list">
+                        <td v-text="item.testsType===0?'判断题':(item.testsType===1?'选择题':'编程题')" class="col-xs-2"></td>
+                        <td v-text="item.stem" class="col-xs-4"></td>
+                        <td class="col-xs-4">
+                            <span v-for="op in item.options" >
+                                <span v-text="op.op+'、'+op.content"
+                                      v-bind:class="[item.answer==op.op ? 'label-success':'','label']"></span>
+                                &nbsp;
+                            </span>
+                        </td>
+                        <td v-text="item.testsType===0?(item.answer==='1'?'正确':'错误'):item.answer" class="col-xs-1"></td>
+                        <td class="col-xs-3">
+                            <a class="btn btn-xs btn-info" title="修改" v-on:click="update(item)">
+                                <i class="ace-icon fa fa-pencil bigger-120"></i>
+                            </a>
+                            <a class="btn btn-xs btn-danger" title="删除" v-on:click="deleteQuestionBank(item.questionBankId)">
+                                <i class="ace-icon fa fa-trash-o bigger-120"></i>
+                            </a>
+                        </td>
+                    </tr>
+                 <tr v-if="QuestionBankVoList.list == 0">
+                     <td colspan="9" align="center"
+                         style="vertical-align: middle; padding-top: 10px; padding-bottom: 10px;">暂无数据</td>
+                 </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
         <!--新增题修改题-->
         <div class="modal fade bs-example-modal-lg" id="myModal">
             <div class="modal-dialog modal-lg">
@@ -81,8 +71,8 @@
                     <div class="modal-header bg-primary primary-color">
                         <button type="button" class="close" data-dismiss="modal"
                             aria-hidden="true">&times;</button>
-                        <h4 class="modal-title" v-if="btnState == 0">新增题</h4>
-                        <h4 class="modal-title" v-if="btnState == 1">修改题</h4>
+                        <h4 class="modal-title" v-if="btnState == 'add'">新增题</h4>
+                        <h4 class="modal-title" v-if="btnState == 'update'">修改题</h4>
                     </div>
                     <!--添加题-->
                     <div class="modal-body">
@@ -95,7 +85,7 @@
                                     </textarea>
                                 </div>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" v-if="btnState == 'add'">
                                 <label class="col-sm-2 control-label">类型：</label>
                                 <div class="col-sm-3">
                                     <input id="op-choose" v-on:click="choose()" type="radio" value="1" v-model="QuestionBank.testsType">
@@ -110,7 +100,7 @@
                                     <label for="op-coding">编程题</label>
                                 </div>
                             </div>
-                            <div id="options-views">
+                            <div class="form-group" v-if="QuestionBank.testsType == 1">
                             <!-- 开始 -->
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">选项：</label>
@@ -302,9 +292,9 @@
                             <button type="button" class="btn btn-default" data-dismiss="modal">
                                 关闭</button>
                             <button type="button" class="btn btn-primary"
-                                    v-on:click="addQuestionBank()" v-if="btnState == 0">提交试题</button>
+                                    v-on:click="addQuestionBank()" v-if="btnState == 'add'">提交试题</button>
                             <button type="button" class="btn btn-primary"
-                                    v-on:click="sbUpdate()"  v-if="btnState == 1">修改试题</button>
+                                    v-on:click="sbUpdate()"  v-if="btnState == 'update'">修改试题</button>
                         </div>
                     </div>
                 </div>
@@ -318,9 +308,16 @@
 <script type="text/javascript" src="/static/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/static/assets/vue/vue.js"></script>
 <script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
+<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
 		<script>
-			//$(function() {
+            $(document).ready(function(){
+                $('#questionsTable').DataTable({
+                    "language": {
+                        "url": "/static/dataTable-zh_cn.json"
+                    }
+                });
+            });
 				var QuestionBank = {
 					stem: '',
 					answer: 'A',
@@ -334,16 +331,11 @@
 				  data: {
 					  QuestionBankVoList: {},
 					  QuestionBank: QuestionBank,
-					  test: "123",
-					  btnState: 0
+					  btnState: 'add'
 				  },
 				  methods: {
                       addQuestionBank: function() {
-                          var temp = JSON.stringify(QuestionBank);
-                          console.log(temp);
-
                           if(this.QuestionBank.testsType === '2'){
-                              // var testCasesArr   = [];
                               var problemCategoriesArr = [];
                               var problemTagsArr = '';
 
@@ -352,15 +344,6 @@
                               } else {
                                   problemTagsArr = problemTagsArr.split(',');
                               }
-                              // $('li.test-case').each(function() {
-                              //     var input   = $('.standard-input', $(this)).val(),
-                              //         output  = $('.standard-output', $(this)).val();
-                              //
-                              //     testCasesArr.push({
-                              //         'input': input,
-                              //         'output': output
-                              //     });
-                              // });
                               $('label.checked', '.parent-categories').each(function() {
                                   problemCategoriesArr.push($(this).attr('for'));
                               });
@@ -396,7 +379,7 @@
                                       for (var i = 0; i <= 3; i++) {
                                           vm.QuestionBank.options[i].content = '';
                                       }
-                                      vm.page(vm.QuestionBankVoList.pageNum);
+                                      getAllQuestionBank();
                                   } else {
                                       toastr.error('操作失败!', '新增题');
                                   }
@@ -409,7 +392,6 @@
                       coding: function() {
                           this.QuestionBank.answer = 100;
                           this.QuestionBank.testsType = 2;
-                          $("#options-views").hide();
                           $.getScript('/static/js/markdown.min.js', function() {
                               var converter = Markdown.getSanitizingConverter();
                               var editor    = new Markdown.Editor(converter);
@@ -430,19 +412,20 @@
                       judge: function() {
                           this.QuestionBank.answer = 1;
                           this.QuestionBank.testsType = 0;
-                          $("#options-views").hide();
                       },
                       choose: function() {
                           this.QuestionBank.answer = 'A';
                           this.QuestionBank.testsType = 1;
-                          $("#options-views").show();
                       },
                       deleteQuestionBank: function(id) {
+                          if (confirm("是否要删除这道题目?") === false) {
+                              return;
+                          }
                           ajaxSubmitJSON("/admin/deletequestionbank", JSON.stringify({"questionBankId": id}),
                               function(data) {
                                   if(data) {
                                       toastr.success('操作成功!', '删除题');
-                                      vm.page(vm.QuestionBankVoList.pageNum);
+                                      getAllQuestionBank();
                                   }else {
                                       toastr.error('操作失败!', '删除题');
                                   }
@@ -453,13 +436,22 @@
                           );
                       },
                       add: function() {
+                          this.btnState = 'add';
+                          vm.QuestionBank={
+                              stem: '',
+                              answer: 'A',
+                              testsType: 1,
+                              questionBankId: null,
+                              codingProblem:{},
+                              options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]
+                          };
                           $('#myModal').modal({
                               backdrop: 'static',
                               keyboard: false
                           });
                       },
                       update: function(data) {
-                          this.btnState = 1;
+                          this.btnState = 'update';
                           vm.QuestionBank.stem = data.stem;
                           vm.QuestionBank.answer = data.answer;
                           vm.QuestionBank.testsType = data.testsType;
@@ -468,11 +460,9 @@
                               vm.QuestionBank.options = data.options;
                           } else if(data.testsType === 0) {
                               vm.QuestionBank.answer = data.answer;
-                              $("#options-views").hide();
                           }else if(data.testsType === 2) {
                               vm.QuestionBank.codingProblem=data.codingProblem;
                               vm.QuestionBank.codingProblem.testCases=JSON.parse(data.codingProblem.testCases);
-                              $("#options-views").hide();
                           }
 
                           $('#myModal').modal({
@@ -499,23 +489,13 @@
                                       for (var i = 0; i <= 3; i++) {
                                           vm.QuestionBank.options[i].content = '';
                                       }
-                                      vm.page(vm.QuestionBankVoList.pageNum);
+                                      getAllQuestionBank();
                                   } else {
                                       toastr.error('操作失败!', '修改题');
                                   }
                               },
                               function(data) {
                                   toastr.error('网络错误：'+data.status);
-                              }
-                          );
-                      },
-                      page: function(pageNum) {
-                          ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({'pageNum':pageNum}),
-                              function(data) {
-                                  vm.QuestionBankVoList = data;
-                              },
-                              function(data) {
-                                  toastr.error('网络错误：'+data);
                               }
                           );
                       },
@@ -627,37 +607,17 @@
                       }
 				  }
 				});
-				ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({}),
-					function(data) {
-						vm.QuestionBankVoList = data;
-					},
-					function(data) {
-						toastr.error('网络错误：'+data);
-					}
-				);
-			//});
-            $('label.checkbox.parent-category').click(function() {
-                var currentControl = $(this);
-                // Fix the bug for Checkbox in FlatUI
-                setTimeout(function() {
-                    var isChecked = $(currentControl).hasClass('checked');
-
-                    if ( !isChecked ) {
-                        $('label.checkbox.child-category', $(currentControl).parent()).removeClass('checked');
-                    }
-                }, 50);
-            });
-            $('label.checkbox.child-category').click(function() {
-                var currentControl = $(this);
-                // Fix the bug for Checkbox in FlatUI
-                setTimeout(function() {
-                    var isChecked = $(currentControl).hasClass('checked');
-
-                    if ( isChecked ) {
-                        $('label.checkbox.parent-category', $(currentControl).parent().parent().parent()).addClass('checked');
-                    }
-                }, 50);
-			});
+                getAllQuestionBank();
+				function getAllQuestionBank() {
+                    ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({}),
+                        function (data) {
+                            vm.QuestionBankVoList = data;
+                        },
+                        function (data) {
+                            toastr.error('网络错误：' + data);
+                        }
+                    );
+                }
 
             function newTestCase() {
                 if(vm.QuestionBank.codingProblem.testCases===null) {
@@ -674,29 +634,6 @@
             }
 		</script>
 
-<script type="text/javascript">
-    // $('#test-cases').on('click', 'i.fa-trash', function() {
-    //     console.log(666);
-    //     var testCaseContainer = $(this).parent().parent().parent().parent().parent(),
-    //         testCases         = $('li.test-case', '#test-cases').length,
-    //         testCaseName      = '测试用例 #%s';
-    //
-    //     $(testCaseContainer).remove();
-    //     $('li.test-case', '#test-cases').each(function(index) {
-    //         $('h5', this).html(testCaseName.format(index));
-    //     });
-    //
-    //     if ( testCases === 1 ) {
-    //         $('#no-test-cases').removeClass('hide');
-    //     }
-    // });
-    // function newTestCase() {
-    //     var testCaseId = $('li.test-case', '#test-cases').length;
-    //     $('#no-test-cases').addClass('hide');
-    //     $('#test-cases > ul').append(getTestCaseContainer(testCaseId));
-    // }
-
-</script>
 <script type="text/javascript">
     function getTestCaseContainer(testCaseId) {
         var containerTemplate = '<li class="test-case">' +

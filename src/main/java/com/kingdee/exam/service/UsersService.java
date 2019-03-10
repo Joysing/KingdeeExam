@@ -17,4 +17,8 @@ public interface UsersService {
     //添加账号
     boolean addUser(User user);
 
+    //修改账号
+    boolean updateUser(User user);
+
+    User getUserByUsername(String username);
 }

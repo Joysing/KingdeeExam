@@ -7,8 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Exam</title>
     <link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
+    <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css">
 </head>
-<@template.header "index.html"/>
+<@template.header "user.html"/>
 	<div class="container-fluid">
 		<div class="col-xs-12 content" id="content">
 			<!--content-->
@@ -22,26 +24,33 @@
 				</div>
 				<div class="adv-table editable-table ">
 				<div class="panel-body">
-					<table id="editable-sample" class="table table-striped table-hover table-bordered">
+					<table id="usersTable" class="table table-striped table-hover table-bordered">
 						<thead>
 							<tr>
 								<th class="text-center">id</th>
-								<th class="text-center">姓名</th>
-								<th class="text-center">身份</th>
+								<th class="text-center">用户名</th>
+								<th class="text-center">真实姓名</th>
+								<th class="text-center">手机号码</th>
+								<th class="text-center">角色</th>
 								<th class="text-center">操作</th>
 							</tr>
 						</thead>
 						<tbody>
-						<#list allUsers as allUsers>
-							<tr id="${allUsers.userId}">
-								<td>${allUsers.userId!}</td>
-								<td>${allUsers.username}</td>
-								<td><#if allUsers.roles=="ROLE_ADMIN"><span>管理员</span><#elseif allUsers.roles=="ROLE_USER"><span>用户</span></#if></td>
-								<td>
-									<a class="btn btn-xs" onclick="delete1(${allUsers.userId})">删除</a>
-								</td>
-							</tr>
-							</#list>
+                            <tr v-for="item in UserList">
+                                <td v-text="item.userId" class="col-xs-2"></td>
+                                <td v-text="item.username" class="col-xs-2"></td>
+                                <td v-text="item.trueName" class="col-xs-2"></td>
+                                <td v-text="item.phone" class="col-xs-2"></td>
+                                <td v-text="item.roles=='ROLE_ADMIN'?'管理员':
+                                            item.roles=='ROLE_USER'?'考生':
+                                            item.roles=='ROLE_JUDGE'?'判题机':'未知角色'" class="col-xs-2"></td>
+                                <td class="col-xs-2">
+                                    <a class="btn btn-xs btn-info" title="修改" v-on:click="update(item)">
+                                        修改
+                                    </a>
+                                    <a class="btn btn-xs" v-on:click="deleteUser(item.userId)">删除</a>
+                                </td>
+                            </tr>
 						</tbody>
 					</table>
 					</div>
@@ -55,14 +64,21 @@
 					<div class="modal-header bg-primary primary-color">
 						<button type="button" class="close" data-dismiss="modal"
 								aria-hidden="true">&times;</button>
-						<h4 class="modal-title">生成新账号</h4>
+						<h4 class="modal-title" v-if="btnState == 'add'">生成新账号</h4>
+                        <h4 class="modal-title" v-if="btnState == 'update'">修改账号</h4>
 					</div>
 					<div class="modal-body">
-						<form class="form-horizontal" id="optionsForm" action="/admin/addQuestionBank" method="post" onsubmit="return mySubmit(true)">
+						<form class="form-horizontal" id="optionsForm">
 							<div class="form-group">
 								<label class="col-xs-2 control-label">姓名：</label>
 								<div class="col-sm-10">
 									<input type="text" class="form-control" name="truename" v-model="User.trueName" placeholder="请输入姓名">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-xs-2 control-label">登录名：</label>
+								<div class="col-sm-10">
+									<input type="text" class="form-control" name="username" v-model="User.username" placeholder="留空则使用手机号">
 								</div>
 							</div>
 							<div class="form-group">
@@ -71,66 +87,107 @@
 									<input type="text" class="form-control" name="phone" v-model="User.phone" placeholder="请输入手机号">
 								</div>
 							</div>
+                            <div class="form-group" v-if="btnState == 'update'">
+                                <label class="col-xs-2 control-label">密码：</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="password" v-model="User.password" placeholder="留空则不修改">
+                                </div>
+                            </div>
+							<div class="form-group">
+								<label class="col-xs-2 control-label">账号类型：</label>
+								<div class="col-sm-10">
+                                    <select class="form-control" v-model="User.roles" title="">
+                                        <option value="ROLE_USER">考生</option>
+                                        <option value="ROLE_JUDGE">判题机</option>
+                                        <option value="ROLE_ADMIN">管理账号</option>
+                                    </select>
+								</div>
+							</div>
 						</form>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">
 								关闭</button>
-							<button type="button" class="btn btn-primary" v-on:click="addQuestionBank()" v-if="btnState == 0">生成</button>
+							<button type="button" class="btn btn-primary" v-on:click="addUser()" v-if="btnState == 'add'">生成</button>
+                            <button type="button" class="btn btn-primary"
+                                    v-on:click="sbUpdate()"  v-if="btnState == 'update'">修改</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+            <div class="modal fade bs-example-modal-lg" id="tipsModal">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary primary-color">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">生成账号成功</h4>
+                        </div>
+                        <div class="modal-body">
+                            <h4 class="modal-title"><span style="color: red;">重要提醒：</span>
+                                此信息只显示一次，关闭后不再显示。请保存好账号和密码并发送给考生。</h4>
+                            <div class="form-group">
+                                <label id="tips-truename" class="col-xs-10 control-label" style="margin-top: 15px;"></label>
+                                <label id="tips-username" class="col-xs-10 control-label"></label>
+                                <label id="tips-password" class="col-xs-10 control-label"></label>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-info" v-on:click="copyAccount()">
+                                    一键复制</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 		</div>
 		<!--content-->
 	</div>
-
-		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-		<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js"></script>
-		<!-- Include all compiled plugins (below), or include individual files as needed -->
-		<script src="/static/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/assets/js/jquery.min.js"></script>
 		<script type="text/javascript" src="/static/assets/vue/vue.js"></script>
         <script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
 		<script type="text/javascript" src="/static/js/common.js"></script>
 		<script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
-		<script src="/static/js/editable-table.js"></script>
-		<script type="text/javascript" src="/static/assets/data-tables/DT_bootstrap.js"></script>
-		<script class="include" type="text/javascript" src="/static/js/jquery.dcjqaccordion.2.7.js"></script>
    <script>
-   jQuery(document).ready(function() {   
-       var a = EditableTable.init();
-
-   });
-   $(function() {
-       var User = {
-           trueName: '',
-           phone: ''
-       };
+        $(document).ready(function(){
+            $('#usersTable').DataTable({
+                "language": {
+                    "url": "/static/dataTable-zh_cn.json"
+                }
+            });
+        });
+        var User={
+            trueName: '',
+            phone: '',
+            userId: '',
+            username: '',
+            roles: '',
+            enabled: ''
+        };
        var vm = new Vue({
            el: '#content',
            data: {
-               QuestionBankVoList: {},
+               UserList:[],
                User:User,
-               test: "123",
                btnState: 0
            },
            methods: {
-               addQuestionBank: function() {
-                   var temp = JSON.stringify(QuestionBank);
-                   console.log(temp);
-                   ajaxSubmitJSON("/admin/addQuestionBank", JSON.stringify(QuestionBank),
+               addUser: function() {
+                   ajaxSubmitJSON("/admin/addUser", JSON.stringify(User),
                        function(data) {
-                           if(data) {
-                               toastr.success('操作成功!', '新增题');
+                           if(data["isSuccessfully"]==="true") {
                                $('#myModal').modal('hide');
-                               vm.QuestionBank.stem = '';
-                               vm.QuestionBank.answer = 'A';
-                               for (var i = 0; i <= 3; i++) {
-                                   vm.QuestionBank.options[i].content = '';
-                               }
-                               vm.page(vm.QuestionBankVoList.pageNum);
+                               $('#tipsModal').modal({
+                                   backdrop: 'static',
+                                   keyboard: false
+                               });
+                               $('#tips-truename').html("考生姓名："+data["trueName"]);
+                               $('#tips-username').html("登录账号："+data["userName"]);
+                               $('#tips-password').html("登录密码："+data["password"]);
+                               toastr.success('', '账号生成成功!');
+                               getAllUser();
                            } else {
-                               toastr.error('操作失败!', '新增题');
+                               toastr.error(data.message, '账号生成失败!');
                            }
                        },
                        function(data) {
@@ -138,21 +195,17 @@
                        }
                    );
                },
-               hide: function() {
-                   if(this.QuestionBank.answer != 1 || this.QuestionBank.answer!= 0) {
-                       this.QuestionBank.answer = 1;
-                       this.QuestionBank.testsType = 0;
+               deleteUser: function(userId) {
+                   if (confirm("是否要删除这位用户?") === false) {
+                       return;
                    }
-                   $("#options-views").hide();
-               },
-               deleteQuestionBank: function(id) {
-                   ajaxSubmitJSON("/admin/deletequestionbank", JSON.stringify({"questionBankId": id}),
+                   ajaxSubmitJSON("/admin/userDelete", JSON.stringify(userId),
                        function(data) {
                            if(data) {
-                               toastr.success('操作成功!', '删除题');
-                               vm.page(vm.QuestionBankVoList.pageNum);
+                               toastr.success('', '删除成功');
+                               getAllUser();
                            }else {
-                               toastr.error('操作失败!', '删除题');
+                               toastr.error('', '删除失败');
                            }
                        },
                        function(data) {
@@ -161,82 +214,65 @@
                    );
                },
                add: function() {
+                   this.btnState = 'add';
+                   vm.User = {};
                    $('#myModal').modal({
                        backdrop: 'static',
                        keyboard: false
                    });
                },
+               copyAccount:function(){
+                   var truename=document.getElementById("tips-truename").innerText;
+                   var username=document.getElementById("tips-username").innerText;
+                   var password=document.getElementById("tips-password").innerText;
+                   var oInput = document.createElement('textarea');
+                   oInput.value = truename+" \n"+username+" \n"+password;
+                   document.body.appendChild(oInput);
+                   oInput.select(); // 选择对象
+                   document.execCommand("Copy"); // 执行浏览器复制命令
+                   oInput.className = 'oInput';
+                   oInput.style.display='none';
+                   toastr.success('', '账号信息复制成功!');
+               },
                update: function(data) {
-                   this.btnState = 1;
-                   vm.QuestionBank.stem = data.stem;
-                   vm.QuestionBank.answer = data.answer;
-                   vm.QuestionBank.testsType = data.testsType;
-                   vm.questionBankId = data.questionBankId;
-                   if(data.testsType === 1) {
-                       vm.QuestionBank.options = data.options;
-                   } else {
-                       vm.hide();
-                   }
-
+                   this.btnState = 'update';
+                   vm.User = data;
+                   vm.User.password = '';
+                   delete vm.User.authorities;
                    $('#myModal').modal({
                        backdrop: 'static',
                        keyboard: false
                    });
                },
                sbUpdate: function() {
-                   console.log(vm.questionBankId);
-                   ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(QuestionBank),
+                   ajaxSubmitJSON("/admin/updateUser", JSON.stringify(vm.User),
                        function(data) {
                            if(data) {
-                               toastr.success('操作成功!', '修改题');
+                               toastr.success('', '用户修改成功');
                                $('#myModal').modal('hide');
-                               vm.QuestionBank.stem = '';
-                               vm.QuestionBank.answer = 'A';
-                               for (var i = 0; i <= 3; i++) {
-                                   vm.QuestionBank.options[i].content = '';
-                               }
-                               vm.page(vm.QuestionBankVoList.pageNum);
+                               getAllUser();
                            } else {
-                               toastr.error('操作失败!', '修改题');
+                               toastr.error('', '用户修改成功');
                            }
                        },
                        function(data) {
-                           toastr.error('网络错误');
+                           toastr.error('网络错误：'+data.status);
                        }
                    );
                },
-               page: function(pageNum) {
-                   ajaxSubmitJSON("/admin/getAllQuestionBank", JSON.stringify({'pageNum':pageNum}),
-                       function(data) {
-                           vm.QuestionBankVoList = data;
-                       },
-                       function(data) {
-                           toastr.error('网络错误');
-                       }
-                   );
-               }
            }
        });
-   });
-    function delete1(userId){
-        if (confirm("是否要删除这位考生 ?") === false) {
-            return;
-        }
-        $.ajax({
-           	url:"/admin/userDelete",
-               data:{"userId":userId},
-               contentType: "application/json",
-               dataType: "json",  
-               type: "GET",  
-               traditional: true,  
-               success: function (data) {  
-            	   alert("删除成功!");
-            	   var idObject = document.getElementById(userId);
-            	   idObject.parentNode.removeChild(idObject);     
-               } 
-           });
-
-    }
+       getAllUser();
+       function getAllUser() {
+           ajaxSubmitJSON("/admin/getAllUser", JSON.stringify({}),
+               function (data) {
+                   vm.UserList = data;
+               },
+               function (data) {
+                   toastr.error('网络错误：' + data);
+               }
+           );
+       }
     </script>
 
 <@template.footer/>

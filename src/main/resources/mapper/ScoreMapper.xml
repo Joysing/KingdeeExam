@@ -3,7 +3,7 @@
 <mapper namespace="com.kingdee.exam.dao.ScoreMapper">
   <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.Score">
     <id column="score_id" jdbcType="INTEGER" property="scoreId" />
-    <result column="users_id" jdbcType="VARCHAR" property="usersId" />
+    <result column="users_id" jdbcType="INTEGER" property="usersId" />
     <result column="testpaper_id" jdbcType="INTEGER" property="testpaperId" />
     <result column="fraction" jdbcType="DOUBLE" property="fraction" />
   </resultMap>
@@ -33,7 +33,7 @@
   <insert id="insert" parameterType="com.kingdee.exam.entity.Score">
     insert into score (score_id, users_id, testpaper_id, 
       fraction)
-    values (#{scoreId,jdbcType=INTEGER}, #{usersId,jdbcType=VARCHAR}, #{testpaperId,jdbcType=INTEGER}, 
+    values (#{scoreId,jdbcType=INTEGER}, #{usersId,jdbcType=INTEGER}, #{testpaperId,jdbcType=INTEGER},
       #{fraction,jdbcType=DOUBLE})
   </insert>
   <insert id="insertSelective" parameterType="com.kingdee.exam.entity.Score">
@@ -57,7 +57,7 @@
         #{scoreId,jdbcType=INTEGER},
       </if>
       <if test="usersId != null">
-        #{usersId,jdbcType=VARCHAR},
+        #{usersId,jdbcType=INTEGER},
       </if>
       <if test="testpaperId != null">
         #{testpaperId,jdbcType=INTEGER},
@@ -71,7 +71,7 @@
     update score
     <set>
       <if test="usersId != null">
-        users_id = #{usersId,jdbcType=VARCHAR},
+        users_id = #{usersId,jdbcType=INTEGER},
       </if>
       <if test="testpaperId != null">
         testpaper_id = #{testpaperId,jdbcType=INTEGER},
@@ -84,7 +84,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.kingdee.exam.entity.Score">
     update score
-    set users_id = #{usersId,jdbcType=VARCHAR},
+    set users_id = #{usersId,jdbcType=INTEGER},
       testpaper_id = #{testpaperId,jdbcType=INTEGER},
       fraction = #{fraction,jdbcType=DOUBLE}
     where score_id = #{scoreId,jdbcType=INTEGER}

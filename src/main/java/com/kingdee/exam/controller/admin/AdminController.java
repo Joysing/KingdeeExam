@@ -69,7 +69,7 @@ public class AdminController {
 	public String loginJson(HttpServletRequest req, User users) {
 		HttpSession session=req.getSession();
 //		String sessionCode = (String) session.getAttribute("code");// session中验证码
-		String code = users.getCode();// 用户code
+		///String code = users.getCode();// 用户code
 //		System.out.println("session中验证码:"+sessionCode);
 //		if (!code.equals(sessionCode)) {// 验证码错误返回提示信息
 //			System.out.println("啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊:0");

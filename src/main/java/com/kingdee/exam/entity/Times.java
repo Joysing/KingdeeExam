@@ -18,7 +18,7 @@ public class Times {
 
     private Integer testpaperId;
 
-    private String userId;
+    private Integer userId;
 
     private Date startTime;
 

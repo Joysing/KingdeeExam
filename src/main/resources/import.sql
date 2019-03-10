@@ -1,12 +1,12 @@
 -- ----------------------------------------------------------
 -- 自动导入脚本
 -- ----------------------------------------------------------
-insert into users (user_id,username, password,true_name,enabled,roles) values ('20000','admin', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','管理员',true,'ROLE_ADMIN');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('149000301','user', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','面试者',true,'ROLE_USER');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('149000302','wang', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','王同学',true,'ROLE_USER');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('149000307','li', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','李同学',true,'ROLE_USER');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('10001','judge1', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机1号',true,'ROLE_JUDGE');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('10002','judge2', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机2号',true,'ROLE_JUDGE');
+insert into users (user_id,username, password,true_name,enabled,roles) values ('1','admin', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','管理员',true,'ROLE_ADMIN');
+insert into users (user_id,username, password,true_name,enabled,roles) values ('2','user', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','面试者',true,'ROLE_USER');
+insert into users (user_id,username, password,true_name,enabled,roles) values ('3','wang', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','王同学',true,'ROLE_USER');
+insert into users (user_id,username, password,true_name,enabled,roles) values ('4','li', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','李同学',true,'ROLE_USER');
+insert into users (user_id,username, password,true_name,enabled,roles) values ('5','judge1', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机1号',true,'ROLE_JUDGE');
+insert into users (user_id,username, password,true_name,enabled,roles) values ('6','judge2', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机2号',true,'ROLE_JUDGE');
 
 INSERT INTO options (options_id,op,content,question_bank_id) VALUES ('222', 'A', 'MDZZ', '69');
 INSERT INTO options (options_id,op,content,question_bank_id) VALUES ('223', 'B', 'MDZZ', '69');
@@ -223,8 +223,8 @@ INSERT INTO question_bank (question_bank_id,stem,answer,tests_type,state) VALUES
 INSERT INTO question_bank (question_bank_id,stem,answer,tests_type,state) VALUES ('160', '过河', '100', '2', '1');
 INSERT INTO question_bank (question_bank_id,stem,answer,tests_type,state) VALUES ('161', '等价表达式', '100', '2', '1');
 
-INSERT INTO score (score_id,users_id,testpaper_id,fraction,img) VALUES ('57', '149000307', '10002', '10', null);
-INSERT INTO score (score_id,users_id,testpaper_id,fraction,img) VALUES ('58', '149000307', '10001', '0', null);
+INSERT INTO score (score_id,users_id,testpaper_id,fraction,img) VALUES ('57', '4', '10002', '10', null);
+INSERT INTO score (score_id,users_id,testpaper_id,fraction,img) VALUES ('58', '4', '10001', '0', null);
 
 INSERT INTO testpaper (testpaper_id,testpaper_name,testpaper_state,start_date,end_date,is_start) VALUES ('10001', '卷一', '1', '2016-12-24 14:53:13', '2016-12-24 14:53:13', '1');
 INSERT INTO testpaper (testpaper_id,testpaper_name,testpaper_state,start_date,end_date,is_start) VALUES ('10002', '卷二', '1', '2016-12-24 14:53:13', '2016-12-24 14:53:13', '1');

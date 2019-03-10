@@ -51,8 +51,8 @@ public class ExamServiceImpl implements ExamService {
 		Score score = new Score();
 		score.setTestpaperId(Integer.parseInt(id));
 		User users = (User) session.getAttribute("myUser");
-		score.setUsersId(users.getUserId());
-//        score.setUsersId("149000301");
+		//score.setUsersId(users.getUserId());
+        score.setUsersId(149000301);
 		Score ifExistenceScore = examMapper.findIfExistenceScore(score);
 		if (ifExistenceScore != null) {
 			modelAndView.addObject("Fraction", ifExistenceScore.getFraction());
@@ -85,8 +85,8 @@ public class ExamServiceImpl implements ExamService {
         List<Language> languages = languageService.getAllLanguages();
 
 		Times times = new Times();// 当前试卷-当前用户的试卷如果没时间设置时间
-		times.setUserId(users.getUserId());
-//		times.setUserId("149000301");
+		//times.setUserId(users.getUserId());
+		times.setUserId(149000301);
 		times.setTestpaperId(Integer.parseInt(id));
 		Times ifExamTimes = examMapper.findExamTimes(times);
 		if (ifExamTimes == null) {

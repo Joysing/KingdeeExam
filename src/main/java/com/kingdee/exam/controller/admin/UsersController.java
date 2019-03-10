@@ -1,17 +1,18 @@
 package com.kingdee.exam.controller.admin;
 
+import com.github.pagehelper.PageInfo;
 import com.kingdee.exam.entity.User;
 import com.kingdee.exam.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 @Controller
 @RequestMapping("/admin")
@@ -28,42 +29,66 @@ public class UsersController {
 	 * 1.首页访问用户界面 对应下面  /user.html
 	 * 2.查询页面用户数据
 	 */
-	@RequestMapping(value="/user.html",method=RequestMethod.GET)
+	@RequestMapping(value="/user.html")
 	public ModelAndView AllUsers(){
-		List<User> allUsers=usersService.findUserInfo();	//2.查询页面用户数据
-		System.out.println("---------------------");
-		System.out.println(allUsers);
-		System.out.println("---------------------");
 		ModelAndView modelAndView = new ModelAndView();
-    	modelAndView.addObject("allUsers", allUsers);
-    	modelAndView.setViewName("_admin/user"); 
+    	modelAndView.setViewName("_admin/user");
 		return modelAndView;
 	}
-	
-	@RequestMapping(value="/userDelete",method=RequestMethod.GET)
+    /**
+     * 获取所有实体
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getAllUser")
+    public List<User> getAllUser(@RequestBody PageInfo<User> pageInfo) {
+        return usersService.findUserInfo();
+    }
+	@PostMapping(value="/userDelete")
 	@ResponseBody
-	public String deleteUsers(String userId){
-		int i=usersService.deleteByPrimaryKey(userId);
-		System.out.println(i);
-			if(i>=1){
-				return "1";
-			}else{
-				return "0";
-			}
-		
+	public boolean deleteUsers(@RequestBody String userId){
+        return usersService.deleteByPrimaryKey(userId) >= 1;
 	}
-
+    @ResponseBody
+    @RequestMapping(value = "/updateUser")
+    public boolean updateUser(@RequestBody User user) {
+//        questionBankVo.setQuestionBankId(Integer.parseInt(id));
+        return usersService.updateUser(user);
+    }
 	/**
 	 * 添加账号
 	 */
 	@ResponseBody
-	@RequestMapping(value = "/adduser")
-	public boolean addQuestionBank(@RequestBody User user) {
-		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+	@RequestMapping(value = "/addUser")
+	public Object addUser(@RequestBody User user) {
+	    String username=user.getPhone();
+	    String password=makeRandomPassword(8);
+	    user.setUsername(username);
+		user.setPassword(new BCryptPasswordEncoder().encode(password));
 		user.setEnabled(true);
-		user.setRoles("ROLE_USER");
-		return usersService.addUser(user);
+		Map<String,String> resultMap=new HashMap<>();
+		if(usersService.getUserByUsername(username)!=null){
+            resultMap.put("isSuccessfully","false");
+            resultMap.put("message","手机号已存在");
+        }else if(usersService.addUser(user)){
+            resultMap.put("isSuccessfully","true");
+            resultMap.put("userName",username);
+            resultMap.put("password",password);
+            resultMap.put("trueName",user.getTrueName());
+        }else{
+            resultMap.put("isSuccessfully","false");
+        }
+
+		return resultMap;
 	}
 
-
+    //随机密码生成
+    public static String makeRandomPassword(int len){
+        char charr[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*.?".toCharArray();
+        StringBuilder sb = new StringBuilder();
+        Random r = new Random();
+        for (int x = 0; x < len; ++x) {
+            sb.append(charr[r.nextInt(charr.length)]);
+        }
+        return sb.toString();
+    }
 }

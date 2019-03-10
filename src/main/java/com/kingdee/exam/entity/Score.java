@@ -16,7 +16,7 @@ public class Score {
     private Integer scoreId;
 
     @Column(name = "users_id")
-    private String usersId;
+    private Integer usersId;
 
     @Column(name = "testpaper_id")
     private Integer testpaperId;

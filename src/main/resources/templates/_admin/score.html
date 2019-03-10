@@ -8,7 +8,7 @@
     <title>Exam</title>
     <link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
 </head>
-<@template.header "index.html"/>
+<@template.header "score.html"/>
 <div class="container-fluid " id="box">
     <div class="col-xs-12 content" id="content">
         <!--content-->
@@ -20,10 +20,10 @@
             </div>
             <div class="adv-table editable-table ">
             <div class="panel-body">
-                <table id="editable-sample" class="table table-striped table-hover table-bordered">
+                <table id="scoreTable" class="table table-striped table-hover table-bordered">
                     <thead>
                         <tr>
-                            <th class="text-center">学号</th>
+                            <th class="text-center">ID</th>
                             <th class="text-center">姓名</th>
                             <th class="text-center">试卷</th>
                             <th class="text-center">分数</th>
@@ -52,13 +52,14 @@
 <script type="text/javascript" src="/static/assets/vue/vue.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
 <script type="text/javascript" src="/static/js/jquery.dataTables.min.js"></script>
-<script src="/static/js/editable-table.js"></script>
-<script type="text/javascript" src="/static/assets/data-tables/DT_bootstrap.js"></script>
-<script class="include" type="text/javascript" src="/static/js/jquery.dcjqaccordion.2.7.js"></script>
 <script>
-jQuery(document).ready(function() {
-    var a = EditableTable.init();
-});
+    $(document).ready(function(){
+        $('#scoreTable').DataTable({
+            "language": {
+                "url": "/static/dataTable-zh_cn.json"
+            }
+        });
+    });
 </script>
 <@template.footer/>
 </html>

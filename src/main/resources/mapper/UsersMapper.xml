@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.kingdee.exam.dao.UsersMapper" >
-  <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.User" >
-    <id column="user_id" property="userId" jdbcType="VARCHAR" />
-    <result column="username" property="username" jdbcType="VARCHAR" />
-    <result column="password" property="password" jdbcType="VARCHAR" />
+    <resultMap id="BaseResultMap" type="com.kingdee.exam.entity.User" >
+        <id column="user_id" property="userId" jdbcType="INTEGER" />
+        <result column="username" property="username" jdbcType="VARCHAR" />
+        <result column="true_name" property="trueName" jdbcType="VARCHAR" />
+        <result column="roles" property="roles" jdbcType="VARCHAR" />
+        <result column="true_name" property="trueName" jdbcType="VARCHAR" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="enabled" property="enabled" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Base_Column_List" >
     user_id, username, password
@@ -20,9 +24,9 @@
     where user_id = #{userId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.kingdee.exam.entity.User" >
-    insert into users (user_id,username, password,true_name,enabled,roles)
-    values (#{userId,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
-      #{trueName,jdbcType=INTEGER},#{enable,jdbcType=INTEGER},#{roles,jdbcType=VARCHAR})
+    insert into users (username, password,true_name,enabled,roles,phone)
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{trueName,jdbcType=INTEGER},#{enabled,jdbcType=INTEGER},#{roles,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.kingdee.exam.entity.User" >
     insert into users
@@ -64,8 +68,14 @@
   <update id="updateByPrimaryKey" parameterType="com.kingdee.exam.entity.User" >
     update users
     set username = #{username,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-    where user_id = #{userId,jdbcType=VARCHAR}
+      <if test="password != ''" >
+          password = #{password,jdbcType=VARCHAR},
+      </if>
+      true_name = #{trueName,jdbcType=VARCHAR},
+      roles = #{roles,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      enabled = #{enabled,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER}
   </update>
   
   <!-- 与系统分隔 -->
@@ -83,8 +93,16 @@
           parameterType="long"
           resultMap="BaseResultMap"
           useCache="true">
-		SELECT *,user_id as uid
+		SELECT *
 		FROM users
 		WHERE user_id = #{userId}
+	</select>
+    <select id="getUserByUsername"
+            parameterType="String"
+            resultMap="BaseResultMap"
+            useCache="false">
+		SELECT *
+		FROM users
+		WHERE username = #{username}
 	</select>
 </mapper>
