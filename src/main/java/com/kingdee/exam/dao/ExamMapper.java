@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ExamMapper {
 
+	TestPaper findTestPaperById(Integer testpaperId);
+
 	List<TestPaper> findAllTestPaper();
 
 	List<QuestionBankVo> findAllCodingQuestion(Integer id);

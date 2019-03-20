@@ -11,7 +11,9 @@ public interface ExamService {
 
 	//查询所有开始考试试卷到前端
 	List<TestPaper> findAllTestPaper();
-	
+
+	TestPaper findTestPaperById(Integer testpaperId);
+
 	//查询选择判断题
 	void findJudgmentQuestionAndChoiceQuestion(ModelAndView modelAndView, String id, HttpSession session);
 

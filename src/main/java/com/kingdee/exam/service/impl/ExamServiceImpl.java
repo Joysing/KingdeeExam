@@ -36,12 +36,15 @@ public class ExamServiceImpl implements ExamService {
     private LanguageService languageService;
 	// 查询所有开始考试试卷到前端
 	public List<TestPaper> findAllTestPaper() {
-
-		List<TestPaper> allTestPaper = examMapper.findAllTestPaper();
-		return allTestPaper;
+        return examMapper.findAllTestPaper();
 	}
 
-	// 查询题目
+    @Override
+    public TestPaper findTestPaperById(Integer testpaperId) {
+        return examMapper.findTestPaperById(testpaperId);
+    }
+
+    // 查询题目
 	@Override
 	public void findJudgmentQuestionAndChoiceQuestion(ModelAndView modelAndView, String id, HttpSession session) {
 
@@ -59,7 +62,13 @@ public class ExamServiceImpl implements ExamService {
 			modelAndView.setViewName("_exam/score");
 			return;
 		}
-
+		int mouseLeave=3;
+		//防止考生通过刷新页面更新鼠标移出次数
+		if(session.getAttribute("mouseLeave")==null) {
+            session.setAttribute("mouseLeave", mouseLeave);
+        }else{
+            mouseLeave=(int)session.getAttribute("mouseLeave");
+        }
 		session.setAttribute("testpaperId", id);
 		// 判断题
 		List<QuestionBankVo> findAllJudgmentQuestion = examMapper.findAllJudgmentQuestion(Integer.parseInt(id));
@@ -98,6 +107,7 @@ public class ExamServiceImpl implements ExamService {
 			session.setAttribute("ExamTime", seconds/60+":"+seconds%60);
 		}
 
+		modelAndView.addObject("testpaperName", findTestPaperById(Integer.parseInt(id)).getTestpaperName());
 		modelAndView.addObject("JudgmentQuestion", findAllJudgmentQuestion);
 		modelAndView.addObject("ChoiceQuestion", findAllChoiceQuestion);
 		modelAndView.addObject("CodingQuestion", findAllCodingQuestion);

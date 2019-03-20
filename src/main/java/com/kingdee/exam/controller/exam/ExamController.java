@@ -1,6 +1,9 @@
 package com.kingdee.exam.controller.exam;
 
+import com.kingdee.exam.dao.ScoreMapper;
+import com.kingdee.exam.entity.Score;
 import com.kingdee.exam.entity.TestPaper;
+import com.kingdee.exam.entity.User;
 import com.kingdee.exam.entity.vo.QuestionBankVo;
 import com.kingdee.exam.service.ExamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +17,13 @@ import java.util.List;
 @Controller
 @RequestMapping(value = "/exam")
 public class ExamController {
-
+    private final ScoreMapper scoreMapper;
     private final ExamService examService;
 
     @Autowired
-    public ExamController(ExamService examService) {
+    public ExamController(ExamService examService, ScoreMapper scoreMapper) {
         this.examService = examService;
+        this.scoreMapper = scoreMapper;
     }
 
     /**
@@ -54,6 +58,31 @@ public class ExamController {
     @RequestMapping(value = "/submitpapers", method = RequestMethod.POST)
     public Object submitPapers(@RequestBody List<QuestionBankVo> questionBankVos, HttpSession session) {
         return examService.JudgmentSystem(questionBankVos, session);
+    }
+
+    /**
+     * 鼠标移出考试界面
+     * @return 剩余可移出次数
+     */
+    @ResponseBody
+    @RequestMapping(value = "/mouseLeave", method = RequestMethod.POST)
+    public int mouseLeave(HttpSession session) {
+        int mouseLeave=(int)session.getAttribute("mouseLeave");
+        if(mouseLeave==0){
+            return 0;
+        }else {
+            mouseLeave = mouseLeave - 1;
+        }
+        if(mouseLeave==0){//移出次数等于0了，直接给0分
+            Score record = new Score();
+            User users = (User) session.getAttribute("myUser");
+            record.setTestpaperId(Integer.parseInt(session.getAttribute("testpaperId").toString()));
+            record.setUsersId(149000301);//users.getUserId());
+            record.setFraction(0.0);
+            scoreMapper.insertSelective(record);
+        }
+        session.setAttribute("mouseLeave",mouseLeave);
+        return mouseLeave;
     }
 
     /**

@@ -119,30 +119,19 @@
 <script type="text/javascript" src="/static/js/common.js"></script>
 
 <script>
-$(document).ready(function(){
-  $('input').iCheck({
-    checkboxClass: 'icheckbox_square',
-    radioClass: 'iradio_square',
-    increaseArea: '20%' // optional
-  });
+$(document).ready(function() {
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_square',
+        radioClass: 'iradio_square',
+        increaseArea: '20%' // optional
+    });
 });
 
 function select(id) {
-	window.location="/exam/exam-"+id+".html";
-};
-
-/* function select(id) {
-	ajaxSubmit("/exam/autoGenerate", 'testpaperId='+id,
-		function(data) {
-			if(data) {
-				window.location="/exam/exam.html";
-			}
-		},
-		function(data) {
-			alert(data);
-		}
-	);
-}; */
+    if (confirm("开始考试后鼠标光标不能离开考试页面，离开三次成绩计零分，确定开始吗？")) {
+        window.location = "/exam/exam-" + id + ".html";
+    }
+}
 </script>
 	</body>
 </html>

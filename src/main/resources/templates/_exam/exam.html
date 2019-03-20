@@ -12,7 +12,9 @@
 		<link rel="stylesheet" href="/static/assets/remodal-1.1.0/remodal.css">
 		<link rel="stylesheet" href="/static/assets/remodal-1.1.0/remodal-default-theme.css">
         <link rel="stylesheet" type="text/css" href="/static/css/highlight.min.css" />
-	</head>
+        <link rel="stylesheet" href="/static/css/codemirror.min.css">
+        <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
+    </head>
 	<style>
 		#back{
 			background: url(/static/img/back3.png) ;
@@ -54,7 +56,7 @@
 		<!--header-->
 		<section class="header">
 			<div class="ziti" id="ziti">
-				卷一   
+				${testpaperName}
 			</div>
 		</section>
 		<!--判断题-->
@@ -62,14 +64,15 @@
 			<h1>判断题</h1>
 			<#list JudgmentQuestion as item>
 			<div >
-				<h2>第 ${item_index+1} 题</h2>
 				<article class="fontsize">
-					${item.stem}
+                    ${item_index+1}、 ${item.stem}
 				</article>
 				<div style="width: 100%;height: 100px;">
 					<ul>
-						<li><input type="radio" id="${item.questionBankId}" name="${item.questionBankId}" value="1"><label>对</label></li>
-						<li><input type="radio" id="${item.questionBankId}" name="${item.questionBankId}" value="0"><label>错</label></li>
+						<li><input type="radio" id="${item.questionBankId}yes" name="${item.questionBankId}" value="1">
+                            <label for="${item.questionBankId}yes">对</label></li>
+						<li><input type="radio" id="${item.questionBankId}no" name="${item.questionBankId}" value="0">
+                            <label for="${item.questionBankId}no">错</label></li>
 					</ul>
 				</div>
 				<div class="alert alert-success text-center hidden success-${item.questionBankId}">正确</div>
@@ -82,19 +85,20 @@
 			<h1>选择题</h1>
 			<#list ChoiceQuestion as item>
 			<div class="col-xs-12">
-				<h2>第 ${item_index+1} 题</h2>
 				<article class="fontsize">
-					${item.stem}
+                    ${item_index+1}、 ${item.stem}
 				</article>
 				<ul>
 					<#list item.options as temp>
-					<li><input type="radio" name="${item.questionBankId}" value="${temp.op}"><label>${temp.op}</label> </li> <label>${temp.content}</label>
+					<li><input type="radio" name="${item.questionBankId}" id="${item.questionBankId}${temp.op}" value="${temp.op}">
+                        <label for="${item.questionBankId}${temp.op}">${temp.op} ${temp.content}</label> </li>
 					</#list>
 				</ul>
 			</div>
 			<div class="clearfix"></div>
 			<div class="alert alert-success text-center hidden success-${item.questionBankId}">正确</div>
-			<div class="alert alert-danger text-center hidden danger-${item.questionBankId}">错误&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;答案:<span>对</span></div>
+			<div class="alert alert-danger text-center hidden danger-${item.questionBankId}">错误&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                答案:<span>对</span></div>
 			</#list>
 		</section>
 		<!--编程题-->
@@ -102,43 +106,40 @@
 			<h1>编程题</h1>
 			<#list CodingQuestion as item>
 			<div class="col-xs-12">
-				<h2>第 ${item_index+1} 题</h2>
 				<article class="fontsize">
-					${item.stem}
+                    ${item_index+1}、 ${item.stem}
 				</article>
 				<div class="section">
 					<h4>描述</h4>
-					<div class="description markdown">${problem.description}</div> <!-- .description -->
-				</div> <!-- .section -->
+					<div class="description markdown">${problem.description}</div>
+				</div>
 				<div class="section">
 					<h4>格式</h4>
 					<h5>输入</h5>
-					<div class="description">${problem.inputFormat}</div> <!-- .description -->
+					<div class="description">${problem.inputFormat}</div>
 					<h5>输出</h5>
-					<div class="description">${problem.outputFormat}</div> <!-- .description -->
-				</div> <!-- .section -->
+					<div class="description">${problem.outputFormat}</div>
+				</div>
 				<div id="io-sample" class="section">
 					<h5>输入样例</h5>
-					<div class="description"><pre>${problem.inputSample}</pre></div> <!-- .description -->
+					<div class="description"><pre>${problem.inputSample}</pre></div>
 					<h5>输出样例</h5>
-					<div class="description"><pre>${problem.outputSample}</pre></div> <!-- .description -->
-				</div> <!-- .section -->
+					<div class="description"><pre>${problem.outputSample}</pre></div>
+				</div>
 				<div class="section">
 					<div class="description">
 						<p><strong>时间限制: </strong>${problem.timeLimit} ms</p>
 						<p><strong>内存限制: </strong>${problem.memoryLimit} KB</p>
-					</div> <!-- .description -->
-				</div> <!-- .section -->
+					</div>
+				</div>
 				<div class="section">
 					<h4>提示</h4>
-					<div class="description markdown">${problem.hint}</div> <!-- .description -->
-				</div> <!-- .section -->
+					<div class="description markdown">${problem.hint}</div>
+				</div>
 				<ul>
 					<li>
 						<div id="code-editor">
-                            <textarea name="codemirror-editor" id="codemirror-editor">${'#include<stdio.h>
-                                int main(){int a,b;scanf("%d %d",&a,&b);printf("%d",a+b);return 0;}'}
-                            </textarea>
+                            <textarea name="codemirror-editor" id="codemirror-editor"></textarea>
                             <input type="text" id="accessRate" name="${item.questionBankId}" value="" style="display: none">
 							<div class="row-fluid">
 								<div class="span4">
@@ -200,18 +201,18 @@
                                 <td id="execute-time"></td>
                             </tr>
                         </table>
-                    </div> <!-- .description -->
-                </div> <!-- .section -->
+                    </div>
+                </div>
                 <div class="section">
                     <h4>评测结果</h4>
-                    <div id="judge-log" class="description markdown"></div> <!-- .description -->
-                </div> <!-- .section -->
+                    <div id="judge-log" class="description markdown"></div>
+                </div>
                     <div class="section">
                         <h4>你的代码</h4>
                         <div class="description">
                             <pre><code id="judge-code"></code></pre>
-                        </div> <!-- .description -->
-                    </div> <!-- .section -->
+                        </div>
+                    </div>
             </div> <!-- .body -->
 
 		</section>
@@ -223,8 +224,7 @@
 	
 	<div>
 		<a id="testpaperBt" class="link link--highlighted btn btn-success btn-lg" href="#modal" style="opacity:0.8; position: fixed; right: 0; bottom: 0; margin-right: 10px; margin-bottom: 10px">提交试卷</a>
-		<!-- <button id="testpaper" class="btn btn-success btn-lg">提交试卷</button> -->
-	</div>	
+	</div>
 	
 
 	<div class="remodal " data-remodal-id="modal" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
@@ -246,31 +246,25 @@
 		<h2 class="modal1Title">考试成绩 <span id="score">0</span>分</h2>
 	  </div>
 	  <br>
-	  <button data-remodal-action="cancel" class="remodal-cancel">查看答案</button>
+	  <button data-remodal-action="cancel" class="remodal-cancel" id="checkTheAnswer">查看答案</button>
 	</div>
-	
-<!--js-->
-<script type="text/javascript" src="/static/js/jquery-1.10.2.min.js" ></script>
-<script type="text/javascript" src="/static/js/bootstrap.min.js" ></script>
-<script type="text/javascript" src="/static/js/icheck.min.js" ></script>
-<script src="/static/assets/remodal-1.1.0/remodal.js"></script>
-<script type="text/javascript" src="/static/js/common.js"></script>
-<script type="text/javascript" src="/static/js/site.js"></script>
+
+    <script type="text/javascript" src="/static/js/jquery-1.10.2.min.js" ></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js" ></script>
+    <script type="text/javascript" src="/static/js/icheck.min.js" ></script>
+    <script src="/static/assets/remodal-1.1.0/remodal.js"></script>
+    <script type="text/javascript" src="/static/assets/toastr-master/toastr.js"></script>
+    <script type="text/javascript" src="/static/js/common.js"></script>
+    <script type="text/javascript" src="/static/js/site.js"></script>
     <script type="text/javascript">
-    $.getScript('/static/js/markdown.min.js', function() {
-        var converter = Markdown.getSanitizingConverter();
-        var editor    = new Markdown.Editor(converter);
-        editor.run();
-
-        $('.markdown').each(function() {
-        var plainContent    = $(this).text(),
-        markdownContent = converter.makeHtml(plainContent.replace(/\\\n/g, '\\n'));
-
-        $(this).html(markdownContent);
+        $.getScript('/static/js/markdown.min.js', function() {
+            var converter = Markdown.getSanitizingConverter();
+            $('.markdown').each(function() {
+                var plainContent    = $(this).text(),
+                    markdownContent = converter.makeHtml(plainContent.replace(/\\\n/g, '\\n'));
+                $(this).html(markdownContent);
+            });
         });
-    });
-    </script>
-    <script type="text/javascript">
         $.getScript('/static/js/codemirror.min.js', function() {
             $.when(
                 $.getScript('/static/mode/clike.min.js'),
@@ -295,8 +289,6 @@
                 });
             });
         });
-    </script>
-    <script type="text/javascript">
         $.getScript('/static/js/highlight.min.js', function() {
             $('code').each(function(i, block) {
                 hljs.highlightBlock(block);
@@ -304,22 +296,27 @@
         });
     </script>
     <script type="text/javascript">
-	$(document).ready(function(){
-	  $('input').iCheck({
-		checkboxClass: 'icheckbox_square',
-		radioClass: 'iradio_square',
-		increaseArea: '20%' // optional
-	  });
-	});
+        var mouseLeave=${mouseLeave};
+        $(document).ready(function(){
+          $('input').iCheck({
+            checkboxClass: 'icheckbox_square',
+            radioClass: 'iradio_square',
+            increaseArea: '20%' // optional
+          });
+        });
 
-	var inst = $('[data-remodal-id=modal-score]').remodal();
+        var inst = $('[data-remodal-id=modal-score]').remodal();
 
-	history.pushState(null, null, document.URL);
-	window.addEventListener('popstate', function () {
-		history.pushState(null, null, document.URL);
-	});
-
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
 	function submitPapers() {
+        if($("#accessRate").html()===""){
+            if(!confirm("编程题未运行，请先运行，否则编程题不计分，确定直接提交吗？")){
+                return;
+            }
+        }
         $("#testpaperBt").remove();
         clearInterval(timeSetInterval);
         var arr = [];
@@ -378,7 +375,28 @@
 	$("#testpaper").on("click", function(){
 		submitPapers();
 	});
-
+	$("#back").mouseleave(function(){
+	    console.log("鼠标移出");
+	    if(mouseLeave===0)return;
+        mouseLeave=mouseLeave-1;
+        ajaxSubmit("/exam/mouseLeave", {},
+            function(result) {
+                if (result === 0) {
+                    alert("你的鼠标移出考试界面次数太多，系统判定你在作弊，本次考试结束，成绩0分");
+                    $("#testpaperBt").remove();
+                    $("#mmm").remove();
+                    $("#checkTheAnswer").remove();
+                    $("#score").text(0);
+                    inst.open();
+                }else {
+                    alert("你的鼠标离开了考试界面，请诚实作答！再移出" + result + "次考试将计0分");
+                }
+            },
+            function(error) {
+                toastr.error('网络错误：' + error.message);
+            }
+        );
+    })
 	var timeSetInterval = setInterval(function() {
 		var time = $("#time").text();
 		var min = parseInt(time.split(":")[0]);
@@ -418,13 +436,13 @@
                     var errorMessage = '';
 
                     if ( !result['isUserLogined'] ) {
-                        errorMessage = 'Please sign in first.';
+                        errorMessage = '请先登录。';
                     } else if ( !result['isProblemExists'] ) {
-                        errorMessage = 'The problem not exists.';
+                        errorMessage = '问题不存在了。';
                     } else if ( !result['isLanguageExists'] ) {
-                        errorMessage = 'The language not exists.';
+                        errorMessage = '本题不支持该语言了。';
                     } else if ( result['isCodeEmpty'] ) {
-                        errorMessage = 'Please enter the code.';
+                        errorMessage = '代码框不能空着。';
                     }
                     $('#submission-error').html(errorMessage);
                 }
@@ -433,7 +451,7 @@
                 $('button[type=submit]', '#code-editor').html('运行代码');
             },
             function(error) {
-                alert(error.message);
+                toastr.error('网络错误：' + error.message);
             }
         );
 

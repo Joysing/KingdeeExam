@@ -40,7 +40,13 @@
 		testpaper_id, testpaper_name, testpaper_state, start_date, end_date, is_start
 	</sql>
 
-
+    <select id="findTestPaperById" parameterType="java.lang.Integer" resultMap="TestPaperResultMap">
+        SELECT
+        <include refid="Test_Paper_Column_List"></include>
+        FROM
+        testpaper
+        WHERE testpaper_id =#{testpaperId}
+    </select>
 
 	<select id="findAllTestPaper" resultMap="TestPaperResultMap">
 		SELECT
