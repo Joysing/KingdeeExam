@@ -211,7 +211,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>测试用例 <a id="new-test-case" title="添加测试用例" href="javascript:newTestCase();">
+                                <h4>测试用例 <a id="new-test-case" title="添加测试用例" v-on:click="newTestCase()">
                                     <i class="fa fa-plus-circle"></i>
                                 </a></h4>
 
@@ -286,6 +286,7 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="alert alert-error hide" style="color: red"></div> <!-- .alert-error -->
                         </form>
                         <!--end添加题-->
                         <div class="modal-footer">
@@ -318,7 +319,7 @@
                     }
                 });
             });
-				var QuestionBank = {
+				var jsQuestionBank = {
 					stem: '',
 					answer: 'A',
 					testsType: 1,
@@ -330,7 +331,7 @@
 				  el: '#content',
 				  data: {
 					  QuestionBankVoList: {},
-					  QuestionBank: QuestionBank,
+					  QuestionBank: jsQuestionBank,
 					  btnState: 'add'
 				  },
 				  methods: {
@@ -363,7 +364,40 @@
                                   problemTags: JSON.stringify(problemTagsArr),
                                   isExactlyMatch: $('#problem-is-exactly-match').parent().hasClass('switch-on')
                               };
+                              var errorMessage  = '';
 
+                              if ( QuestionBank.codingProblem.problemName==='' ) {
+                                  errorMessage += '请填写试题名称.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.timeLimit==='' || timeLimit<=0 ) {
+                                  errorMessage += '时间限制必须是大于0的整数.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.memoryLimit==='' || memoryLimit<=0 ) {
+                                  errorMessage += '内存限制必须是大于0的整数.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.description==='' ) {
+                                  errorMessage += '请填写试题描述.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.inputFormat==='' ) {
+                                  errorMessage += '请填写输入格式.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.outputFormat==='' ) {
+                                  errorMessage += '请填写输出格式.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.inputSample==='' ) {
+                                  errorMessage += '请填写输入样例.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.outputSample==='' ) {
+                                  errorMessage += '请填写输出样例.<br>';
+                              }
+                              if ( QuestionBank.codingProblem.testCases==='' ) {
+                                  errorMessage += '请填写测试用例.<br>';
+                              }
+                              if(errorMessage !==''){
+                                  $('.alert-error', '#problem-form').html(errorMessage);
+                                  $('.alert-error', '#problem-form').removeClass('hide');
+                                  return;
+                              }
                               $('.alert-success', '#problem-form').addClass('hide');
                               $('.alert-error', '#problem-form').addClass('hide');
                               $('button[type=submit]', '#problem-form').attr('disabled', 'disabled');
@@ -442,7 +476,7 @@
                               answer: 'A',
                               testsType: 1,
                               questionBankId: null,
-                              codingProblem:{},
+                              codingProblem:{testCases:[]},
                               options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]
                           };
                           $('#myModal').modal({
@@ -499,111 +533,14 @@
                               }
                           );
                       },
-                      onSubmit: function() {
-                          var testCasesArr   = [];
-                          var problemCategoriesArr = [];
-                          var problemTagsArr = '';
-
-                          if ( problemTagsArr === '' ) {
-                              problemTagsArr = [];
-                          } else {
-                              problemTagsArr = problemTagsArr.split(',');
+                      newTestCase: function() {
+                          if(vm.QuestionBank.codingProblem.testCases===undefined) {
+                              vm.QuestionBank.codingProblem.testCases=[];
                           }
-                          $('li.test-case').each(function() {
-                              var input   = $('.standard-input', $(this)).val(),
-                                  output  = $('.standard-output', $(this)).val();
-
-                              testCasesArr.push({
-                                  'input': input,
-                                  'output': output
-                              });
+                          vm.QuestionBank.codingProblem.testCases.push({
+                              "input":"",
+                              "output":""
                           });
-                          $('label.checked', '.parent-categories').each(function() {
-                              problemCategoriesArr.push($(this).attr('for'));
-                          });
-                          var problemName         = vm.QuestionBank.stem,
-                              timeLimit           = $('#time-limit').val(),
-                              memoryLimit         = $('#memory-limit').val(),
-                              description         = $('#wmd-input').val(),
-                              hint                = $('#hint').val(),
-                              inputFormat         = $('#input-format').val(),
-                              outputFormat        = $('#output-format').val(),
-                              inputSample         = $('#input-sample').val(),
-                              outputSample        = $('#output-sample').val(),
-                              testCases           = JSON.stringify(testCasesArr),
-                              problemCategories   = JSON.stringify(problemCategoriesArr),
-                              problemTags         = JSON.stringify(problemTagsArr),
-                              isPublic            = $('#problem-is-public').parent().hasClass('switch-on'),
-                              isExactlyMatch      = $('#problem-is-exactly-match').parent().hasClass('switch-on');
-
-                          $('.alert-success', '#problem-form').addClass('hide');
-                          $('.alert-error', '#problem-form').addClass('hide');
-                          $('button[type=submit]', '#problem-form').attr('disabled', 'disabled');
-                          $('button[type=submit]', '#problem-form').html('请稍等...');
-
-                          var postData = {
-                              'problemName': problemName,
-                              'timeLimit': timeLimit,
-                              'memoryLimit': memoryLimit,
-                              'description': description,
-                              'hint': hint,
-                              'inputFormat': inputFormat,
-                              'outputFormat': outputFormat,
-                              'inputSample': inputSample,
-                              'outputSample': outputSample,
-                              'testCases': testCases,
-                              'problemCategories': problemCategories,
-                              'problemTags': problemTags,
-                              'isPublic': isPublic,
-                              'isExactlyMatch': isExactlyMatch
-                          };
-
-                          ajaxSubmit("/administration/createProblem.action", postData,
-                              function(result) {
-                                  if ( result['isSuccessful'] ) {
-                                      var problemId = result['problemId'];
-                                      window.location.href = '/administration/edit-problem/' + problemId;
-                                  } else {
-                                      var errorMessage  = '';
-
-                                      if ( result['isProblemNameEmpty'] ) {
-                                          errorMessage += '请填写试题名称.<br>';
-                                      } else if ( !result['isProblemNameLegal'] ) {
-                                          errorMessage += '试题名称的长度不得超过128个字符.<br>';
-                                      }
-                                      if ( !result['isTimeLimitLegal'] ) {
-                                          errorMessage += '时间限制必须是大于0的整数.<br>';
-                                      }
-                                      if ( !result['isMemoryLimitLegal'] ) {
-                                          errorMessage += '内存限制必须是大于0的整数.<br>';
-                                      }
-                                      if ( result['isDescriptionEmpty'] ) {
-                                          errorMessage += '请填写试题描述.<br>';
-                                      }
-                                      if ( result['isInputFormatEmpty'] ) {
-                                          errorMessage += '请填写输入格式.<br>';
-                                      }
-                                      if ( result['isOutputFormatEmpty'] ) {
-                                          errorMessage += '请填写输出格式.<br>';
-                                      }
-                                      if ( result['isInputSampleEmpty'] ) {
-                                          errorMessage += '请填写输入样例.<br>';
-                                      }
-                                      if ( result['isOutputSampleEmpty'] ) {
-                                          errorMessage += '请填写输出样例.<br>';
-                                      }
-
-                                      $('.alert-error', '#problem-form').html(errorMessage);
-                                      $('.alert-error', '#problem-form').removeClass('hide');
-                                  }
-                                  $('button[type=submit]', '#problem-form').removeAttr('disabled');
-                                  $('button[type=submit]', '#problem-form').html('发布');
-                              },
-                              function(error) {
-                                console.log(error);
-                                  alert(error.message);
-                              }
-                          );
                       }
 				  }
 				});
@@ -618,16 +555,6 @@
                         }
                     );
                 }
-
-            function newTestCase() {
-                if(vm.QuestionBank.codingProblem.testCases===null) {
-                    vm.QuestionBank.codingProblem.testCases=[];
-                }
-                vm.QuestionBank.codingProblem.testCases.push({
-                    "input":"",
-                    "output":""
-                });
-            }
 
             function deleteTestCase(index){
                 vm.QuestionBank.codingProblem.testCases.splice(index,1);

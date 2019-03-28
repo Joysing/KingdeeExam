@@ -145,17 +145,16 @@
     </p>
 
 </div>
-
-<#if (RequestParameters['error']=='code_wrong')??>
+<#if (RequestParameters['error'])=="code_wrong" >
 <script>
     toastr.error('验证码错误!', '登录失败');
 </script>
-<#elseif (RequestParameters['error']=='password_wrong')??>
+<#elseif (RequestParameters['error'])=="password_wrong" >
 <script>
     toastr.error('密码错误!', '登录失败');
 </script>
 </#if>
-
+<script type="text/javascript" src="/static/js/common.js"></script>
 <script>
     function changeImg() {
         var imgSrc = $("#code-img");
@@ -207,13 +206,13 @@
                             }
                         }
                     },
-                    code: {
-                        validators: {
-                            notEmpty: {
-                                message: '请输入验证码'
-                            }
-                        }
-                    }
+                    // code: {
+                    //     validators: {
+                    //         notEmpty: {
+                    //             message: '请输入验证码'
+                    //         }
+                    //     }
+                    // }
                 }
             });
     });

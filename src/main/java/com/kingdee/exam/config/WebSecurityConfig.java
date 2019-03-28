@@ -36,7 +36,7 @@ import java.util.Set;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailService userDetailService;
     private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
-    private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/static/**", "/code","/**","/favicon.ico"};
+    private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/static/**", "/code", "/favicon.ico","/loginPage"};
 
     @Autowired
     public WebSecurityConfig(UserDetailService userDetailService) {
@@ -56,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Override
         public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-            String inputCode = request.getParameter("code");
+            String inputCode = request.getParameter("code")==null?"":request.getParameter("code");
             String sessionCode = (String) request.getSession().getAttribute("code");
             if (sessionCode==null||!sessionCode.equals(inputCode.toUpperCase())) {
                 throw new CaptchaException("captcha code not matched!");
@@ -85,7 +85,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(loginAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/loginPage")
                 .failureHandler(authenticationFailureHandler())
                 .successHandler(loginSuccessHandler())
                 .permitAll()
@@ -94,7 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedPage("/access?error")
                 .and().logout().permitAll().invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID").logoutSuccessHandler(logoutSuccessHandler())
-                .and().sessionManagement().maximumSessions(10).expiredUrl("/login?error=expired");
+                .and().sessionManagement().maximumSessions(10).expiredUrl("/loginPage?error=expired");
     }
 
     @Autowired
@@ -141,8 +141,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationFailureHandler authenticationFailureHandler() {
         ExceptionMappingAuthenticationFailureHandler failureHandler = new ExceptionMappingAuthenticationFailureHandler();
         Map<String, String> failureUrlMap = new HashMap<>();
-        failureUrlMap.put(BadCredentialsException.class.getName(), "/login?error=password_wrong");
-        failureUrlMap.put(LoginAuthenticationFilter.CaptchaException.class.getName(), "/login?error=code_wrong");
+        failureUrlMap.put(BadCredentialsException.class.getName(), "/loginPage?error=password_wrong");
+        failureUrlMap.put(LoginAuthenticationFilter.CaptchaException.class.getName(), "/loginPage?error=code_wrong");
         failureHandler.setExceptionMappings(failureUrlMap);
         return failureHandler;
     }
