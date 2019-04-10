@@ -3,15 +3,16 @@ package com.kingdee.exam.controller.voj;
 import com.alibaba.fastjson.JSON;
 import com.kingdee.exam.entity.vo.QuestionBankVo;
 import com.kingdee.exam.service.QuestionBankService;
-import com.kingdee.exam.voj.exception.ResourceNotFoundException;
-import com.kingdee.exam.voj.model.*;
-import com.kingdee.exam.voj.service.LanguageService;
-import com.kingdee.exam.voj.service.OptionService;
-import com.kingdee.exam.voj.service.ProblemService;
-import com.kingdee.exam.voj.service.SubmissionService;
 import com.kingdee.exam.util.CsrfProtector;
 import com.kingdee.exam.util.DateUtils;
 import com.kingdee.exam.util.HttpRequestParser;
+import com.kingdee.exam.voj.exception.ResourceNotFoundException;
+import com.kingdee.exam.voj.model.Checkpoint;
+import com.kingdee.exam.voj.model.Problem;
+import com.kingdee.exam.voj.model.ProblemCategory;
+import com.kingdee.exam.voj.model.Submission;
+import com.kingdee.exam.voj.service.ProblemService;
+import com.kingdee.exam.voj.service.SubmissionService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,17 +32,13 @@ import java.util.*;
 public class AdministrationController {
     private final ProblemService problemService;
     private final SubmissionService submissionService;
-    private final OptionService optionService;
-    private final LanguageService languageService;
     private final QuestionBankService questionBankService;
     private static final Logger LOGGER = LogManager.getLogger(AdministrationController.class);
 
     @Autowired
-    public AdministrationController(ProblemService problemService, SubmissionService submissionService, OptionService optionService, LanguageService languageService, QuestionBankService questionBankService) {
+    public AdministrationController(ProblemService problemService, SubmissionService submissionService, QuestionBankService questionBankService) {
         this.problemService = problemService;
         this.submissionService = submissionService;
-        this.optionService = optionService;
-        this.languageService = languageService;
         this.questionBankService = questionBankService;
     }
 
@@ -485,84 +482,4 @@ public class AdministrationController {
         return view;
     }
 
-    /**
-     * 加载常规选项页面.
-     *
-     * @return 包含常规选项页面信息的ModelAndView对象
-     */
-    @RequestMapping(value = "/general-settings", method = RequestMethod.GET)
-    public ModelAndView generalSettingsView() {
-        ModelAndView view = new ModelAndView("administration/general-settings");
-        view.addObject("options", getOptions());
-        return view;
-    }
-
-    /**
-     * 获取系统全部的选项, 以键值对的形式返回.
-     *
-     * @return 键值对形式的系统选项
-     */
-    private Map<String, String> getOptions() {
-        Map<String, String> optionMap = new HashMap<>();
-        List<Option> options = optionService.getOptions();
-
-        for (Option option : options) {
-            optionMap.put(option.getOptionName(), option.getOptionValue());
-        }
-        return optionMap;
-    }
-
-    /**
-     * 更新网站常规选项.
-     *
-     * @param websiteName         - 网站名称
-     * @param websiteDescription  - 网站描述
-     * @param copyright           - 网站版权信息
-     * @param allowUserRegister   - 是否允许用户注册
-     * @param icpNumber           - 网站备案号
-     * @param policeIcpNumber     - 公安备案号
-     * @param googleAnalyticsCode - Google Analytics代码
-     * @param offensiveWords      - 敏感词列表
-     * @return 网站常规选项的更新结果
-     */
-    @RequestMapping(value = "/updateGeneralSettings.action", method = RequestMethod.POST)
-    public @ResponseBody
-    Map<String, Boolean> updateGeneralSettingsAction(
-            @RequestParam(value = "websiteName") String websiteName,
-            @RequestParam(value = "websiteDescription") String websiteDescription,
-            @RequestParam(value = "copyright") String copyright,
-            @RequestParam(value = "allowUserRegister") boolean allowUserRegister,
-            @RequestParam(value = "icpNumber") String icpNumber,
-            @RequestParam(value = "policeIcpNumber") String policeIcpNumber,
-            @RequestParam(value = "googleAnalyticsCode") String googleAnalyticsCode,
-            @RequestParam(value = "offensiveWords") String offensiveWords) {
-        return optionService.updateOptions(websiteName, websiteDescription,
-                copyright, allowUserRegister, icpNumber, policeIcpNumber, googleAnalyticsCode, offensiveWords);
-    }
-
-    /**
-     * 加载编程语言设置页面.
-     *
-     * @return 包含编程语言设置信息的ModelAndView对象
-     */
-    @RequestMapping(value = "/language-settings", method = RequestMethod.GET)
-    public ModelAndView languageSettingsView() {
-        ModelAndView view = new ModelAndView("administration/language-settings");
-        view.addObject("languages", languageService.getAllLanguages());
-        return view;
-    }
-
-    /**
-     * 更新网站编程语言选项.
-     *
-     * @param languages - 包含编程语言设置的数组
-     * @return 编程语言选项的更新结果
-     */
-    @RequestMapping(value = "/updateLanguageSettings.action", method = RequestMethod.POST)
-    public @ResponseBody
-    Map<String, Object> updateLanguageSettingsAction(
-            @RequestParam(value = "languages") String languages) {
-        List<Language> languagesList = JSON.parseArray(languages, Language.class);
-        return languageService.updateLanguageSettings(languagesList);
-    }
 }

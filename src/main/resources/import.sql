@@ -1,12 +1,12 @@
 -- ----------------------------------------------------------
 -- 自动导入脚本
 -- ----------------------------------------------------------
-insert into users (user_id,username, password,true_name,enabled,roles) values ('1','admin', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','管理员',true,'ROLE_ADMIN');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('2','user', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','面试者',true,'ROLE_USER');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('3','wang', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','王同学',true,'ROLE_USER');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('4','li', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','李同学',true,'ROLE_USER');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('5','judge1', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机1号',true,'ROLE_JUDGE');
-insert into users (user_id,username, password,true_name,enabled,roles) values ('6','judge2', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机2号',true,'ROLE_JUDGE');
+insert into users (user_id,username, password,true_name,enabled,roles,phone) values ('1','admin', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','管理员',true,'ROLE_ADMIN','18888888881');
+insert into users (user_id,username, password,true_name,enabled,roles,phone) values ('2','user', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','面试者',true,'ROLE_USER','18888888882');
+insert into users (user_id,username, password,true_name,enabled,roles,phone) values ('3','wang', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','王同学',true,'ROLE_USER','18888888883');
+insert into users (user_id,username, password,true_name,enabled,roles,phone) values ('4','li', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','李同学',true,'ROLE_USER','18888888884');
+insert into users (user_id,username, password,true_name,enabled,roles,phone) values ('5','judge1', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机1号',true,'ROLE_JUDGE','18888888885');
+insert into users (user_id,username, password,true_name,enabled,roles,phone) values ('6','judge2', '$2a$10$TnsaY486k50PV.23Xi/82ePEQQkfziTFJIYW9SoYXWjFDLGlZKSP6','判题机2号',true,'ROLE_JUDGE','18888888886');
 
 INSERT INTO options (options_id,op,content,question_bank_id) VALUES ('222', 'A', 'MDZZ', '69');
 INSERT INTO options (options_id,op,content,question_bank_id) VALUES ('223', 'B', 'MDZZ', '69');
@@ -283,15 +283,6 @@ INSERT INTO testpaper_tests (testpaper_tests_id,testpaper_id,question_bank_id) V
 -- ----------------------------
 -- 以下为判题机
 -- ----------------------------
-
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(1, 'websiteName', 'Verwandlung Online Judge', 1);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(2, 'description', 'Verwandlung Online Judge is a cross-platform online judge system based on Spring MVC Framework.', 1);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(3, 'copyright', '<a href="https://haozhexie.com/" target="_blank">Infinite Script</a>', 1);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(4, 'googleAnalyticsCode', '', 1);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(5, 'icpNumber', '', 1);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(6, 'policeIcpNumber', '', 1);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(7, 'allowUserRegister', '1', 0);
-INSERT INTO voj_options (option_id, option_name, option_value, is_autoload)VALUES(8, 'offensiveWords', '["法轮","中央","六四","军区","共产党","国民党"]', 0);
 
 INSERT INTO voj_judge_results (judge_result_id, judge_result_slug, judge_result_name)VALUES(1, 'PD', 'Pending');
 INSERT INTO voj_judge_results (judge_result_id, judge_result_slug, judge_result_name)VALUES(2, 'AC', 'Accepted');
