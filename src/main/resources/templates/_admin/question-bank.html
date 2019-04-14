@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>题库管理 金蝶在线笔试</title>
+    <link rel="shortcut icon" href="/static/img/favicon.png">
     <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
     <link rel="stylesheet" href="/static/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -170,7 +171,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>输入输出</h4>
+                                <h4 style="margin-left: 50px;">输入输出</h4>
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label no-padding-right" for="input-format">输入格式：</label>
                                     <div class="col-sm-9">
@@ -211,7 +212,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <h4>测试用例 <a id="new-test-case" title="添加测试用例" v-on:click="newTestCase()">
+                                <h4 style="margin-left: 50px;">测试用例 <a id="new-test-case" title="添加测试用例" v-on:click="newTestCase()">
                                     <i class="fa fa-plus-circle"></i>
                                 </a></h4>
 
@@ -254,7 +255,7 @@
                                         </div> <!-- .span12 -->
                                     </div> <!-- .row-fluid -->
                                 </div> <!-- .span8 -->
-                                <div class="col-xs-12 col-sm-3">
+                                <div class="col-xs-12 col-sm-3 hide">
                                     <div class="control-group">
                                         <div class="checkbox">
                                             <label>
@@ -348,8 +349,8 @@
                               $('label.checked', '.parent-categories').each(function() {
                                   problemCategoriesArr.push($(this).attr('for'));
                               });
-                              QuestionBank.answer=100;
-                              QuestionBank.codingProblem={
+                              vm.QuestionBank.answer=100;
+                              vm.QuestionBank.codingProblem={
                                   problemName: vm.QuestionBank.stem,
                                   timeLimit: $('#time-limit').val(),
                                   memoryLimit: $('#memory-limit').val(),
@@ -366,31 +367,31 @@
                               };
                               var errorMessage  = '';
 
-                              if ( QuestionBank.codingProblem.problemName==='' ) {
+                              if ( vm.QuestionBank.codingProblem.problemName==='' ) {
                                   errorMessage += '请填写试题名称.<br>';
                               }
-                              if ( QuestionBank.codingProblem.timeLimit==='' || timeLimit<=0 ) {
+                              if ( vm.QuestionBank.codingProblem.timeLimit==='' || vm.QuestionBank.codingProblem.timeLimit<=0 ) {
                                   errorMessage += '时间限制必须是大于0的整数.<br>';
                               }
-                              if ( QuestionBank.codingProblem.memoryLimit==='' || memoryLimit<=0 ) {
+                              if ( vm.QuestionBank.codingProblem.memoryLimit==='' || vm.QuestionBank.codingProblem.memoryLimit<=0 ) {
                                   errorMessage += '内存限制必须是大于0的整数.<br>';
                               }
-                              if ( QuestionBank.codingProblem.description==='' ) {
+                              if ( vm.QuestionBank.codingProblem.description==='' ) {
                                   errorMessage += '请填写试题描述.<br>';
                               }
-                              if ( QuestionBank.codingProblem.inputFormat==='' ) {
+                              if ( vm.QuestionBank.codingProblem.inputFormat==='' ) {
                                   errorMessage += '请填写输入格式.<br>';
                               }
-                              if ( QuestionBank.codingProblem.outputFormat==='' ) {
+                              if ( vm.QuestionBank.codingProblem.outputFormat==='' ) {
                                   errorMessage += '请填写输出格式.<br>';
                               }
-                              if ( QuestionBank.codingProblem.inputSample==='' ) {
+                              if ( vm.QuestionBank.codingProblem.inputSample==='' ) {
                                   errorMessage += '请填写输入样例.<br>';
                               }
-                              if ( QuestionBank.codingProblem.outputSample==='' ) {
+                              if ( vm.QuestionBank.codingProblem.outputSample==='' ) {
                                   errorMessage += '请填写输出样例.<br>';
                               }
-                              if ( QuestionBank.codingProblem.testCases==='' ) {
+                              if ( vm.QuestionBank.codingProblem.testCases==='' ) {
                                   errorMessage += '请填写测试用例.<br>';
                               }
                               if(errorMessage !==''){
@@ -402,8 +403,10 @@
                               $('.alert-error', '#problem-form').addClass('hide');
                               $('button[type=submit]', '#problem-form').attr('disabled', 'disabled');
                               $('button[type=submit]', '#problem-form').html('请稍等...');
+                          }else{
+                              vm.QuestionBank.codingProblem={}
                           }
-                          ajaxSubmitJSON("/admin/addQuestionBank", JSON.stringify(QuestionBank),
+                          ajaxSubmitJSON("/admin/addQuestionBank", JSON.stringify(vm.QuestionBank),
                               function(data) {
                                   if(data) {
                                       toastr.success('操作成功!', '新增题');
@@ -505,14 +508,14 @@
                           });
                       },
                       sbUpdate: function() {
-                          if(QuestionBank.testsType===2){
-                              QuestionBank.codingProblem.testCases= JSON.stringify(QuestionBank.codingProblem.testCases);
-                              QuestionBank.codingProblem.problemCategories= '';
-                              QuestionBank.codingProblem.problemName=QuestionBank.stem;
+                          if(this.QuestionBank.testsType===2){
+                              this.QuestionBank.codingProblem.testCases= JSON.stringify(this.QuestionBank.codingProblem.testCases);
+                              this.QuestionBank.codingProblem.problemCategories= '';
+                              this.QuestionBank.codingProblem.problemName=this.QuestionBank.stem;
                               console.log(vm.questionBankId);
                           }
 
-                          ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(QuestionBank),
+                          ajaxSubmitJSON("/admin/updatequestionbank-"+vm.questionBankId, JSON.stringify(this.QuestionBank),
                               function(data) {
 
                                   if(data) {

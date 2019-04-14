@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Exam</title>
+    <link rel="shortcut icon" href="/static/img/favicon.png">
+    <title>账号管理 金蝶笔试系统</title>
     <link href="/static/css/jquery.dataTables.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css" />
     <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css">
@@ -103,6 +104,7 @@
                                     </select>
 								</div>
 							</div>
+                            <div class="alert alert-error hide" style="color: red"></div> <!-- .alert-error -->
 						</form>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal">
@@ -173,7 +175,22 @@
            },
            methods: {
                addUser: function() {
-                   ajaxSubmitJSON("/admin/addUser", JSON.stringify(User),
+                   var errorMessage='';
+                   if ( vm.User.trueName===undefined || vm.User.trueName==='') {
+                       errorMessage += '请填写真实姓名.<br>';
+                   }
+                   if ( vm.User.phone===undefined || vm.User.phone==='' ) {
+                       errorMessage += '请填写手机号码.<br>';
+                   }
+                   if ( vm.User.roles===undefined || vm.User.roles==='' ) {
+                       errorMessage += '请选择账号类型.<br>';
+                   }
+                   if(errorMessage !==''){
+                       $('.alert-error', '#optionsForm').html(errorMessage);
+                       $('.alert-error', '#optionsForm').removeClass('hide');
+                       return;
+                   }
+                   ajaxSubmitJSON("/admin/addUser", JSON.stringify(vm.User),
                        function(data) {
                            if(data["isSuccessfully"]==="true") {
                                $('#myModal').modal('hide');

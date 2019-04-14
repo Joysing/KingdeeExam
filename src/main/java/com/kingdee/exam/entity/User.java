@@ -21,6 +21,7 @@ public class User implements UserDetails {
     //private Integer id;
     @Column(name = "user_id")
     private Integer userId;
+    @Column(name="username", unique=true, nullable=false)
     private String username;
     private String password;
     private String trueName;

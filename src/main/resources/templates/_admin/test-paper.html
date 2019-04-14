@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css"/>
     <link rel="stylesheet" href="/static/css/jquery.dataTables.min.css">
-    <title>Exam</title>
+    <link rel="shortcut icon" href="/static/img/favicon.png">
+    <title>试卷管理 金蝶笔试系统</title>
 </head>
 <@template.header "testPaper.html"/>
 <div class="row" id="app">
@@ -40,8 +41,8 @@
                 <td v-text="item.endDate"></td>
 
                 <td class="hidden-480">
-                    <span v-bind:class="[item.isStart==1 ? 'label-success':'','label label-sm']"
-                          v-text="item.isStart==1?'可用':'不可用'"></span>
+                    <span v-bind:class="[(item.isStart==1 && item.testpaperState==1) ? 'label-success':'','label label-sm']"
+                          v-text="(item.isStart==1 && item.testpaperState==1)?'可考试':'不可考试'"></span>
                 </td>
                 <td>
                     <div class="hidden-sm hidden-xs btn-group">
@@ -59,8 +60,11 @@
                                 v-bind:href="'/admin/editTestPaperInfo.html?testpaperId='+item.testpaperId">
                             <i class="ace-icon fa fa-pencil bigger-120"></i>
                         </a>
-
-                        <a class="btn btn-xs btn-danger" title="删除试卷"
+                        <a class="btn btn-xs btn-danger" title="禁用"
+                                v-bind:onclick="'closeTestpaper('+item.testpaperId+')'">
+                            <i class="ace-icon fa fa-ban bigger-120"></i>
+                        </a>
+                        <a class="btn btn-xs btn-default" title="删除试卷"
                                 v-bind:onclick="'deleteTestpaper('+item.testpaperId+')'">
                             <i class="ace-icon fa fa-trash-o bigger-120"></i>
                         </a>
@@ -143,6 +147,26 @@
             traditional: true,
             success: function (data) {
                 toastr.success('操作成功!', "删除试卷");
+                getAllTestPaper();
+                // var idObject = document.getElementById(testpaperId);
+                // idObject.parentNode.removeChild(idObject);
+            }
+        });
+
+    }
+    function closeTestpaper(testpaperId) {
+        if (confirm("是否要禁用考卷？如需重新启用，请到试卷修改界面保存即可启用。") === false) {
+            return;
+        }
+        $.ajax({
+            url: "/admin/updateTestPaperStatus",
+            data: {"testpaperId": testpaperId},
+            contentType: "application/json",
+            dataType: "json",
+            type: "GET",
+            traditional: true,
+            success: function (data) {
+                toastr.success('如需重新启用，请到试卷修改界面保存即可启用。', "禁用成功");
                 getAllTestPaper();
                 // var idObject = document.getElementById(testpaperId);
                 // idObject.parentNode.removeChild(idObject);

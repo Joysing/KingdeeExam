@@ -46,18 +46,18 @@ public class TestPaperController {
 		
 	}
 	
-	//获取所有试卷内容
+	//获取所有试卷
 	@ResponseBody
 	@RequestMapping(value = "/getalltestpaper")
 	public List<TestPaper> getAllTestPaper() {
-        return testPaperService.findTestPaperInfo();
+        return testPaperService.getAllTestPaper();
 	}
 	
-	//更改试卷状态 即为删除
+	//删除试卷
 	@RequestMapping(value="/testDelete",method=RequestMethod.GET)
 	@ResponseBody
 	public String updateTestPaperInfo(String testpaperId){
-		int i=testPaperService.updateTestPaperState(Integer.parseInt(testpaperId));
+		int i=testPaperService.deleteTestPaper(Integer.parseInt(testpaperId));
 		if(i>=1){
 			return "1";
 		}else{
@@ -65,7 +65,19 @@ public class TestPaperController {
 		}
            
 	}
-	
+	//更改试卷状态
+	@RequestMapping(value="/updateTestPaperStatus",method=RequestMethod.GET)
+	@ResponseBody
+	public String updateTestPaperStatus(String testpaperId){
+		int i=testPaperService.updateTestPaperState(Integer.parseInt(testpaperId));
+		if(i>=1){
+			return "1";
+		}else{
+			return "0";
+		}
+
+	}
+
 	//编辑试卷信息
 	@RequestMapping(value="/editTestPaperInfo.html")
 	@ResponseBody

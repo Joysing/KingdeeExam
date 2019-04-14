@@ -7,8 +7,12 @@ import com.kingdee.exam.entity.vo.QuestionBankVo;
 import java.util.List;
 
 public interface TestPaperService {
+    //查询所有试卷
+    List<TestPaper> getAllTestPaper();
     //查询所有有效试卷
     List<TestPaper> findTestPaperInfo();
+    //删除试卷
+    int deleteTestPaper(int testpaperId);
     //更改试卷状态
     int updateTestPaperState(int testpaperId);
     //根据id查询试卷信息

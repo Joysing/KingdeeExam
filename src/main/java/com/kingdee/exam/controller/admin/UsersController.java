@@ -60,18 +60,19 @@ public class UsersController {
 	@ResponseBody
 	@RequestMapping(value = "/addUser")
 	public Object addUser(@RequestBody User user) {
-	    String username=user.getPhone();
+        if("".equals(user.getUsername()) ||user.getUsername()==null) {
+            user.setUsername(user.getPhone());
+        }
 	    String password=makeRandomPassword(8);
-	    user.setUsername(username);
 		user.setPassword(new BCryptPasswordEncoder().encode(password));
 		user.setEnabled(true);
 		Map<String,String> resultMap=new HashMap<>();
-		if(usersService.getUserByUsername(username)!=null){
+		if(usersService.getUserByUsername(user.getUsername())!=null){
             resultMap.put("isSuccessfully","false");
-            resultMap.put("message","手机号已存在");
+            resultMap.put("message","用户名已存在");
         }else if(usersService.addUser(user)){
             resultMap.put("isSuccessfully","true");
-            resultMap.put("userName",username);
+            resultMap.put("userName",user.getUsername());
             resultMap.put("password",password);
             resultMap.put("trueName",user.getTrueName());
         }else{

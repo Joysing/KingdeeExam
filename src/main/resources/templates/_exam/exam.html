@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>考试页面</title>
+        <title>考试页面 金蝶笔试系统</title>
         <link rel="shortcut icon" href="/static/img/favicon.png">
 		<link rel="stylesheet" href="/static/css/select.css" />
 		<link rel="stylesheet" href="/static/css/bootstrap-theme.css" />
@@ -134,7 +134,7 @@
 				</div>
 				<div class="section">
 					<h4>提示</h4>
-					<div class="description markdown">${problem.hint}</div>
+					<div class="description markdown">${problem.hint?replace("<","&lt;")?replace(">","&gt;")}</div>
 				</div>
 				<ul>
 					<li>
@@ -312,8 +312,8 @@
             history.pushState(null, null, document.URL);
         });
 	function submitPapers() {
-        if($("#accessRate").html()===""){
-            if(!confirm("编程题未运行，请先运行，否则编程题不计分，确定直接提交吗？")){
+        if($("#accessRate").val()===""){
+            if(!confirm("编程题未运行成功，请先运行，否则编程题不计分，确定直接提交吗？")){
                 return;
             }
         }
@@ -417,6 +417,7 @@
         }
         $("#time").text(min+":"+sec);
         if(min==='00'&&sec==='00') {
+            $('#accessRate').val(0);
 			submitPapers();
 		}
 	},1000);
@@ -426,7 +427,7 @@
         var postData = {
             problemId: problemId,
             languageSlug: $('select#languages').val(),
-            code: $('#codemirror-editor').val()
+            code: window.codeMirrorEditor.getValue()
         };
         ajaxSubmit("/p/createSubmission.action", postData,
             function(result) {
@@ -470,7 +471,7 @@
                 $('#used-time').html(submission['usedTime']);
                 $('#used-memory').html(submission['usedMemory']);
                 $('#execute-time').html(submission['executeTime']==null?'': submission['executeTime']);
-                $('#judge-code').html(submission['code']==null?'': submission['code']);
+                $('#judge-code').html(submission['code']==null?'': submission['code'].replace("<","&lt;").replace(">","&gt;"));
 
                 $.getScript('/static/js/date-zh_CN.min.js', function() {
                     var currentJudgeResult = 'Pending';

@@ -9,7 +9,7 @@
     <meta name="author" content="">
     <link rel="shortcut icon" href="/static/img/favicon.png">
 
-    <title>Exam - 考试系统</title>
+    <title>登录 金蝶笔试系统</title>
 
     <!-- TODC Bootstrap core CSS -->
     <link rel="stylesheet" href="/static/assets/yeti/bootstrap.min.css"/>
@@ -145,11 +145,11 @@
     </p>
 
 </div>
-<#if (RequestParameters['error'])=="code_wrong" >
+<#if RequestParameters['error']?exists && (RequestParameters['error'])=="code_wrong" >
 <script>
     toastr.error('验证码错误!', '登录失败');
 </script>
-<#elseif (RequestParameters['error'])=="password_wrong" >
+<#elseif RequestParameters['error']?exists && (RequestParameters['error'])=="password_wrong" >
 <script>
     toastr.error('密码错误!', '登录失败');
 </script>
@@ -159,7 +159,6 @@
     function changeImg() {
         var imgSrc = $("#code-img");
         var src = imgSrc.attr("src");
-        console.log(src);
         imgSrc.attr("src", chgUrl(src));
     }
 
@@ -167,7 +166,6 @@
     //为了使每次生成图片不一致，即不让浏览器读缓存，所以需要加上时间戳
     function chgUrl(url) {
         var timestamp = (new Date()).valueOf();
-        //url = url.substring(0, 17);
         return url + "?" + timestamp;
         if ((url.indexOf("&") >= 0)) {
             url = url + "×tamp=" + timestamp;
@@ -206,13 +204,13 @@
                             }
                         }
                     },
-                    // code: {
-                    //     validators: {
-                    //         notEmpty: {
-                    //             message: '请输入验证码'
-                    //         }
-                    //     }
-                    // }
+                    code: {
+                        validators: {
+                            notEmpty: {
+                                message: '请输入验证码'
+                            }
+                        }
+                    }
                 }
             });
     });

@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/static/assets/toastr-master/toastr.css"/>
-    <title>Exam</title>
+    <link rel="shortcut icon" href="/static/img/favicon.png">
+    <title>试卷管理-修改试卷 金蝶笔试系统</title>
 </head>
 <@template.header "index.html"/>
 	<div class="container-fluid">
@@ -175,7 +176,7 @@
 	    	    choosefun: function(datas){
 	    	         start.maxDate = datas; //将结束日的初始值设定为开始日的最大日期
 	    	    },
-	    		okfun:function(val){alert(val)}
+	    		okfun:function(val){console.log(val)}
 	    	};
 	    	jeDate(start);
 	    	jeDate(end);		

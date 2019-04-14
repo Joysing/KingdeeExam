@@ -12,11 +12,20 @@ import java.util.List;
 
 @Service
 public class TestPaperServiceImpl implements TestPaperService {
-	@Autowired
-	private TestPaperMapper testPaperMapper;
-	@Autowired
-	private QuestionBankMapper questionBankMapper; //题库
+	private final TestPaperMapper testPaperMapper;
+	private final QuestionBankMapper questionBankMapper; //题库
 
+    @Autowired
+    public TestPaperServiceImpl(TestPaperMapper testPaperMapper, QuestionBankMapper questionBankMapper) {
+        this.testPaperMapper = testPaperMapper;
+        this.questionBankMapper = questionBankMapper;
+    }
+
+    @Override
+	public List<TestPaper> getAllTestPaper() {
+
+		return testPaperMapper.getAllTestPaper();
+	}
 	@Override
 	public List<TestPaper> findTestPaperInfo() {
 
@@ -24,14 +33,16 @@ public class TestPaperServiceImpl implements TestPaperService {
 	}
 
 	@Override
+	public int deleteTestPaper(int testpaperId) {
+		return testPaperMapper.deleteTestPaper(testpaperId);
+	}
+	@Override
 	public int updateTestPaperState(int testpaperId) {
-		// TODO Auto-generated method stub
 		return testPaperMapper.updateTestPaperState(testpaperId);
 	}
 
 	@Override
 	public TestPaper selectByPrimaryKey(Integer testpaperId) {
-		// TODO Auto-generated method stub
 		return testPaperMapper.selectByPrimaryKey(testpaperId);
 	}
 

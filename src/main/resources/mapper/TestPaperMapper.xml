@@ -91,11 +91,13 @@
       end_date = #{endDate,jdbcType=TIMESTAMP}
     where testpaper_id = #{testpaperId,jdbcType=INTEGER}
   </update>
-  
-  
-  <!-- 与系统分隔 -->
+
+    <!-- 查询所有试卷 -->
+    <select id="getAllTestPaper" resultMap="BaseResultMap">
+	  SELECT * FROM testpaper
+    </select>
+
   <!-- 查询所有有效试卷 -->
-  
   <select id="findTestPaperInfo" resultMap="BaseResultMap">
 	  SELECT
 		*
@@ -105,19 +107,33 @@
 		testpaper.testpaper_state = 1
   </select>
   
-  <!-- 更新书卷状态  即前端页面执行的删除试卷操作 -->
-  <update id="updateTestPaperState" parameterType="java.lang.Integer">
-		  UPDATE testpaper
-		SET testpaper.testpaper_state = 0
+  <!-- 删除试卷操作 -->
+  <update id="deleteTestPaper" parameterType="java.lang.Integer">
+		delete from testpaper
 		WHERE
 			testpaper.testpaper_id = #{id,jdbcType=INTEGER}
   </update>
-  
+  <!-- 更新试卷状态-->
+  <update id="updateTestPaperState" parameterType="java.lang.Integer">
+		  UPDATE testpaper
+		SET testpaper.testpaper_state = #{testpaperState,jdbcType=INTEGER}
+		WHERE
+			testpaper.testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </update>
+  <!-- 更新试卷开考状态-->
+  <update id="updateIsStart" parameterType="com.kingdee.exam.entity.TestPaper">
+		  UPDATE testpaper
+		SET testpaper.is_start = #{testpaperState,jdbcType=INTEGER}
+		WHERE
+			testpaper.testpaper_id = #{testpaperId,jdbcType=INTEGER}
+  </update>
+
   <update id="updateTestPaperInfo" parameterType="com.kingdee.exam.entity.TestPaper">
 		  	UPDATE testpaper
 		SET testpaper.testpaper_name =#{testpaperName,jdbcType=VARCHAR},
 				testpaper.start_date =#{startDate,jdbcType=TIMESTAMP},
-				testpaper.end_date =#{endDate,jdbcType=TIMESTAMP}
+				testpaper.end_date =#{endDate,jdbcType=TIMESTAMP},
+                testpaper.testpaper_state = 1
 		WHERE
 			testpaper.testpaper_id =#{testpaperId,jdbcType=INTEGER}
   
