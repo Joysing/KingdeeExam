@@ -158,7 +158,7 @@
 <script>
     function changeImg() {
         var imgSrc = $("#code-img");
-        var src = imgSrc.attr("src");
+        var src = "/code";
         imgSrc.attr("src", chgUrl(src));
     }
 
@@ -168,7 +168,7 @@
         var timestamp = (new Date()).valueOf();
         return url + "?" + timestamp;
         if ((url.indexOf("&") >= 0)) {
-            url = url + "×tamp=" + timestamp;
+            url = url + "timestamp=" + timestamp;
         } else {
             url = url + "?timestamp=" + timestamp;
         }

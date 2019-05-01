@@ -80,6 +80,7 @@ public class CodeController {
 		// 将四位数字的验证码保存到Session中。
 		HttpSession session = req.getSession();
 		System.out.println("生成的验证码："+randomCode);
+		if(session.getAttribute("code")==null)session.removeAttribute("code");
 		session.setAttribute("code", randomCode.toString());
 
 		// 禁止图像缓存。
