@@ -47,7 +47,7 @@ public class MessageReceiver implements MessageListener {
 				} else if ( "KeepAlive".equals(event) ) {
 					receiveFromAliveJudgersHandler(mapMessage);
 				} else {
-					LOGGER.warn(String.format("Unknown Event Received. [Event = %s]",
+					LOGGER.warn(String.format("接收到未知事件. [Event = %s]",
                             event));
 				}
 			} catch (JMSException ex) {
@@ -63,7 +63,7 @@ public class MessageReceiver implements MessageListener {
 	private void errorHandler(MapMessage mapMessage) throws JMSException {
 		long submissionId = mapMessage.getLong("submissionId");
 		eventPublisher.publishEvent(new SubmissionEvent(this, submissionId, "System Error", "System Error.", true));
-		LOGGER.info(String.format("Submission #%d returned [System Error].", submissionId));
+		LOGGER.info(String.format("Submission #%d 返回结果 [System Error].", submissionId));
 	}
 	
 	/**
@@ -77,10 +77,10 @@ public class MessageReceiver implements MessageListener {
 		if ( isSuccessful ) {
 			String message = "代码编译成功。开始测试数据。\n\n";
 			eventPublisher.publishEvent(new SubmissionEvent(this, submissionId, "Running", message, false));
-			LOGGER.info(String.format("Submission #%d returned [Compile Successfully].", submissionId));
+			LOGGER.info(String.format("Submission #%d 返回结果 [Compile Successfully].", submissionId));
 		} else {
 			eventPublisher.publishEvent(new SubmissionEvent(this, submissionId, "Compiler Error", log, true));
-			LOGGER.info(String.format("Submission #%d returned [Compile Error].\n\tError Message:%s",
+			LOGGER.info(String.format("Submission #%d 返回结果 [Compile Error].\n\tError Message:%s",
                     submissionId, log));
 		}
 	}
@@ -101,7 +101,7 @@ public class MessageReceiver implements MessageListener {
                 checkpointId, runtimeResult, usedTime, usedMemory, score);
 		eventPublisher.publishEvent(new SubmissionEvent(this, submissionId, "Running", message, false));
 		
-		LOGGER.info(String.format("Submission #%d/ CheckPoint#%d returned [%s] (Time = %dms, Memory = %d KB, Score = %d).",
+		LOGGER.info(String.format("Submission #%d/ 测试用例#%d 返回结果 [%s] (所用时间 = %dms, 所用内存 = %d KB, 分数 = %d).",
                 submissionId, checkpointId, runtimeResult, usedTime, usedMemory, score));
 	}
 	
@@ -120,7 +120,7 @@ public class MessageReceiver implements MessageListener {
                 runtimeResult, usedTime, usedMemory, score,"%");
 		eventPublisher.publishEvent(new SubmissionEvent(this, submissionId, runtimeResult, message, true));
 		
-		LOGGER.info(String.format("Submission #%d judge completed and returned [%s] (Time = %d ms, Memory = %d KB, Score = %d).",
+		LOGGER.info(String.format("Submission #%d 判题完成，返回结果为 [%s] (所用时间 = %d ms, 所用内存 = %d KB, 分数 = %d).",
                 submissionId, runtimeResult, usedTime, usedMemory, score));
 	}
 	
@@ -138,7 +138,7 @@ public class MessageReceiver implements MessageListener {
 		calendar.setTimeInMillis(heartbeatTimeInMillis);
 		Date heartbeatTime = calendar.getTime();
 		eventPublisher.publishEvent(new KeepAliveEvent(this, judgerUsername, judgerDescription, heartbeatTime));
-		LOGGER.info(String.format("Received heartbeat from Judger[%s]", judgerUsername));
+		LOGGER.info(String.format("接收到来自编译机[%s]的心跳", judgerUsername));
 	}
 	
 

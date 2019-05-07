@@ -106,7 +106,12 @@
 	WHERE
 		testpaper.testpaper_state = 1
   </select>
-  
+
+    <!-- 查询被指定题目引用的试卷 -->
+    <select id="findAllTestpaperInUseByQuestion" resultMap="BaseResultMap" parameterType="String">
+        SELECT t.* FROM testpaper_tests tt join testpaper t on tt.testpaper_id=t.testpaper_id and t.testpaper_state=1 WHERE question_bank_id=#{questionBankId}
+    </select>
+
   <!-- 删除试卷操作 -->
   <update id="deleteTestPaper" parameterType="java.lang.Integer">
 		delete from testpaper

@@ -13,12 +13,4 @@ public class IndexController {
 		modelAndView.setViewName("index");
 		return modelAndView;
 	}
-
-	@RequestMapping("/errors/404")
-	public ModelAndView errors(){
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("_error/404");
-		return modelAndView;
-	}
-	
 }

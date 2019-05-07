@@ -77,7 +77,7 @@ public class ExamController {
             Score record = new Score();
             User users = (User) session.getAttribute("myUser");
             record.setTestpaperId(Integer.parseInt(session.getAttribute("testpaperId").toString()));
-            record.setUsersId(149000301);//users.getUserId());
+            record.setUsersId(users.getUserId());
             record.setFraction(0.0);
             scoreMapper.insertSelective(record);
         }

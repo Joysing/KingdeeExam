@@ -36,7 +36,7 @@ import java.util.Set;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailService userDetailService;
     private static final Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
-    private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/static/**", "/code", "/favicon.ico","/loginPage"};
+    private static final String[] UNSECURED_RESOURCE_LIST = new String[]{"/static/**", "/code", "/favicon.ico","/loginPage","/"};
 
     @Autowired
     public WebSecurityConfig(UserDetailService userDetailService) {

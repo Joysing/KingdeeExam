@@ -69,28 +69,6 @@ public class SubmissionController {
 	}
 	
 	/**
-	 * 获取最新的评测信息的列表.
-	 * @param problemId - 试题的唯一标识符
-	 * @param username - 用户的用户名
-	 * @param startIndex - 当前加载的最新一条记录的提交唯一标识符
-	 * @return 一个包含提交记录列表的HashMap对象
-	 */
-	@RequestMapping(value="/getLatestSubmissions.action", method=RequestMethod.GET)
-	public @ResponseBody
-    Map<String, Object> getLatestSubmissionsAction(
-			@RequestParam(value="problemId", required=false, defaultValue="0") long problemId,
-			@RequestParam(value="username", required=false, defaultValue="") String username,
-			@RequestParam(value="startIndex") long startIndex) {
-		Map<String, Object> result = new HashMap<>(3, 1);
-
-		List<Submission> submissions = submissionService.getLatestSubmissions(problemId, username, startIndex, NUMBER_OF_SUBMISSION_PER_PAGE);
-		result.put("isSuccessful", submissions != null && !submissions.isEmpty());
-		result.put("submissions", submissions);
-		
-		return result;
-	}
-	
-	/**
 	 * 显示提交记录详细信息的页面.
 	 * @param submissionId - 提交记录的唯一标识符
 	 * @return 包含提交详细信息的ModelAndView对象

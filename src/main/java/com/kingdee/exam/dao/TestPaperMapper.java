@@ -23,6 +23,8 @@ public interface TestPaperMapper {
     List<TestPaper> getAllTestPaper();
     //查询所有有效试卷
     List<TestPaper> findTestPaperInfo();
+    //查询被指定题目引用的试卷
+    List<TestPaper> findAllTestpaperInUseByQuestion();
 
     //删除试卷
     int deleteTestPaper(int testpaperId);

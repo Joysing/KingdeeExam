@@ -92,7 +92,7 @@ public class TestPaperController {
 	}
     @RequestMapping(value = "/testPaperEdit")
     @ResponseBody
-    public String userEdti(TestPaper testPaper) {
+    public String testPaperEdit(TestPaper testPaper) {
 
     	int j=testPaperService.updateTestPaperInfo(testPaper);
     	if (j >= 1) {
