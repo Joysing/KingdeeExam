@@ -128,7 +128,7 @@
   <!-- 更新试卷开考状态-->
   <update id="updateIsStart" parameterType="com.kingdee.exam.entity.TestPaper">
 		  UPDATE testpaper
-		SET testpaper.is_start = #{testpaperState,jdbcType=INTEGER}
+		SET testpaper.is_start = #{isStart,jdbcType=INTEGER}
 		WHERE
 			testpaper.testpaper_id = #{testpaperId,jdbcType=INTEGER}
   </update>

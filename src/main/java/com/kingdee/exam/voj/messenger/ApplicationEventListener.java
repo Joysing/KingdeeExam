@@ -49,7 +49,6 @@ public class ApplicationEventListener {
 	/**
 	 * 提交事件的处理器.
 	 * @param event - 提交记录事件
-	 * @throws IOException 
 	 */
 	@EventListener
 	public void submissionEventHandler(SubmissionEvent event) throws IOException {
@@ -67,8 +66,10 @@ public class ApplicationEventListener {
 		mapMessage.put("judgeResult", judgeResult);
 		mapMessage.put("message", message);
         if ( isCompleted ) {
-            String accessRate = new AESEncryptor().encrypt(message.split("通过率 ")[1].split("%")[0]);
-            mapMessage.put("accessRate", accessRate);
+            if(message.contains("通过率 ")) {
+                String accessRate = new AESEncryptor().encrypt(message.split("通过率 ")[1].split("%")[0]);
+                mapMessage.put("accessRate", accessRate);
+            }
         }
 		sseEmitter.send(mapMessage);
 		

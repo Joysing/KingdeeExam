@@ -464,9 +464,10 @@
 
                 $('#coding-judge-result').css("display","block");
                 //初始化数据
+                var submitTime=new Date(parseInt(submission['submitTime']));
                 $('#judge-result').html(submission['judgeResult']==null?'Pending': submission['judgeResult']['judgeResultName']);
                 $('#problem-summery').html(submission['problem']['problemId']+' ' +submission['problem']['problemName']);
-                $('#submit-time').html(submission['submitTime']==null?'': submission['submitTime']);
+                $('#submit-time').html(submitTime.toLocaleDateString().replace(/\//g, "-") + " " + submitTime.toTimeString().substr(0, 8));
                 $('#language-name').html(submission['language']['languageName']);
                 $('#used-time').html(submission['usedTime']);
                 $('#used-memory').html(submission['usedMemory']);

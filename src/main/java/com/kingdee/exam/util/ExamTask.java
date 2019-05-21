@@ -46,7 +46,7 @@ public class ExamTask {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-			if (new Date().getTime()>endDate.getTime() && new Date().getTime()<startDate.getTime()
+			if ((new Date().getTime()>endDate.getTime() || new Date().getTime()<startDate.getTime())
                     && testPaper.getIsStart()==1) {
                 new Timer().schedule(new TimerTask() {
                     public void run() {
