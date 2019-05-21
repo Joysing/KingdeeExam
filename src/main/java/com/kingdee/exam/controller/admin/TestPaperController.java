@@ -26,14 +26,14 @@ public class TestPaperController {
 	private final TestPaperService testPaperService;
 	private final QuestionBankMapper questionBankMapper;
 	private final TestPaperTestService testPaperTestService;
-	private final TestPaperMapper testPaperController;
+	private final TestPaperMapper testPaperMapper;
 
     @Autowired
-    public TestPaperController(TestPaperService testPaperService, QuestionBankMapper questionBankMapper, TestPaperTestService testPaperTestService, TestPaperMapper testPaperController) {
+    public TestPaperController(TestPaperService testPaperService, QuestionBankMapper questionBankMapper, TestPaperTestService testPaperTestService, TestPaperMapper testPaperMapper) {
         this.testPaperService = testPaperService;
         this.questionBankMapper = questionBankMapper;
         this.testPaperTestService = testPaperTestService;
-        this.testPaperController = testPaperController;
+        this.testPaperMapper = testPaperMapper;
     }
 
 
@@ -206,6 +206,10 @@ public class TestPaperController {
         testPaperTestsList.setQuestionBankId(questionBankId);
         System.out.println(testPaperID);
         testPaperTestService.deleteTestPaperTestById(testPaperID);
+        TestPaper testPaper=new TestPaper();
+        testPaper.setTestpaperId(testPaperID);
+        testPaper.setIsStart(1);
+        testPaperMapper.updateIsStart(testPaper);
         int addTestPaperQuestion = testPaperTestService.addTestPaperQuestion(testPaperTestsList);
         return addTestPaperQuestion >= 1;
     }
@@ -213,7 +217,8 @@ public class TestPaperController {
     @RequestMapping(value = "/addtestpaper")
     public boolean addTestPaper(TestPaper testPaper) {
     	testPaper.setTestpaperState(1);
-    	int insertSelective = testPaperController.insertSelective(testPaper);
+    	testPaper.setIsStart(0);
+    	int insertSelective = testPaperMapper.insertSelective(testPaper);
         return insertSelective >= 1;
     }
 

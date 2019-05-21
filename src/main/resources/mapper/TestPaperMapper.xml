@@ -37,6 +37,9 @@
       <if test="testpaperName != null">
         testpaper_name,
       </if>
+      <if test="isStart != null">
+        is_start,
+      </if>
       <if test="testpaperState != null">
         testpaper_state,
       </if>
@@ -54,6 +57,9 @@
       <if test="testpaperName != null">
         #{testpaperName,jdbcType=VARCHAR},
       </if>
+    <if test="isStart != null">
+        #{isStart,jdbcType=VARCHAR},
+    </if>
       <if test="testpaperState != null">
         #{testpaperState,jdbcType=INTEGER},
       </if>
