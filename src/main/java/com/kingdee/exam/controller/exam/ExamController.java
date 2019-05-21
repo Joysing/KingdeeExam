@@ -6,6 +6,7 @@ import com.kingdee.exam.entity.TestPaper;
 import com.kingdee.exam.entity.User;
 import com.kingdee.exam.entity.vo.QuestionBankVo;
 import com.kingdee.exam.service.ExamService;
+import com.kingdee.exam.util.HttpSessionParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -75,7 +76,7 @@ public class ExamController {
         }
         if(mouseLeave==0){//移出次数等于0了，直接给0分
             Score record = new Score();
-            User users = (User) session.getAttribute("myUser");
+            User users = HttpSessionParser.getCurrentUser(session);
             record.setTestpaperId(Integer.parseInt(session.getAttribute("testpaperId").toString()));
             record.setUsersId(users.getUserId());
             record.setFraction(0.0);

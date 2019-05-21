@@ -9,6 +9,7 @@ import com.kingdee.exam.entity.User;
 import com.kingdee.exam.entity.vo.QuestionBankVo;
 import com.kingdee.exam.service.ExamService;
 import com.kingdee.exam.util.AESEncryptor;
+import com.kingdee.exam.util.HttpSessionParser;
 import com.kingdee.exam.voj.model.Language;
 import com.kingdee.exam.voj.model.Problem;
 import com.kingdee.exam.voj.service.LanguageService;
@@ -53,7 +54,7 @@ public class ExamServiceImpl implements ExamService {
 		 */
 		Score score = new Score();
 		score.setTestpaperId(Integer.parseInt(id));
-		User users = (User) session.getAttribute("myUser");
+		User users = HttpSessionParser.getCurrentUser(session);
 		score.setUsersId(users.getUserId());
         //score.setUsersId(149000301);
 		Score ifExistenceScore = examMapper.findIfExistenceScore(score);
@@ -158,7 +159,7 @@ public class ExamServiceImpl implements ExamService {
 		}
 		Score score = new Score();
 		score.setTestpaperId(Integer.parseInt(session.getAttribute("testpaperId").toString()));
-		score.setUsersId(((User) session.getAttribute("myUser")).getUserId());
+		score.setUsersId(HttpSessionParser.getCurrentUser(session).getUserId());
 		score.setFraction(fraction);
 		int insertSelective = scoreMapper.insertSelective(score);
 		if (insertSelective == 0) {// 设置分数是否成功
