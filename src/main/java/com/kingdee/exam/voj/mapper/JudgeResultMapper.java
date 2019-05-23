@@ -4,9 +4,6 @@ import com.kingdee.exam.voj.model.JudgeResult;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.Param;
 
-/**
- * JudgeResult Data Access Object.
- */
 @CacheNamespace(implementation = org.mybatis.caches.ehcache.EhcacheCache.class)
 public interface JudgeResultMapper {
 	/**

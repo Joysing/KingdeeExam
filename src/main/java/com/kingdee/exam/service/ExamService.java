@@ -20,7 +20,4 @@ public interface ExamService {
 	//判题系统
     Object JudgmentSystem(List<QuestionBankVo> questionBankVos, HttpSession session);
 
-	boolean autoGenerate(HttpSession session, Integer id);
-
-	
 }

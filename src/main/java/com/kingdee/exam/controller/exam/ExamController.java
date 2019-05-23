@@ -86,13 +86,4 @@ public class ExamController {
         return mouseLeave;
     }
 
-    /**
-     * 试卷模板映射
-     */
-    @ResponseBody
-    @RequestMapping(value = "/autoGenerate", method = RequestMethod.POST)
-    public boolean autoGenerate(HttpSession session, TestPaper testPaper) {
-        return examService.autoGenerate(session, testPaper.getTestpaperId());
-    }
-
 }

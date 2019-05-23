@@ -9,17 +9,15 @@ import com.kingdee.exam.voj.mapper.SubmissionMapper;
 import com.kingdee.exam.voj.model.Language;
 import com.kingdee.exam.voj.model.Problem;
 import com.kingdee.exam.voj.model.Submission;
-import org.junit.jupiter.api.Assertions;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.sql.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * SubmissionMapper测试类.
@@ -27,223 +25,7 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = KingdeeExamApplication.class)
 public class SubmissionMapperTest {
-	/**
-	 * 测试用例: 测试getNumberOfSubmissions(String, String)方法
-	 * 测试数据: 使用2014年10月01日-2014年10月18日进行查询
-	 * 预期结果: 返回该时间区间内的提交次数(2次)
-	 */
-	@Test
-	public void testGetNumberOfSubmissionsUsingDate() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2014-10-18 00:00:00";
-		
-		long numberOfSubmissions = submissionMapper.getNumberOfSubmissionsUsingDate(startTime, endTime);
-		Assertions.assertEquals(2, numberOfSubmissions);
-	}
 
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByMonth(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2015年10月01日进行查询
-	 * 预期结果: 返回该年度12个月每个月的提交次数
-	 */
-	@Test
-	public void testGetNumberOfTotalSubmissionsGroupByMonthWithoutUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2015-10-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByMonth(startTime, endTime, 0, false);
-		Assertions.assertEquals(3, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		int month = (Integer)firstEntry.get("month");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals(201410, month);
-		Assertions.assertEquals(2, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByMonth(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2015年10月01日进行查询通过的提交记录
-	 * 预期结果: 返回该年度12个月的每个月通过提交次数
-	 */
-	@Test
-	public void testGetNumberOfAccpectedSubmissionsGroupByMonthWithoutUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2015-10-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByMonth(startTime, endTime, 0, true);
-		Assertions.assertEquals(2, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		int month = (Integer)firstEntry.get("month");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals(201410, month);
-		Assertions.assertEquals(1, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByMonth(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2015年10月01日进行查询某个用户的提交记录
-	 * 预期结果: 返回该用户在该年度12个月每个月的提交次数
-	 */
-	@Test
-	public void testGetNumberOfTotalSubmissionsGroupByMonthWithUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2015-10-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByMonth(startTime, endTime, 1000, false);
-		Assertions.assertEquals(2, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		int month = (Integer)firstEntry.get("month");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals(201410, month);
-		Assertions.assertEquals(2, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByMonth(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2015年10月01日进行查询某个用户通过的提交记录
-	 * 预期结果: 返回该用户在该年度12个月的每个月通过提交次数
-	 */
-	@Test
-	public void testGetNumberOfAccpectedSubmissionsGroupByMonthWithUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2015-10-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByMonth(startTime, endTime, 1000, true);
-		Assertions.assertEquals(2, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		int month = (Integer)firstEntry.get("month");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals(201410, month);
-		Assertions.assertEquals(1, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByDay(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2014年10月31日进行查询
-	 * 预期结果: 返回该月份每天的提交次数
-	 */
-	@Test
-	public void testGetNumberOfTotalSubmissionsGroupByDayWithoutUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2014-11-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByDay(startTime, endTime, 0, false);
-		Assertions.assertEquals(2, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		Date day = (Date)firstEntry.get("date");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals("2014-10-01", day.toString());
-		Assertions.assertEquals(1, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByDay(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2014年10月31日进行查询通过的提交记录
-	 * 预期结果: 返回该月份每天通过的提交次数
-	 */
-	@Test
-	public void testGetNumberOfAccpectedSubmissionsGroupByDayWithoutUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2014-11-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByDay(startTime, endTime, 0, true);
-		Assertions.assertEquals(1, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		Date day = (Date)firstEntry.get("date");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals("2014-10-01", day.toString());
-		Assertions.assertEquals(1, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByDay(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2014年10月31日进行查询某个用户的提交记录
-	 * 预期结果: 返回该用户在该月份每天的提交次数
-	 */
-	@Test
-	public void testGetNumberOfTotalSubmissionsGroupByDayWithUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2014-11-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByDay(startTime, endTime, 1000, false);
-		Assertions.assertEquals(2, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		Date day = (Date)firstEntry.get("date");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals("2014-10-01", day.toString());
-		Assertions.assertEquals(1, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsGroupByDay(String, String, int, boolean)方法
-	 * 测试数据: 使用2014年10月01日-2014年10月31日进行查询某个用户通过的提交记录
-	 * 预期结果: 返回该用户在该月份每天通过的提交次数
-	 */
-	@Test
-	public void testGetNumberOfAccpectedSubmissionsGroupByDayWithUser() {
-		String startTime = "2014-10-01 00:00:00";
-		String endTime = "2014-11-01 00:00:00";
-
-		List<Map<String, Object>> numberOfSubmissions = submissionMapper.getNumberOfSubmissionsGroupByDay(startTime, endTime, 1000, true);
-		Assertions.assertEquals(1, numberOfSubmissions.size());
-		
-		Map<String, Object> firstEntry = numberOfSubmissions.get(0);
-		Date day = (Date)firstEntry.get("date");
-		long submissions = (Long)firstEntry.get("submissions");
-		
-		Assertions.assertEquals("2014-10-01", day.toString());
-		Assertions.assertEquals(1, submissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsUsingLanguage(int)方法
-	 * 测试数据: 使用C++语言的唯一标识符
-	 * 预期结果: 返回使用C++语言提交记录的数量(3条)
-	 */
-	@Test
-	public void testGetNumberOfSubmissionsUsingLanguageUsingCpp() {
-		int languageId = 2;
-		long numberOfSubmissions = submissionMapper.getNumberOfSubmissionsUsingLanguage(languageId);
-		Assertions.assertEquals(4, numberOfSubmissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getNumberOfSubmissionsUsingLanguage(int)方法
-	 * 测试数据: 使用不存在的唯一标识符
-	 * 预期结果: 返回0
-	 */
-	@Test
-	public void testGetNumberOfSubmissionsUsingLanguageUsingNotExistingLanguage() {
-		int languageId = 0;
-		long numberOfSubmissions = submissionMapper.getNumberOfSubmissionsUsingLanguage(languageId);
-		Assertions.assertEquals(0, numberOfSubmissions);
-	}
-	
-	/**
-	 * 测试用例: 测试getLatestSubmissionId()方法
-	 * 测试数据: N/a
-	 * 预期结果: 返回最后一条提交的唯一标识符
-	 */
-	@Test
-	public void testGetLatestSubmissionId() {
-		long latestSubmissionId = submissionMapper.getLatestSubmissionId();
-		Assertions.assertEquals(1004, latestSubmissionId);
-	}
-	
 	/**
 	 * 测试用例: 测试getSubmission(long)方法
 	 * 测试数据: Problem#1000的提交记录的唯一标识符
@@ -268,47 +50,6 @@ public class SubmissionMapperTest {
 	public void testGetSubmissionNotExists() {
 		Submission submission = submissionMapper.getSubmission(0);
 		Assertions.assertNull(submission);
-	}
-	
-	/**
-	 * 测试用例: 测试getSubmissionsUsingOffset(long, String, long, int)方法
-	 * 测试数据: 获取ID从1010起始的10次提交(ID From 1010 to 1000)
-	 * 预期结果: 返回提交列表(共4次提交)
-	 */
-	@Test
-	public void testGetSubmissionsFrom1010WithLimit10() {
-		List<Submission> submissions = submissionMapper.getSubmissionsUsingOffset(0, "", 1010, 10);
-		Assertions.assertEquals(5, submissions.size());
-		
-		Submission firstSubmission = submissions.get(0);
-		long submissionId = firstSubmission.getSubmissionId();
-		Assertions.assertEquals(1004, submissionId);
-	}
-	
-	/**
-	 * 测试用例: 测试getSubmissionsUsingOffset(long, String, long, int)方法
-	 * 测试数据: 获取ID从1003起始的2次提交
-	 * 预期结果: 返回提交列表(共2次提交)
-	 */
-	@Test
-	public void testGetSubmissionsFrom1003WithLimit2() {
-		List<Submission> submissions = submissionMapper.getSubmissionsUsingOffset(0, "", 1003, 2);
-		Assertions.assertEquals(2, submissions.size());
-		
-		Submission firstSubmission = submissions.get(0);
-		long submissionId = firstSubmission.getSubmissionId();
-		Assertions.assertEquals(1003, submissionId);
-	}
-	
-	/**
-	 * 测试用例: 测试getSubmissionsUsingOffset(long, String, long, int)方法
-	 * 测试数据: 获取ID从100起始的10次提交(ID From 100 to 90)
-	 * 预期结果: 返回空提交列表
-	 */
-	@Test
-	public void testGetSubmissionsFrom100WithLimit10() {
-		List<Submission> submissions = submissionMapper.getSubmissionsUsingOffset(0, "", 100, 10);
-		Assertions.assertEquals(0, submissions.size());
 	}
 	
 	/**
@@ -413,28 +154,6 @@ public class SubmissionMapperTest {
 	public void testGetAcceptedSubmissionOfProblemsWithUser1001() {
 		List<Submission> submissions = submissionMapper.getAcceptedSubmissionOfProblems(1001, 1000, 1010);
 		Assertions.assertEquals(0, submissions.size());
-	}
-	
-	/**
-	 * 测试用例: 测试getAcceptedSubmissionUsingUserId(long)方法
-	 * 测试数据: 获取用户ID#1001通过的提交次数
-	 * 预期结果: 返回用户ID#1001通过的提交次数(共2次)
-	 */
-	@Test
-	public void testGetAcceptedSubmissionUsingUserIdWithUser1000() {
-		long acceptedSubmission = submissionMapper.getAcceptedSubmissionUsingUserId(1000);
-		Assertions.assertEquals(2, acceptedSubmission);
-	}
-	
-	/**
-	 * 测试用例: 测试getTotalSubmissionUsingUserId(long)方法
-	 * 测试数据: 获取用户ID#1001总提交次数
-	 * 预期结果: 返回用户ID#1001总提交次数(共4次)
-	 */
-	@Test
-	public void testGetTotalSubmissionUsingUserIdWithUser1000() {
-		long acceptedSubmission = submissionMapper.getTotalSubmissionUsingUserId(1000);
-		Assertions.assertEquals(3, acceptedSubmission);
 	}
 	
 	/**

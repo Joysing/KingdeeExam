@@ -13,21 +13,6 @@
 		<result property="output" column="checkpoint_output" />
 	</resultMap>
 
-	<!-- Methods -->
-	<select id="getNumberOfCheckpoints" 
-		resultType="long" 
-		useCache="true">
-		SELECT COUNT(*) 
-		FROM voj_problem_checkpoints
-	</select>
-	<select id="getCheckpointsUsingProblemId" 
-		parameterType="long"
-		resultMap="CheckpointResultMap" 
-		useCache="true">
-		SELECT * 
-		FROM voj_problem_checkpoints 
-		WHERE problem_id = #{problemId}
-	</select>
 	<insert id="createCheckpoint" 
 		parameterType="com.kingdee.exam.voj.model.Checkpoint"
 		flushCache="true">

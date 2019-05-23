@@ -171,29 +171,4 @@ public class ExamServiceImpl implements ExamService {
 		return map;// 返回状态
 	}
 
-	/**
-	 * 自动生成试卷
-	 */
-	@Override
-	public boolean autoGenerate(HttpSession session, Integer id) {
-		// 判断题
-		List<QuestionBankVo> findAllJudgmentQuestion = examMapper.findAllJudgmentQuestion(id);
-
-		// 选择题
-		List<QuestionBankVo> findAllChoiceQuestion = examMapper.findAllChoiceQuestion(id);
-		if (findAllChoiceQuestion.size() >= 5 && findAllChoiceQuestion.size() >= 5) {
-			HashMap<String, List<QuestionBankVo>> hashMap = new HashMap<String, List<QuestionBankVo>>();
-			hashMap.put("JudgmentQuestion", findAllJudgmentQuestion);
-			hashMap.put("ChoiceQuestion", findAllChoiceQuestion);
-			session.setAttribute("question", hashMap);
-			session.setAttribute("JudgmentQuestion", findAllJudgmentQuestion);
-			session.setAttribute("ChoiceQuestion", findAllChoiceQuestion);
-			// 存入时间
-			// 初始化成绩
-			return true;
-		}
-
-		return false;
-	}
-
 }
