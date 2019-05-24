@@ -337,7 +337,11 @@
 				  },
 				  methods: {
                       addQuestionBank: function() {
-                          if(this.QuestionBank.testsType === '2'){
+                          var errorMessage  = '';
+                          if ( vm.QuestionBank.stem==='' ) {
+                              errorMessage += '请填写试题名称.<br>';
+                          }
+                          if(this.QuestionBank.testsType == 2){
                               var problemCategoriesArr = [];
                               var problemTagsArr = '';
 
@@ -365,7 +369,6 @@
                                   problemTags: JSON.stringify(problemTagsArr),
                                   isExactlyMatch: $('#problem-is-exactly-match').parent().hasClass('switch-on')
                               };
-                              var errorMessage  = '';
 
                               if ( vm.QuestionBank.codingProblem.problemName==='' ) {
                                   errorMessage += '请填写试题名称.<br>';
@@ -394,17 +397,33 @@
                               if ( vm.QuestionBank.codingProblem.testCases==='' ) {
                                   errorMessage += '请填写测试用例.<br>';
                               }
-                              if(errorMessage !==''){
-                                  $('.alert-error', '#problem-form').html(errorMessage);
-                                  $('.alert-error', '#problem-form').removeClass('hide');
-                                  return;
-                              }
+
                               $('.alert-success', '#problem-form').addClass('hide');
                               $('.alert-error', '#problem-form').addClass('hide');
                               $('button[type=submit]', '#problem-form').attr('disabled', 'disabled');
                               $('button[type=submit]', '#problem-form').html('请稍等...');
+                          }else if(this.QuestionBank.testsType == 1){
+                              //选择题
+                              vm.QuestionBank.codingProblem={};
+                              if ( vm.QuestionBank.options[0].content==='' ) {
+                                  errorMessage += '请填写选项A.<br>';
+                              }
+                              if ( vm.QuestionBank.options[1].content==='' ) {
+                                  errorMessage += '请填写选项B.<br>';
+                              }
+                              if ( vm.QuestionBank.options[2].content==='' ) {
+                                  errorMessage += '请填写选项C.<br>';
+                              }
+                              if ( vm.QuestionBank.options[3].content==='' ) {
+                                  errorMessage += '请填写选项D.<br>';
+                              }
                           }else{
                               vm.QuestionBank.codingProblem={}
+                          }
+                          if(errorMessage !==''){
+                              $('.alert-error', '#problem-form').html(errorMessage);
+                              $('.alert-error', '#problem-form').removeClass('hide');
+                              return;
                           }
                           ajaxSubmitJSON("/admin/addQuestionBank", JSON.stringify(vm.QuestionBank),
                               function(data) {
@@ -429,6 +448,8 @@
                       coding: function() {
                           this.QuestionBank.answer = 100;
                           this.QuestionBank.testsType = 2;
+                          $('.alert-error', '#problem-form').html('');
+                          $('.alert-error', '#problem-form').addClass('hide');
                           $.getScript('/static/js/markdown.min.js', function() {
                               var converter = Markdown.getSanitizingConverter();
                               var editor    = new Markdown.Editor(converter);
@@ -449,10 +470,14 @@
                       judge: function() {
                           this.QuestionBank.answer = 1;
                           this.QuestionBank.testsType = 0;
+                          $('.alert-error', '#problem-form').html('');
+                          $('.alert-error', '#problem-form').addClass('hide');
                       },
                       choose: function() {
                           this.QuestionBank.answer = 'A';
                           this.QuestionBank.testsType = 1;
+                          $('.alert-error', '#problem-form').html('');
+                          $('.alert-error', '#problem-form').addClass('hide');
                       },
                       deleteQuestionBank: function(id) {
                           if (confirm("是否要删除这道题目?") === false) {
@@ -482,6 +507,8 @@
                               codingProblem:{testCases:[]},
                               options: [{op: 'A', content: ''}, {op: 'B', content: ''}, {op: 'C', content: ''}, {op: 'D', content: ''}]
                           };
+                          $('.alert-error', '#problem-form').html('');
+                          $('.alert-error', '#problem-form').addClass('hide');
                           $('#myModal').modal({
                               backdrop: 'static',
                               keyboard: false
@@ -493,11 +520,11 @@
                           vm.QuestionBank.answer = data.answer;
                           vm.QuestionBank.testsType = data.testsType;
                           vm.questionBankId = data.questionBankId;
-                          if(data.testsType === 1) {
+                          if(data.testsType == 1) {
                               vm.QuestionBank.options = data.options;
-                          } else if(data.testsType === 0) {
+                          } else if(data.testsType == 0) {
                               vm.QuestionBank.answer = data.answer;
-                          }else if(data.testsType === 2) {
+                          }else if(data.testsType == 2) {
                               vm.QuestionBank.codingProblem=data.codingProblem;
                               vm.QuestionBank.codingProblem.testCases=JSON.parse(data.codingProblem.testCases);
                           }
@@ -508,7 +535,7 @@
                           });
                       },
                       sbUpdate: function() {
-                          if(this.QuestionBank.testsType===2){
+                          if(this.QuestionBank.testsType==2){
                               this.QuestionBank.codingProblem.testCases= JSON.stringify(this.QuestionBank.codingProblem.testCases);
                               this.QuestionBank.codingProblem.problemCategories= '';
                               this.QuestionBank.codingProblem.problemName=this.QuestionBank.stem;
