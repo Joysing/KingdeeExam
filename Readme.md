@@ -6,7 +6,7 @@
 
 ###搭建步骤
 1. ActiveMQ的下载安装
-    * 进入http://www.apache.org/dyn/closer.cgi?filename=/activemq/5.15.9/apache-activemq-5.15.9-bin.zip&action=download下载apache-activemq-5.15.9-bin.zip
+    * 进入http://www.apache.org/dyn/closer.cgi?filename=/activemq/5.15.9/apache-activemq-5.15.9-bin.zip&action=download  下载apache-activemq-5.15.9-bin.zip
     * 解压apache-activemq-5.15.9-bin.zip到随意文件夹
     * 双击bin目录下的activemq.bat进行启动
     * 启动完成后登录http://localhost:8161/admin 账号密码都默认admin
