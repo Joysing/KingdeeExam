@@ -2,7 +2,7 @@
 1. ActiveMQ
 2. MySQL
 3. C语言、C++、Python、Java中至少一个编译环境
-4. judger.jar文件（源码地址https://github.com/Joysing/KingdeeExamJudge）
+4. judger.jar文件（源码地址https://github.com/Joysing/KingdeeExamJudge ）
 
 ###搭建步骤
 1. ActiveMQ的下载安装
@@ -23,4 +23,4 @@
 ###上述所有项配置完成后，本系统才能正常启动：
 
 1. 启动本项目（入口：KingdeeExamApplication.class）
-2. 访问http://localhost:8080/loginPage（管理员账号admin/密码admin，考生账号user/密码admin）
+2. 访问http://localhost:8080/loginPage （管理员账号admin/密码admin，考生账号user/密码admin）
