@@ -2,7 +2,7 @@
 1. ActiveMQ
 2. MySQL
 3. C语言、C++、Python、Java中至少一个编译环境
-4. judger.jar文件
+4. judger.jar文件（源码地址https://github.com/Joysing/KingdeeExamJudge）
 
 ###搭建步骤
 1. ActiveMQ的下载安装
